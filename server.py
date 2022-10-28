@@ -1,4 +1,4 @@
-# Import flask and datetime module for showing date and time
+# Import flask 
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_restplus import Resource, Api, abort, reqparse
