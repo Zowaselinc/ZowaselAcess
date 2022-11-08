@@ -42,6 +42,15 @@ class Crop(Resource):
     def get(self, id):
         crop = Crop.query.get(id)   
         return jsonify(crop=crop.to_dict())
+    def delete(self,id):
+        crop = Crop.query.get(id)
+        if crop:
+            db.session.delete(crop)
+            db.session.commit()
+            return {'Message':'Deleted'}
+        else:
+            return {'Message':'Error'}
+
 class AddCrop(Resource):
     def post(self):
         new_crop = Crop(
@@ -56,17 +65,7 @@ class AddCrop(Resource):
         db.session.add(new_crop)
         db.session.commit()
         return new_crop.json
-
-    def delete(self,id):
-        crop = Crop.query.get(id)
-
-        if crop:
-            db.session.delete(crop)
-            db.session.commit()
-            return {'Message':'Deleted'}
-        else:
-            return {'Message':'Error'}
-
+    
 
 
 # Add Farmer
@@ -227,11 +226,9 @@ farmer = api.namespace('farmer', description='load farmer')
 farmer.add_resource(FarmerBvn,'/Bvn=<int:Bvn>')
 farmer.add_resource(AllFarmers,'/all')
 
-crops = api.namespace('crop',description='add crops')
+crops = api.namespace('crop',description='load crops')
 crops.add_resource(AllCrops,'/all')
 crops.add_resource(Crop,'/<int:id>')
-
-
 
 bulk = api.namespace('bulk', description='bulk files')
 bulk.add_resource(AllBulkFarmer,'/farmer')
