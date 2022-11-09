@@ -36,7 +36,7 @@ class Crop(db.Model):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
     def __repr__(self):
-        return f"{self.id}. {self.name} in {self.location}"
+        return '<Crop %r>' % self.id
         
 class Product(db.Model):
 
@@ -78,6 +78,13 @@ class ScoreCard(db.Model):
     machines = db.Column(db.String(200))
     estimate_monthly_income = db.Column(db.String(200))
     years_cultivating = db.Column(db.String(200))
+    apply_loan_amount = db.Column(db.Integer)
+    gender = db.Column(db.String(200))
+    owns_a_bank_account = db.Column(db.String(200))
+    size_of_farm = db.Column(db.String(200))
+    grows_more_than_one_crop = db.Column(db.String(200))
+    is_in_a_cooperative = db.Column(db.String(200))
+    no_of_agronomist_visits = db.Column(db.Integer)
     date_created    = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __init__(self,id,Bvn,age,number_of_land,address,owner_caretaker,crop,
@@ -95,7 +102,7 @@ class ScoreCard(db.Model):
         self.years_cultivating = years_cultivating
 
     def __repr__(self):
-        return '<ScoreCard %r>' % self.farmer_id
+        return '<ScoreCard %r>' % self.id
 
 
 class LoanTransfer(db.Model):
@@ -279,7 +286,7 @@ class CreditAccessTable(db.Model):
     def __repr__(self):
         return '<CreditAccessTable %r>' % self.id
 class CreditHistoryTable(db.Model):
-    __tablename__   = 'credit_history__table'
+    __tablename__   = 'credit_history_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     HasTakenLoanBefore     = db.Column(db.String(200))
     SourceOfLoan     = db.Column(db.String(200))
@@ -362,7 +369,7 @@ class ProductivityViabilityTable(db.Model):
         self.YoungCropsAndStage = YoungCropsAndStage
         self.CultivationStartdate = CultivationStartdate
         self.IsIntensiveFarmingPractised = IsIntensiveFarmingPractised
-        self.c = EconomicActivities
+        self.EconomicActivities = EconomicActivities
     def json(self):
         return {'id':self.id,'Bvn':self.Bvn,'CropsCultivated':self.CropsCultivated,'GrowsCrops':self.GrowsCrops,'OilPalmFertilizers':self.OilPalmFertilizers,
         'CocoaFertilizers':self.CocoaFertilizers,'FertilizerFrequency':self.FertilizerFrequency,'PestFungHerbicides':self.PestFungHerbicides,
@@ -378,25 +385,171 @@ class AgronomyServicesTable(db.Model):
     __tablename__   = 'agronomy_services_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     Bvn     = db.Column(db.Integer)
-    KnowsAgriProcessed     = db.Column(db.Integer)
-    AgronomistThatTrainedYou     = db.Column(db.Integer)
-    CanManageEcosystem    = db.Column(db.Integer)
-    HowToManageEcosystem     = db.Column(db.Integer)
-    IsTrainingBeneficial     = db.Column(db.Integer)
-    FieldRoutines     = db.Column(db.Integer)
-    HarvestingChanges     = db.Column(db.Integer)
-    IsCropCalendarBeneficial     = db.Column(db.Integer)
-    CropCalendarBenefits     = db.Column(db.Integer)
-    RecordKeepingBenefits     = db.Column(db.Integer)
-    def __init__(self,id,Bvn):
-        self.id = id
-        self.Bvn = Bvn
+    KnowsAgriProcessed     = db.Column(db.String(200))
+    AgronomistThatTrainedYou     = db.Column(db.String(200))
+    CanManageEcosystem    = db.Column(db.String(200))
+    HowToManageEcosystem     = db.Column(db.String(200))
+    IsTrainingBeneficial     = db.Column(db.String(200))
+    FieldRoutines     = db.Column(db.String(200))
+    HarvestingChanges     = db.Column(db.String(200))
+    IsCropCalendarBeneficial     = db.Column(db.String(200))
+    CropCalendarBenefits     = db.Column(db.String(200))
+    RecordKeepingBenefits     = db.Column(db.String(200))
     def json(self):
-        return {'id':self.id,'Bvn':self.Bvn,
-        }  
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
-        return '<CreditHistoryTable %r>' % self.id
+        return '<AgronomyServicesTable %r>' % self.id
 
+class PsychometricsTable(db.Model):
+    __tablename__   = 'psychometrics_table'
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    Bvn     = db.Column(db.Integer)
+    FluidIntelligence     = db.Column(db.String(200))
+    AttitudesandBeliefs     = db.Column(db.String(200))
+    AgribusinessSkills     = db.Column(db.String(200))
+    EthicsandHonesty     = db.Column(db.String(200))
+    SavesEnough     = db.Column(db.String(200))
+    HasLazyNeighbors     = db.Column(db.String(200))
+    def json(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
+    def __repr__(self):
+        return '<PsychometricsTable %r>' % self.id
+class MobileDataTable(db.Model):
+    __tablename__   = 'mobile_data_table'
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    Bvn     = db.Column(db.Integer)
+    MobilePhoneType     = db.Column(db.String(200))
+    Avweeklyphoneuse     = db.Column(db.Integer)
+    Callsoutnumber     = db.Column(db.Integer)
+    Callsoutminutes     = db.Column(db.Integer)
+    Callsinnumber     = db.Column(db.Integer)
+    Callinminutes     = db.Column(db.Integer)
+    SMSsent     = db.Column(db.Integer)
+    Dataprecedingplanswitch     = db.Column(db.Integer)
+    Billpaymenthistory     = db.Column(db.Integer)
+    Avweeklydatarefill     = db.Column(db.Integer)
+    NoOfmobileapps     = db.Column(db.Integer)
+    AvTimeSpentOnApp     = db.Column(db.Integer)
+    MobileAppKinds     = db.Column(db.String(200))
+    AppDeleteRate     = db.Column(db.String(200))
+    def json(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
+    def __repr__(self):
+        return '<MobileDataTable %r>' % self.id
+class FarmlandTable(db.Model):
+    __tablename__   = 'farmland_table'
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    Bvn     = db.Column(db.Integer)
+    NoOfFarmlands     = db.Column(db.Integer)
+    OwnerOrCaretaker     = db.Column(db.String(200))
+    FarmOwnerName     = db.Column(db.String(200))
+    FarmOwnerPhoneNo     = db.Column(db.Integer)
+    RelationshipWithOwner     = db.Column(db.String(200))
+    InheritedFrom     = db.Column(db.String(200))
+    SizeOfFarm     = db.Column(db.String(200))
+    FarmCoordinates     = db.Column(db.String(200))
+    FarmAddress     = db.Column(db.String(200))
+    KeepsAnimals     = db.Column(db.String(200))
+    AnimalsFeedOn     = db.Column(db.String(200))
+    def json(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
+    def __repr__(self):
+        return '<FarmlandTable %r>' % self.id
+class CapacityTable(db.Model):
+    __tablename__   = 'capacity_table'
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    Bvn     = db.Column(db.Integer)
+    HowLongBeenFarming     = db.Column(db.Integer)
+    ParticipatedInTraining     = db.Column(db.String(200))
+    FarmingPractice     = db.Column(db.String(200))
+    KeepsAnimals     = db.Column(db.String(200))
+    HasCooperative     = db.Column(db.String(200))
+    CooperativeName     = db.Column(db.String(200))
+    EducationLevel     = db.Column(db.String(200))
+    
+    def json(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
+    def __repr__(self):
+        return '<CapacityTable %r>' % self.id
+
+class FarmPractice(db.Model):
+    __tablename__   = 'farm_practice_table'
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    Bvn     = db.Column(db.Integer)
+    SizeOfFarm     = db.Column(db.Integer)
+    FarmIsRentedorLeased     = db.Column(db.String(200))
+    NoOfYearsLeased     = db.Column(db.Integer)
+    UsesMachines     = db.Column(db.String(200))
+    RotatesCrops     = db.Column(db.String(200))
+    NoOfHectaresProducedYearly     = db.Column(db.Integer)
+    ApproxFertilizerUse     = db.Column(db.String(200))
+    NoOfFertlizerApplications     = db.Column(db.String(200))
+    DecisionForSpraying     = db.Column(db.String(200))
+    WeedControlPractice     = db.Column(db.String(200))
+    EstimatedIncomePerCrop     = db.Column(db.String(200))
+    CropthatcanSellWell     = db.Column(db.String(200))
+    HasFarmPlanOrProject     = db.Column(db.String(200))
+    FarmProjectInfo     = db.Column(db.String(200))
+    
+    
+    def json(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
+    def __repr__(self):
+        return '<FarmPractice %r>' % self.id
+class MechanizationTable(db.Model):
+    __tablename__   = 'mechanization_table'
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    Bvn     = db.Column(db.Integer)
+    MachinesUsed     = db.Column(db.String(200))
+    MachineHasHelped     = db.Column(db.String(200))
+    AdviseMachineOrLabour     = db.Column(db.String(200))
+    OtherMachinesNeeded     = db.Column(db.String(200))
+    CanAcquireMoreLands     = db.Column(db.String(200))
+    PercentCostSaved     = db.Column(db.Integer) 
+    def json(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
+    def __repr__(self):
+        return '<MechanizationTable %r>' % self.id
+class CultivationTable(db.Model):
+    __tablename__   = 'cultivation_table'
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    Bvn     = db.Column(db.Integer)
+    type_of_labor     = db.Column(db.String(200))
+    pay_for_labor     = db.Column(db.Integer)
+    how_many_housechildren_help     = db.Column(db.String(200))
+    season_children_help     = db.Column(db.String(200))
+    labor_children_do     = db.Column(db.String(200))
+    household_vs_hire_cost     = db.Column(db.Integer)
+    labor_women_do     = db.Column(db.String(200))
+    percent_female_hired     = db.Column(db.Integer) 
+    def json(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
+    def __repr__(self):
+        return '<CultivationTable %r>' % self.id
+class HarvestTable(db.Model):
+    __tablename__   = 'harvest_table'
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    Bvn     = db.Column(db.Integer)
+    when_is_harvest_season     = db.Column(db.String(200))
+    no_of_hired_workers     = db.Column(db.Integer)
+    no_of_family_workers     = db.Column(db.Integer)
+    no_of_permanent_workers    = db.Column(db.Integer)
+    no_hired_constantly     = db.Column(db.Integer)
+    
+    def json(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
+    def __repr__(self):
+        return '<HarvestTable %r>' % self.id
+class ConditionsTable(db.Model):
+    __tablename__   = 'conditions_table'
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    Bvn     = db.Column(db.Integer)
+    LengthOfHarvestChanged     = db.Column(db.String(200))
+    
+    def json(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
+    def __repr__(self):
+        return '<ConditionsTable %r>' % self.id
 db.init_app(app)
 with app.app_context():
     db.create_all()

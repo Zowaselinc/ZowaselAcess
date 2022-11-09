@@ -5,6 +5,7 @@ from flask_restplus import Resource, Api, fields
 from flask_mysqldb import MySQL
 
 from models import app, Crop,FarmerTable,ScoreCard, Product, Loan,Location, MovementTable, CapitalTable,CreditAccessTable,CreditHistoryTable,ProductivityViabilityTable
+from models import AgronomyServicesTable, PsychometricsTable, MobileDataTable, FarmlandTable, CapacityTable, FarmPractice, MechanizationTable, CultivationTable, HarvestTable, ConditionsTable
 #from flasgger import Swagger
 import os
 from datetime import datetime
@@ -27,11 +28,18 @@ class AddScoreCard(Resource):
         machines=request.form['machines'],
         estimate_monthly_income=request.form['estimate_monthly_income'],
         years_cultivating=request.form['years_cultivating'],
-        date_created=request.form['date_created']
+        apply_loan_amount = request.form['apply_loan_amount'],
+        gender=request.form['gender'],
+        owns_a_bank_account=request.form['owns_a_bank_account'],
+        size_of_farm=request.form['size_of_farm'],
+        grows_more_than_one_crop=request.form['grows_more_than_one_crop'],
+        is_in_a_cooperative=request.form['is_in_a_cooperative'],
+        no_of_agronomist_visits=request.form['no_of_agronomist_visits'],
+        
     )
         db.session.add(card)
         db.session.commit()
-        #return card.json()
+        return card.json()
 class AllCrops(Resource):
     def get(self):
         crops = db.session.query(Crop).all()
@@ -188,6 +196,187 @@ class AddProductivityViability(Resource):
         db.session.add(productivityviability)
         db.session.commit()
         return productivityviability.json()
+
+class AddAgronomyServices(Resource):	
+    def post(self):
+        new_data = AgronomyServicesTable(
+        id=request.form['Bvn'],
+        Bvn=request.form['Bvn'],
+        KnowsAgriProcessed=request.form['KnowsAgriProcessed'],
+        AgronomistThatTrainedYou=request.form['AgronomistThatTrainedYou'],
+        CanManageEcosystem=request.form['CanManageEcosystem'],
+        HowToManageEcosystem=request.form['HowToManageEcosystem'],
+        IsTrainingBeneficial=request.form['IsTrainingBeneficial'],
+        FieldRoutines=request.form['FieldRoutines'],
+        HarvestingChanges=request.form['HarvestingChanges'],
+        IsCropCalendarBeneficial=request.form['IsCropCalendarBeneficial'],
+        CropCalendarBenefits=request.form['CropCalendarBenefits'],
+        RecordKeepingBenefits=request.form['RecordKeepingBenefits']
+    )
+        db.session.add(new_data)
+        db.session.commit()
+        return new_data.json()
+class AddPsychometrics(Resource):	
+    def post(self):
+        new_data = PsychometricsTable(
+        id=request.form['Bvn'],
+        Bvn=request.form['Bvn'],
+        FluidIntelligence=request.form['FluidIntelligence'],
+        AttitudesandBeliefs=request.form['AttitudesandBeliefs'],
+        AgribusinessSkills=request.form['AgribusinessSkills'],
+        EthicsandHonesty=request.form['EthicsandHonesty'],
+        SavesEnough=request.form['SavesEnough'],
+        HasLazyNeighbors=request.form['HasLazyNeighbors'],
+    )
+        db.session.add(new_data)
+        db.session.commit()
+        return new_data.json()
+
+class AddMobileData(Resource):	
+    def post(self):
+        new_data = MobileDataTable(
+        id=request.form['Bvn'],
+        Bvn=request.form['Bvn'],
+        MobilePhoneType=request.form['MobilePhoneType'],
+        Avweeklyphoneuse=request.form['Avweeklyphoneuse'],
+        Callsoutnumber=request.form['Callsoutnumber'],
+        Callsoutminutes=request.form['Callsoutminutes'],
+        Callsinnumber=request.form['Callsinnumber'],
+        Callinminutes=request.form['Callinminutes'],
+        SMSsent=request.form['SMSsent'],
+        Dataprecedingplanswitch=request.form['Dataprecedingplanswitch'],
+        Billpaymenthistory=request.form['Billpaymenthistory'],
+        Avweeklydatarefill=request.form['Avweeklydatarefill'],
+        NoOfmobileapps=request.form['NoOfmobileapps'],
+        AvTimeSpentOnApp=request.form['AvTimeSpentOnApp'],
+        MobileAppKinds=request.form['MobileAppKinds'],
+        AppDeleteRate=request.form['AppDeleteRate']
+    )
+        db.session.add(new_data)
+        db.session.commit()
+        return new_data.json()
+
+class AddFarmlandData(Resource):	
+    def post(self):
+        new_data = FarmlandTable(
+        id=request.form['Bvn'],
+        Bvn=request.form['Bvn'],
+        NoOfFarmlands=request.form['NoOfFarmlands'],
+        OwnerOrCaretaker=request.form['OwnerOrCaretaker'],
+        FarmOwnerName=request.form['FarmOwnerName'],
+        FarmOwnerPhoneNo=request.form['FarmOwnerPhoneNo'],
+        RelationshipWithOwner=request.form['RelationshipWithOwner'],
+        InheritedFrom=request.form['InheritedFrom'],
+        SizeOfFarm=request.form['SizeOfFarm'],
+        FarmCoordinates=request.form['FarmCoordinates'],
+        FarmAddress=request.form['FarmAddress'],
+        KeepsAnimals=request.form['KeepsAnimals'],
+        AnimalsFeedOn=request.form['AnimalsFeedOn']
+    )
+        db.session.add(new_data)
+        db.session.commit()
+        return new_data.json()
+
+class AddCapacity(Resource):	
+    def post(self):
+        new_data = CapacityTable(
+        id=request.form['Bvn'],
+        Bvn=request.form['Bvn'],
+        HowLongBeenFarming=request.form['HowLongBeenFarming'],
+        ParticipatedInTraining=request.form['ParticipatedInTraining'],
+        FarmingPractice=request.form['FarmingPractice'],
+        KeepsAnimals=request.form['KeepsAnimals'],
+        HasCooperative=request.form['HasCooperative'],
+        CooperativeName=request.form['CooperativeName'],
+        EducationLevel=request.form['EducationLevel']
+    )
+        db.session.add(new_data)
+        db.session.commit()
+        return new_data.json()
+
+class AddFarmPractice(Resource):	
+    def post(self):
+        new_data = FarmPractice(
+        id=request.form['Bvn'],
+        Bvn=request.form['Bvn'],
+        SizeOfFarm=request.form['SizeOfFarm'],
+        FarmIsRentedorLeased=request.form['FarmIsRentedorLeased'],
+        NoOfYearsLeased=request.form['NoOfYearsLeased'],
+        UsesMachines=request.form['UsesMachines'],
+        RotatesCrops=request.form['RotatesCrops'],
+        NoOfHectaresProducedYearly=request.form['NoOfHectaresProducedYearly'],
+        ApproxFertilizerUse=request.form['ApproxFertilizerUse'],
+        NoOfFertlizerApplications=request.form['NoOfFertlizerApplications'],
+        DecisionForSpraying=request.form['DecisionForSpraying'],
+        WeedControlPractice=request.form['WeedControlPractice'],
+        EstimatedIncomePerCrop=request.form['EstimatedIncomePerCrop'],
+        CropthatcanSellWell=request.form['CropthatcanSellWell'],
+        HasFarmPlanOrProject=request.form['HasFarmPlanOrProject'],
+        FarmProjectInfo=request.form['FarmProjectInfo'],
+    )
+        db.session.add(new_data)
+        db.session.commit()
+        return new_data.json()
+
+class AddMechanization(Resource):	
+    def post(self):
+        new_data = MechanizationTable(
+        id=request.form['Bvn'],
+        Bvn=request.form['Bvn'],
+        MachinesUsed=request.form['MachinesUsed'],
+        MachineHasHelped=request.form['MachineHasHelped'],
+        AdviseMachineOrLabour=request.form['AdviseMachineOrLabour'],
+        OtherMachinesNeeded=request.form['OtherMachinesNeeded'],
+        CanAcquireMoreLands=request.form['CanAcquireMoreLands'],
+        PercentCostSaved=request.form['PercentCostSaved'],
+    )
+        db.session.add(new_data)
+        db.session.commit()
+        return new_data.json()
+
+class AddCultivation(Resource):	
+    def post(self):
+        new_data = CultivationTable(
+        id=request.form['Bvn'],
+        Bvn=request.form['Bvn'],
+        type_of_labor=request.form['type_of_labor'],
+        pay_for_labor=request.form['pay_for_labor'],
+        how_many_housechildren_help=request.form['how_many_housechildren_help'],
+        season_children_help=request.form['season_children_help'],
+        labor_children_do=request.form['labor_children_do'],
+        household_vs_hire_cost=request.form['household_vs_hire_cost'],
+        labor_women_do=request.form['labor_women_do'],
+        percent_female_hired=request.form['percent_female_hired']
+    )
+        db.session.add(new_data)
+        db.session.commit()
+        return new_data.json()
+
+class AddHarvest(Resource):	
+    def post(self):
+        new_data = HarvestTable(
+        id=request.form['Bvn'],
+        Bvn=request.form['Bvn'],
+        when_is_harvest_season=request.form['when_is_harvest_season'],
+        no_of_hired_workers=request.form['no_of_hired_workers'],
+        no_of_family_workers=request.form['no_of_family_workers'],
+        no_of_permanent_workers=request.form['no_of_permanent_workers'],
+        no_hired_constantly=request.form['no_hired_constantly']
+    )
+        db.session.add(new_data)
+        db.session.commit()
+        return new_data.json()
+
+class AddConditions(Resource):	
+    def post(self):
+        new_data = ConditionsTable(
+        id=request.form['Bvn'],
+        Bvn=request.form['Bvn'],
+        LengthOfHarvestChanged=request.form['LengthOfHarvestChanged']
+    )
+        db.session.add(new_data)
+        db.session.commit()
+        return new_data.json()
 class FarmerBvn(Resource):
     def get(self, Bvn):
         farmer = FarmerTable.query.filter_by(Bvn=Bvn).first()
@@ -216,11 +405,20 @@ class AllBulkFarmer(Resource):
 add = api.namespace('add',description='Add New Data')
 add.add_resource(AddFarmer,'/farmer')
 add.add_resource(AddCrop,'/crop')
-add.add_resource(AddScoreCard,'/')
+add.add_resource(AddScoreCard,'/scorecard')
 add.add_resource(AddCapital,'/capital')
 add.add_resource(AddCreditAccess,'/creditaccess')
 add.add_resource(AddCreditHistory,'/credithistory')
-add.add_resource(AddProductivityViability,'/productivity')
+add.add_resource(AddCapacity,'/capacity')
+add.add_resource(AddAgronomyServices,'/agronomy')
+add.add_resource(AddConditions,'/conditions')
+add.add_resource(AddCultivation,'/cultivation')
+add.add_resource(AddFarmlandData,'/farmland')
+add.add_resource(AddFarmPractice,'/practice')
+add.add_resource(AddPsychometrics,'/psychometrics')
+add.add_resource(AddMechanization,'/mechanization')
+add.add_resource(AddMobileData,'/mobiledata')
+add.add_resource(AddHarvest,'/harvest')
 
 farmer = api.namespace('farmer', description='load farmer')
 farmer.add_resource(FarmerBvn,'/Bvn=<int:Bvn>')
