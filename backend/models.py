@@ -8,12 +8,7 @@ from datetime import datetime
 from flask_mysqldb import MySQL
 import pymysql
 from sqlalchemy import create_engine, exc
-
-
-
 import os
-
-
 
 # Initializing flask app
 app = Flask(__name__)
@@ -28,7 +23,8 @@ db = SQLAlchemy()
 
 class Loan(db.Model):
     __tablename__ = 'loans'
-    loan_type      = db.Column(db.String(200), primary_key=True)
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    loan_type      = db.Column(db.String(200), unique=True)
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def __repr__(self):
@@ -36,8 +32,8 @@ class Loan(db.Model):
 
 class ScoreCard(db.Model):
     __tablename__   = 'score_card'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200), unique=True)
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    Bvn     = db.Column(db.String(200))
     age = db.Column(db.String(200))
     number_of_land = db.Column(db.String(200))
     address = db.Column(db.String(200))
@@ -47,13 +43,37 @@ class ScoreCard(db.Model):
     machines = db.Column(db.String(200))
     estimate_monthly_income = db.Column(db.String(200))
     years_cultivating = db.Column(db.String(200))
-    #apply_loan_amount = db.Column(db.String(200))
     gender = db.Column(db.String(200))
     owns_a_bank_account = db.Column(db.String(200))
     size_of_farm = db.Column(db.String(200))
     number_of_crops = db.Column(db.String(200))
     is_in_a_cooperative = db.Column(db.String(200))
     no_of_agronomist_visits = db.Column(db.String(200))
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+
+class ScoreHistory(db.Model):
+    __tablename__   = 'score_history'
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    Bvn     = db.Column(db.String(200))
+    age = db.Column(db.String(200))
+    number_of_land = db.Column(db.String(200))
+    address = db.Column(db.String(200))
+    owner_caretaker = db.Column(db.String(200))
+    crop = db.Column(db.String(200))
+    intercropping = db.Column(db.String(200))
+    machines = db.Column(db.String(200))
+    estimate_monthly_income = db.Column(db.String(200))
+    years_cultivating = db.Column(db.String(200))
+    gender = db.Column(db.String(200))
+    owns_a_bank_account = db.Column(db.String(200))
+    size_of_farm = db.Column(db.String(200))
+    number_of_crops = db.Column(db.String(200))
+    is_in_a_cooperative = db.Column(db.String(200))
+    no_of_agronomist_visits = db.Column(db.String(200))
+    applyLoanAmount     = db.Column(db.String(200))
+    term_months     = db.Column(db.String(200))
+    score     = db.Column(db.String(200))
+    bin     = db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):
@@ -69,11 +89,12 @@ class LoanTransfer(db.Model):
     id     = db.Column(db.String(200), primary_key=True)
     loan_type      = db.Column(db.String(200))
     amount             = db.Column(db.String(200))
-    status      = db.Column(db.String(200), default='Pending')
+    status      = db.Column(db.String(200))
     farmer_name     = db.Column(db.String(200))
     Bvn     = db.Column(db.String(200))
     transfer_date   = db.Column(db.String(200))
     due_date   = db.Column(db.String(200))
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -382,7 +403,7 @@ class HarvestTable(db.Model):
 
 class CareTable(db.Model):
     __tablename__ = 'care_table'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
     Bvn     = db.Column(db.String(200))
     HealthCentLoc= db.Column(db.String(200))
     HealthCentCount= db.Column(db.String(200))
@@ -401,6 +422,7 @@ class CareTable(db.Model):
     StudyTime= db.Column(db.String(200))
     StudyWhere= db.Column(db.String(200))
     AltIncomeSource= db.Column(db.String(200))
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -409,7 +431,7 @@ class CareTable(db.Model):
 
 class Planet(db.Model):
     __tablename__ = 'planet_table'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
     Bvn     = db.Column(db.String(200))
     PlanToExpand= db.Column(db.String(200))
     Crop= db.Column(db.String(200))
@@ -441,6 +463,7 @@ class Planet(db.Model):
     Pollution= db.Column(db.String(200))
     PollutionFreq= db.Column(db.String(200))
     Measures= db.Column(db.String(200))
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -449,7 +472,7 @@ class Planet(db.Model):
 
 class Safety(db.Model):
     __tablename__ = 'safety_table'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
     Bvn     = db.Column(db.String(200))
     Ferment  = db.Column(db.String(200))
     FermentDays  = db.Column(db.String(200))
@@ -466,6 +489,7 @@ class Safety(db.Model):
     HarvestTool  = db.Column(db.String(200))
     Wear  = db.Column(db.String(200))
     Disposal  = db.Column(db.String(200))
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -474,7 +498,7 @@ class Safety(db.Model):
 
 class LivingTable(db.Model):
     __tablename__ = 'living_table'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
     Bvn     = db.Column(db.String(200))
     HouseOwned = db.Column(db.String(200))
     StaysWithFamily = db.Column(db.String(200))
@@ -501,6 +525,7 @@ class LivingTable(db.Model):
     Position = db.Column(db.String(200))
     HasAccessedInput = db.Column(db.String(200))
     Input = db.Column(db.String(200))
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -511,7 +536,12 @@ class ConditionsTable(db.Model):
     __tablename__   = 'conditions_table'
     id     = db.Column(db.String(200), unique=True, primary_key=True)
     Bvn     = db.Column(db.String(200))
-    LengthOfHarvestChanged     = db.Column(db.String(200))
+    duration     = db.Column(db.String(200))
+    seller     = db.Column(db.String(200))
+    seller_mou     = db.Column(db.String(200))
+    CropYieldPrediction     = db.Column(db.String(200), default='0')
+    CropExpectedMarketValue      = db.Column(db.String(200), default='0')
+    ZowaselMarketplacePriceOffers     = db.Column(db.String(200), default='0')
     
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -520,7 +550,9 @@ class ConditionsTable(db.Model):
 
 class CropInfo(db.Model):
     __tablename__   = 'crop_info'
-    tracing_id     = db.Column(db.String(200), unique=True, primary_key=True)
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    tracing_id     = db.Column(db.String(200))
     crop_type  = db.Column(db.String(200))
     sourcing_location  = db.Column(db.String(200))
     crop_origin  = db.Column(db.String(200))
@@ -538,7 +570,9 @@ class CropInfo(db.Model):
 
 class CropQuality(db.Model):
     __tablename__   = 'crop_quality'
-    tracing_id     = db.Column(db.String(200), unique=True, primary_key=True)
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    tracing_id     = db.Column(db.String(200))
     moisture_content  = db.Column(db.String(200))
     foreign_matter  = db.Column(db.String(200))
     test_weight  = db.Column(db.String(200))
@@ -569,7 +603,9 @@ class CropQuality(db.Model):
 
 class InputsInfo(db.Model):
     __tablename__   = 'inputs_info'
-    tracing_id     = db.Column(db.String(200), unique=True, primary_key=True)
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    tracing_id     = db.Column(db.String(200))
     Fertilizers  = db.Column(db.String(200))
     Herbicides  = db.Column(db.String(200))
     Fungicides  = db.Column(db.String(200))
@@ -584,7 +620,9 @@ class InputsInfo(db.Model):
 
 class Warehouse(db.Model):
     __tablename__   = 'warehouse_table'
-    tracing_id     = db.Column(db.String(200), unique=True, primary_key=True)
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    tracing_id     = db.Column(db.String(200))
     location  = db.Column(db.String(200))
     warehouse_type  = db.Column(db.String(200))
     capacity  = db.Column(db.String(200))
@@ -600,7 +638,9 @@ class Warehouse(db.Model):
 
 class Shipment(db.Model):
     __tablename__   = 'shipment_table'
-    tracing_id     = db.Column(db.String(200), unique=True, primary_key=True)
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    tracing_id     = db.Column(db.String(200))
     location  = db.Column(db.String(200))
     loading_date  = db.Column(db.String(200))
     no_of_people  = db.Column(db.String(200))
@@ -632,7 +672,9 @@ class Shipment(db.Model):
 
 class Recommendation(db.Model):
     __tablename__   = 'recommendation_table'
-    tracing_id     = db.Column(db.String(200), unique=True, primary_key=True)
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    tracing_id     = db.Column(db.String(200))
     rec_one  = db.Column(db.String(200))
     rec_two  = db.Column(db.String(200))
     rec_three  = db.Column(db.String(200))
@@ -644,13 +686,16 @@ class Recommendation(db.Model):
 
 class ScoreAnalytics(db.Model):
     __tablename__   = 'score_analytics'
-    Bvn     = db.Column(db.String(200), unique=True, primary_key=True)
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    Bvn     = db.Column(db.String(200))
     Scores  = db.Column(db.String(200))
     Conditions  = db.Column(db.String(200))
     Capital  = db.Column(db.String(200))
     Collateral  = db.Column(db.String(200))
     Capacity  = db.Column(db.String(200))
     Character  = db.Column(db.String(200))
+    
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
