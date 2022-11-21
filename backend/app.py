@@ -33,7 +33,7 @@ class AddFarmer(Resource):
         # Add data only if Id does not exist in database already
         farmer = FarmerTable.query.filter_by(Bvn=request.form['Bvn']).first()
         if farmer:
-            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Record with Bvn already exists!"}
+            message = {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Record with Bvn already exists!"}
         else:
             farmerkyf = FarmerTable(id=request.form['Bvn'],FirstName=request.form['FirstName'],Surname=request.form['Surname'],
         Middlename=request.form['Middlename'],Telephone=request.form['Telephone'],Age=request.form['Age'],
@@ -50,7 +50,8 @@ class AddFarmer(Resource):
         LandmarkNok  = request.form['LandmarkNok'],NinNok  = request.form['NinNok'])
             db.session.add(farmerkyf)
             db.session.commit()
-            return farmerkyf.json()
+            message = {'Message':'Success'}
+        print(message)
 
 # -------------5Cs of Credit Scoring-------------------------------------------------------------------------------------
 
@@ -650,11 +651,11 @@ class AddScoreCard(Resource):
 
 class ScorecardBvn(Resource):
     def get(self, Bvn):
-        farmer = ScoreCard.query.filter_by(Bvn=Bvn).last()
+        farmer = ScoreCard.query.filter_by(Bvn=Bvn).first()
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = ScoreCard.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -663,11 +664,11 @@ class ScorecardBvn(Resource):
 
 class ScoreHistoryBvn(Resource):
     def get(self, Bvn):
-        farmer = ScoreHistory.query.filter_by(Bvn=Bvn).last()
+        farmer = ScoreHistory.query.filter_by(Bvn=Bvn).first()
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = ScoreHistory.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -679,7 +680,7 @@ class ScoreFarmer(Resource):
         Bvn=request.form['Bvn']
         applyLoanAmount=request.form['applyLoanAmount']
         #term_months=request.form['term_months']
-        farmer = ScoreCard.query.filter_by(Bvn=Bvn).last()
+        farmer = ScoreCard.query.filter_by(Bvn=Bvn).first()
         cols=['age', 'number_of_land', 'owner_caretaker', 'crop',
             'intercropping', 'machines', 'estimate_monthly_income','years_cultivating']
         if farmer:
@@ -706,7 +707,7 @@ class ScoreFarmer(Resource):
             db.session.commit()
             return {'Bvn':Bvn, 'score':score, 'bin':bin }
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     
 class ScoreFarmerDragAndDrop(Resource):
     def post(self):
@@ -715,7 +716,7 @@ class ScoreFarmerDragAndDrop(Resource):
         #term_months=request.form['term_months']
         features=request.form['features']
         features = list(features)
-        farmer = ScoreCard.query.filter_by(Bvn=Bvn).last()
+        farmer = ScoreCard.query.filter_by(Bvn=Bvn).first()
         cols=['age', 'number_of_land', 'owner_caretaker', 'crop',
             'intercropping', 'machines', 'estimate_monthly_income','years_cultivating']
         if farmer:
@@ -745,7 +746,7 @@ class ScoreFarmerDragAndDrop(Resource):
             db.session.commit()
             return {'Bvn':Bvn, 'score':score, 'bin':bin }
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     
 # Loans
 
@@ -776,7 +777,7 @@ class CropInfoTracing(Resource):
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, tracing_id):
         farmer = CropInfo.query.filter_by(tracing_id=tracing_id).first()
         db.session.delete(farmer)
@@ -789,7 +790,7 @@ class CropQualityTracing(Resource):
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, tracing_id):
         farmer = CropQuality.query.filter_by(tracing_id=tracing_id).first()
         db.session.delete(farmer)
@@ -802,7 +803,7 @@ class ShipmentTracing(Resource):
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, tracing_id):
         farmer = Shipment.query.filter_by(tracing_id=tracing_id).first()
         db.session.delete(farmer)
@@ -814,7 +815,7 @@ class InputsInfoTracing(Resource):
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, tracing_id):
         farmer = InputsInfo.query.filter_by(tracing_id=tracing_id).first()
         db.session.delete(farmer)
@@ -827,7 +828,7 @@ class RecommendationTracing(Resource):
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, tracing_id):
         farmer = Recommendation.query.filter_by(tracing_id=tracing_id).first()
         db.session.delete(farmer)
@@ -842,7 +843,7 @@ class FarmerBvn(Resource):
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = FarmerTable.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -855,7 +856,7 @@ class AgronomyBvn(Resource):
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = AgronomyServicesTable.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -868,7 +869,7 @@ class CapacityBvn(Resource):
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = CapacityTable.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -881,7 +882,7 @@ class CapitalBvn(Resource):
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = CapitalTable.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -893,7 +894,7 @@ class CareBvn(Resource):
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = CareTable.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -905,7 +906,7 @@ class ConditionsBvn(Resource):
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = ConditionsTable.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -918,7 +919,7 @@ class CreditAccessBvn(Resource):
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = CreditAccessTable.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -931,7 +932,7 @@ class CreditHistoryBvn(Resource):
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = CreditHistoryTable.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -944,7 +945,7 @@ class CultivationBvn(Resource):
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = CultivationTable.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -957,7 +958,7 @@ class FarmlandBvn(Resource):
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = FarmlandTable.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -970,7 +971,7 @@ class HarvestBvn(Resource):
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = HarvestTable.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -979,11 +980,11 @@ class HarvestBvn(Resource):
 
 class LivingBvn(Resource):
     def get(self, Bvn):
-        farmer = LivingTable.query.filter_by(Bvn=Bvn).last()
+        farmer = LivingTable.query.filter_by(Bvn=Bvn).first()
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = LivingTable.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -992,11 +993,11 @@ class LivingBvn(Resource):
 
 class MechanizationBvn(Resource):
     def get(self, Bvn):
-        farmer = MechanizationTable.query.filter_by(Bvn=Bvn).last()
+        farmer = MechanizationTable.query.filter_by(Bvn=Bvn).first()
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = MechanizationTable.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -1005,11 +1006,11 @@ class MechanizationBvn(Resource):
 
 class MobileDataBvn(Resource):
     def get(self, Bvn):
-        farmer = MobileDataTable.query.filter_by(Bvn=Bvn).last()
+        farmer = MobileDataTable.query.filter_by(Bvn=Bvn).first()
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = MobileDataTable.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -1018,11 +1019,11 @@ class MobileDataBvn(Resource):
 
 class PlanetBvn(Resource):
     def get(self, Bvn):
-        farmer = Planet.query.filter_by(Bvn=Bvn).last()
+        farmer = Planet.query.filter_by(Bvn=Bvn).first()
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = Planet.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -1031,11 +1032,11 @@ class PlanetBvn(Resource):
 
 class PracticeBvn(Resource):
     def get(self, Bvn):
-        farmer = FarmPractice.query.filter_by(Bvn=Bvn).last()
+        farmer = FarmPractice.query.filter_by(Bvn=Bvn).first()
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = FarmPractice.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -1044,11 +1045,11 @@ class PracticeBvn(Resource):
 
 class ProductivityBvn(Resource):
     def get(self, Bvn):
-        farmer = ProductivityViabilityTable.query.filter_by(Bvn=Bvn).last()
+        farmer = ProductivityViabilityTable.query.filter_by(Bvn=Bvn).first()
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = ProductivityViabilityTable.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -1057,11 +1058,11 @@ class ProductivityBvn(Resource):
     
 class PsychometricsBvn(Resource):
     def get(self, Bvn):
-        farmer = PsychometricsTable.query.filter_by(Bvn=Bvn).last()
+        farmer = PsychometricsTable.query.filter_by(Bvn=Bvn).first()
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = PsychometricsTable.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -1071,11 +1072,11 @@ class PsychometricsBvn(Resource):
 
 class SafetyBvn(Resource):
     def get(self, Bvn):
-        farmer = Safety.query.filter_by(Bvn=Bvn).last()
+        farmer = Safety.query.filter_by(Bvn=Bvn).first()
         if farmer:
             return farmer.json()
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = Safety.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
@@ -1090,7 +1091,7 @@ class TransferBvn(Resource):
         if farmer:
             return [transfer.json() for transfer in farmer]
         else:
-            return {'Bvn':None},404
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = LoanTransfer.query.filter_by(Bvn=Bvn).all()
         db.session.delete(farmer)
