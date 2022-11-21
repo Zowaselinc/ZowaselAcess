@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_restplus import Resource, Api, fields
 from flask_mysqldb import MySQL
 
-from models import app,FarmerTable,ScoreCard, Loan, CapitalTable,CreditAccessTable,CreditHistoryTable,ProductivityViabilityTable,LoanTransfer
+from models import app, db,FarmerTable,ScoreCard, Loan, CapitalTable,CreditAccessTable,CreditHistoryTable,ProductivityViabilityTable,LoanTransfer
 from models import AgronomyServicesTable, PsychometricsTable, MobileDataTable, FarmlandTable, CapacityTable, FarmPractice, MechanizationTable, CultivationTable, HarvestTable, ConditionsTable
 from models import CareTable, Planet, Safety, LivingTable, CropInfo, CropQuality, InputsInfo, Warehouse, Shipment, Recommendation, ScoreAnalytics
 from models import ScoreHistory
@@ -17,7 +17,6 @@ import pandas as pd
 import pickle
 from modelExample import preprocess_df, bin_target
 model = pickle.load(open('modelExample.pkl','rb'))
-db= SQLAlchemy()
 api = Api(app, title='Zowasel')
 Migrate(app,db)
 
@@ -50,10 +49,10 @@ class AddFarmer(Resource):
         LandmarkNok  = request.form['LandmarkNok'],NinNok  = request.form['NinNok'])
             db.session.add(farmerkyf)
             db.session.commit()
-            message = {'Message':'Success'}
-        print(message)
+            message = {'message':'success'}
+        return message
 
-# -------------5Cs of Credit Scoring-------------------------------------------------------------------------------------
+# -------------5cs of Credit Scoring-------------------------------------------------------------------------------------
 
 # 1.Capital
 
@@ -71,8 +70,8 @@ class AddCapital(Resource):
         HarvestQtyChanged=request.form['HarvestQtyChanged'],PestExpenseChanged=request.form['PestExpenseChanged'])
             db.session.add(farmercapital)
             db.session.commit()
-            return farmercapital.json()
-
+            return {'message':'success'}
+        
 class AddCreditAccess(Resource):
     def post(self):
         # Add data only if Id does not exist in database already
@@ -92,10 +91,10 @@ class AddCreditAccess(Resource):
         YearsOfCultivating=request.form['Collateral'],AnnualTurnover=request.form['AnnualTurnover'])
             db.session.add(farmercreditaccess)
             db.session.commit()
-            return farmercreditaccess.json()
+            return {'message':'success'}
 
 
-class AddCapital5C(Resource):	
+class AddCapital5c(Resource):	
     def post(self):
         farmercapital = CapitalTable(id=request.form['Bvn'],Bvn=request.form['Bvn'],MainIncomeSource=request.form['MainIncomeSource'],
         OtherIncomeSource=request.form['OtherIncomeSource'],NoOfIncomeEarners=request.form['NoOfIncomeEarners'],
@@ -115,17 +114,18 @@ class AddCapital5C(Resource):
         # Add data only if Id does not exist in database already
         farmer = CapitalTable.query.filter_by(Bvn=request.form['Bvn']).first()
         if farmer:
-            pass
+            print({"error":True,"message":"Sorry your request can not be processed at the moment","data":"Record with Bvn already exists in Capital!"})     
         else:
             db.session.add(farmercapital)
+            db.session.commit()
         # Add data only if Id does not exist in database already
         farmer = CreditAccessTable.query.filter_by(Bvn=request.form['Bvn']).first()
         if farmer:
-            pass
+            print({"error":True,"message":"Sorry your request can not be processed at the moment","data":"Record with Bvn already exists in Credit Access!"})
         else:
             db.session.add(farmercreditaccess)
             db.session.commit()
-            return {'Message':'Success'}
+        return {'message':'success'}
 
 
 # 2.Character
@@ -219,7 +219,7 @@ class AddMobileData(Resource):
             return farmermobiledata.json()
 
 
-class AddCharacter5C(Resource):
+class AddCharacter5c(Resource):
     def post(self):
         farmercredithistory = CreditHistoryTable(id=request.form['Bvn'],Bvn=request.form['Bvn'],
         HasTakenLoanBefore=request.form['HasTakenLoanBefore'],SourceOfLoan=request.form['SourceOfLoan'],
@@ -284,7 +284,7 @@ class AddCharacter5C(Resource):
         else:
             db.session.add(farmermobiledata)
         db.session.commit()
-        return {'Message':'Success'}
+        return {'message':'success'}
 
 
 # 3.Collateral
@@ -305,7 +305,7 @@ class AddFarmlandData(Resource):
             db.session.commit()
             return farmerland.json()
 
-class AddCollateral5C(Resource):	
+class AddCollateral5c(Resource):	
     def post(self):
         farmerland = FarmlandTable(id=request.form['Bvn'],Bvn=request.form['Bvn'],NoOfFarmlands=request.form['NoOfFarmlands'],
         OwnerOrCaretaker=request.form['OwnerOrCaretaker'],FarmOwnerName=request.form['FarmOwnerName'],
@@ -320,7 +320,7 @@ class AddCollateral5C(Resource):
         else:
             db.session.add(farmerland)
             db.session.commit()
-            return {'Message':'Success'}
+            return {'message':'success'}
 
 #  4.Capacity
 
@@ -399,7 +399,7 @@ class AddHarvest(Resource):
             db.session.commit()
             return farmerharvest.json()
 
-class AddCapacity5C(Resource):	
+class AddCapacity5c(Resource):	
     def post(self):
         farmercapacity = CapacityTable(id=request.form['Bvn'],Bvn=request.form['Bvn'],
         HowLongBeenFarming=request.form['HowLongBeenFarming'],ParticipatedInTraining=request.form['ParticipatedInTraining'],
@@ -457,7 +457,7 @@ class AddCapacity5C(Resource):
         else:
             db.session.add(farmerharvest)
             db.session.commit()
-            return {'Message':'Success'}
+            return {'message':'success'}
 
 
 
@@ -475,7 +475,7 @@ class AddConditions(Resource):
             db.session.commit()
             return farmercondition.json()
 
-class AddConditions5C(Resource):	
+class AddConditions5c(Resource):	
     def post(self):
         farmercondition = ConditionsTable(id=request.form['Bvn'],Bvn=request.form['Bvn'],
         duration=request.form['duration'],seller=request.form['seller'],seller_mou=request.form['seller_mou'])
@@ -660,7 +660,7 @@ class ScorecardBvn(Resource):
         farmer = ScoreCard.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
         db.session.commit()
-        return {'note':'delete success'}
+        return {'message':'success'}
 
 class ScoreHistoryBvn(Resource):
     def get(self, Bvn):
@@ -673,7 +673,7 @@ class ScoreHistoryBvn(Resource):
         farmer = ScoreHistory.query.filter_by(Bvn=Bvn).first()
         db.session.delete(farmer)
         db.session.commit()
-        return {'note':'delete success'}
+        return {'message':'success'}
 
 class ScoreFarmer(Resource):
     def post(self):
@@ -782,7 +782,7 @@ class CropInfoTracing(Resource):
         farmer = CropInfo.query.filter_by(tracing_id=tracing_id).first()
         db.session.delete(farmer)
         db.session.commit()
-        return {'note':'delete success'}
+        return {'message':'success'}
 
 class CropQualityTracing(Resource):
     def get(self, tracing_id):
@@ -795,7 +795,7 @@ class CropQualityTracing(Resource):
         farmer = CropQuality.query.filter_by(tracing_id=tracing_id).first()
         db.session.delete(farmer)
         db.session.commit()
-        return {'note':'delete success'}
+        return {'message':'success'}
 
 class ShipmentTracing(Resource):
     def get(self, tracing_id):
@@ -808,7 +808,7 @@ class ShipmentTracing(Resource):
         farmer = Shipment.query.filter_by(tracing_id=tracing_id).first()
         db.session.delete(farmer)
         db.session.commit()
-        return {'note':'delete success'}
+        return {'message':'success'}
 class InputsInfoTracing(Resource):
     def get(self, tracing_id):
         farmer = InputsInfo.query.filter_by(tracing_id=tracing_id).first()
@@ -820,7 +820,7 @@ class InputsInfoTracing(Resource):
         farmer = InputsInfo.query.filter_by(tracing_id=tracing_id).first()
         db.session.delete(farmer)
         db.session.commit()
-        return {'note':'delete success'}
+        return {'message':'success'}
 
 class RecommendationTracing(Resource):
     def get(self, tracing_id):
@@ -833,7 +833,7 @@ class RecommendationTracing(Resource):
         farmer = Recommendation.query.filter_by(tracing_id=tracing_id).first()
         db.session.delete(farmer)
         db.session.commit()
-        return {'note':'delete success'}
+        return {'message':'success'}
 
 # ------------Get Requests-------------------------------------------------------------------------------------------------
 
@@ -846,9 +846,14 @@ class FarmerBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = FarmerTable.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
+        if farmer:
+            farmer = FarmerTable.query.filter_by(Bvn=Bvn).first()
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
 
 class AgronomyBvn(Resource):
     def get(self, Bvn):
@@ -859,9 +864,13 @@ class AgronomyBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = AgronomyServicesTable.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
 
 class CapacityBvn(Resource):
     def get(self, Bvn):
@@ -872,10 +881,13 @@ class CapacityBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = CapacityTable.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
-
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
 class CapitalBvn(Resource):
     def get(self, Bvn):
         farmer = CapitalTable.query.filter_by(Bvn=Bvn).first()
@@ -885,9 +897,13 @@ class CapitalBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = CapitalTable.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
 class CareBvn(Resource):
     def get(self, Bvn):
         farmer = CareTable.query.filter_by(Bvn=Bvn).first()
@@ -897,9 +913,13 @@ class CareBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = CareTable.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
 class ConditionsBvn(Resource):
     def get(self, Bvn):
         farmer = ConditionsTable.query.filter_by(Bvn=Bvn).first()
@@ -909,10 +929,13 @@ class ConditionsBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = ConditionsTable.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
-
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
 class CreditAccessBvn(Resource):
     def get(self, Bvn):
         farmer = CreditAccessTable.query.filter_by(Bvn=Bvn).first()
@@ -922,10 +945,43 @@ class CreditAccessBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = CreditAccessTable.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
-
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
+class Capital5cBvn(Resource):
+    def get(self, Bvn):
+        farmer1 = CapitalTable.query.filter_by(Bvn=Bvn).first()
+        farmer2 = CreditAccessTable.query.filter_by(Bvn=Bvn).first()
+        if not farmer1:
+            farmer1='{"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"}'
+        else:
+            farmer1=farmer1.json()
+        if not farmer2:
+            farmer2={"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"}
+        else:
+            farmer2=farmer2.json()
+        return {'capital':farmer1,'creditaccess':farmer2}
+        '''
+        if farmer1:
+            if farmer2:
+                return {'capital':farmer1.json(),'creditaccess':farmer2.json()}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+        '''
+    def delete(self, Bvn):
+        farmer1 = CapitalTable.query.filter_by(Bvn=Bvn).first()
+        farmer2 = CreditAccessTable.query.filter_by(Bvn=Bvn).first()
+        if farmer1:
+            db.session.delete(farmer1)
+            db.session.commit()
+        if farmer2:
+            db.session.delete(farmer2)
+            db.session.commit()
+        return {'message':'success'}
 class CreditHistoryBvn(Resource):
     def get(self, Bvn):
         farmer = CreditHistoryTable.query.filter_by(Bvn=Bvn).first()
@@ -935,9 +991,13 @@ class CreditHistoryBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = CreditHistoryTable.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
 
 class CultivationBvn(Resource):
     def get(self, Bvn):
@@ -948,10 +1008,13 @@ class CultivationBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = CultivationTable.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
-
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
 class FarmlandBvn(Resource):
     def get(self, Bvn):
         farmer = FarmlandTable.query.filter_by(Bvn=Bvn).first()
@@ -961,10 +1024,13 @@ class FarmlandBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = FarmlandTable.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
-
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
 class HarvestBvn(Resource):
     def get(self, Bvn):
         farmer = HarvestTable.query.filter_by(Bvn=Bvn).first()
@@ -974,10 +1040,13 @@ class HarvestBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = HarvestTable.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
-
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
 class LivingBvn(Resource):
     def get(self, Bvn):
         farmer = LivingTable.query.filter_by(Bvn=Bvn).first()
@@ -987,10 +1056,13 @@ class LivingBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = LivingTable.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
-
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
 class MechanizationBvn(Resource):
     def get(self, Bvn):
         farmer = MechanizationTable.query.filter_by(Bvn=Bvn).first()
@@ -1000,9 +1072,13 @@ class MechanizationBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = MechanizationTable.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
 
 class MobileDataBvn(Resource):
     def get(self, Bvn):
@@ -1013,9 +1089,13 @@ class MobileDataBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = MobileDataTable.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
 
 class PlanetBvn(Resource):
     def get(self, Bvn):
@@ -1026,10 +1106,13 @@ class PlanetBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = Planet.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
-
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
 class PracticeBvn(Resource):
     def get(self, Bvn):
         farmer = FarmPractice.query.filter_by(Bvn=Bvn).first()
@@ -1039,9 +1122,13 @@ class PracticeBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = FarmPractice.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
 
 class ProductivityBvn(Resource):
     def get(self, Bvn):
@@ -1052,9 +1139,13 @@ class ProductivityBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = ProductivityViabilityTable.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
     
 class PsychometricsBvn(Resource):
     def get(self, Bvn):
@@ -1065,11 +1156,13 @@ class PsychometricsBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = PsychometricsTable.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
-
-
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
 class SafetyBvn(Resource):
     def get(self, Bvn):
         farmer = Safety.query.filter_by(Bvn=Bvn).first()
@@ -1079,11 +1172,13 @@ class SafetyBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = Safety.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
-
-
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
 
 class TransferBvn(Resource):
     def get(self, Bvn):
@@ -1094,10 +1189,13 @@ class TransferBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = LoanTransfer.query.filter_by(Bvn=Bvn).all()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {'note':'delete success'}
-
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    
 # All Loans, Farmers
 
 class AllFarmers(Resource):
@@ -1134,7 +1232,13 @@ class AllCreditAccess(Resource):
     def get(self):
         all_farmers = CreditAccessTable.query.all()
         return [farmer.json() for farmer in all_farmers]
-
+class AllCapital5c(Resource):
+    def get(self):
+        all_farmer1 = CapitalTable.query.all()
+        all_farmer1 = [farmer.json() for farmer in all_farmer1]
+        all_farmer2 = CreditAccessTable.query.all()
+        all_farmer2 = [farmer.json() for farmer in all_farmer2]
+        return {'capital':all_farmer1,'creditaccess':all_farmer2}
 class AllCreditHistory(Resource):
     def get(self):
         all_farmers = CreditHistoryTable.query.all()
@@ -1273,7 +1377,7 @@ class AddBulkFarmer(Resource):
         NinNok  = dfr['NinNok'])
                 db.session.add(farmerkyf)
             db.session.commit()
-            return {'Message':'Upload Success'}
+            return {'message':'Upload success'}
 
 
 add = api.namespace('api/add',description='Add New Data')
@@ -1306,12 +1410,12 @@ add.add_resource(AddShipment,'/shipment')
 add.add_resource(AddSafety,'/safety')
 add.add_resource(AddWarehouse,'/warehouse')
 add.add_resource(AddScoreAnalytics,'/score_analytics')
-# 5C API Routes
-add.add_resource(AddCapital5C,'/5c/capital')
-add.add_resource(AddCapacity5C,'/5c/capacity')
-add.add_resource(AddCharacter5C,'/5c/character')
-add.add_resource(AddCollateral5C,'/5c/collateral')
-add.add_resource(AddConditions5C,'/5c/conditions')
+# 5c API Routes
+add.add_resource(AddCapital5c,'/5c/capital')
+add.add_resource(AddCapacity5c,'/5c/capacity')
+add.add_resource(AddCharacter5c,'/5c/character')
+add.add_resource(AddCollateral5c,'/5c/collateral')
+add.add_resource(AddConditions5c,'/5c/conditions')
 
 
 scorefarmer = api.namespace('api/score', description='credit scoring')
@@ -1431,6 +1535,10 @@ loans.add_resource(AllLoans,'/all')
 
 bulk = api.namespace('api/bulk', description='bulk files')
 bulk.add_resource(AddBulkFarmer,'/farmer')
+
+capital5c = api.namespace('api/5c/capital', description='farmer 5c/capital')
+capital5c.add_resource(Capital5cBvn,'/Bvn=<Bvn>')
+capital5c.add_resource(AllCapital5c,'/all')
 
 # Running app
 if __name__ == '__main__':
