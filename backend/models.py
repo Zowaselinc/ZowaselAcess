@@ -16,7 +16,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 # connect to the database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://zowasel:Zowaseladmin@1234!@mydb.touchofcloud.com.ng:59714/zowasel'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy()
+db = SQLAlchemy(app)
 
 
 # Create Tables 

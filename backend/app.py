@@ -3,11 +3,14 @@ from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_restplus import Resource, Api, fields
 from flask_mysqldb import MySQL
-
-from models import app, db,FarmerTable,ScoreCard, Loan, CapitalTable,CreditAccessTable,CreditHistoryTable,ProductivityViabilityTable,LoanTransfer
-from models import AgronomyServicesTable, PsychometricsTable, MobileDataTable, FarmlandTable, CapacityTable, FarmPractice, MechanizationTable, CultivationTable, HarvestTable, ConditionsTable
-from models import CareTable, Planet, Safety, LivingTable, CropInfo, CropQuality, InputsInfo, Warehouse, Shipment, Recommendation, ScoreAnalytics
-from models import ScoreHistory
+from models import *
+# Import database models with app context
+#with app.app_context():
+  #from models import *
+#from models import app, db,FarmerTable,ScoreCard, Loan, CapitalTable,CreditAccessTable,CreditHistoryTable,ProductivityViabilityTable,LoanTransfer
+#from models import AgronomyServicesTable, PsychometricsTable, MobileDataTable, FarmlandTable, CapacityTable, FarmPractice, MechanizationTable, CultivationTable, HarvestTable, ConditionsTable
+#from models import CareTable, Planet, Safety, LivingTable, CropInfo, CropQuality, InputsInfo, Warehouse, Shipment, Recommendation, ScoreAnalytics
+#from models import ScoreHistory
 #from flasgger import Swagger
 import os
 from datetime import datetime
@@ -319,8 +322,8 @@ class AddCollateral5c(Resource):
             pass
         else:
             db.session.add(farmerland)
-            db.session.commit()
-            return {'message':'success'}
+        db.session.commit()
+        return {'message':'success'}
 
 #  4.Capacity
 
@@ -1019,6 +1022,88 @@ class Character5cBvn(Resource):
             db.session.commit()
         return {'message':'success'}
 
+class Collateral5cBvn(Resource):
+    def get(self, Bvn):
+        farmer = FarmlandTable.query.filter_by(Bvn=Bvn).first()
+        if farmer:
+            return {'farmland':farmer.json()}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    def delete(self, Bvn):
+        farmer = FarmlandTable.query.filter_by(Bvn=Bvn).first()
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+        else:
+            print({"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not in FarmlandTable"})
+        return {'message':'success'}
+class Character5cBvn(Resource):
+    def get(self, Bvn):
+        farmer1 = CapacityTable.query.filter_by(Bvn=Bvn).first()
+        farmer2 = FarmPractice.query.filter_by(Bvn=Bvn).first()
+        farmer3 = MechanizationTable.query.filter_by(Bvn=Bvn).first()
+        farmer4 = CultivationTable.query.filter_by(Bvn=Bvn).first()
+        farmer5 = HarvestTable.query.filter_by(Bvn=Bvn).first()
+        
+        if not farmer1:
+            farmer1='{"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"}'
+        else:
+            farmer1=farmer1.json()
+        if not farmer2:
+            farmer2={"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"}
+        else:
+            farmer2=farmer2.json()
+        if not farmer3:
+            farmer3={"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"}
+        else:
+            farmer3=farmer3.json()
+        if not farmer4:
+            farmer4={"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"}
+        else:
+            farmer4=farmer4.json()
+        if not farmer5:
+            farmer5={"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"}
+        else:
+            farmer5=farmer5.json()
+        return {'capacity':farmer1,'practice':farmer2,'mechanization':farmer3,'cultivation':farmer4,'harvest':farmer5}
+        
+    def delete(self, Bvn):
+        farmer1 = CapacityTable.query.filter_by(Bvn=Bvn).first()
+        farmer2 = FarmPractice.query.filter_by(Bvn=Bvn).first()
+        farmer3 = MechanizationTable.query.filter_by(Bvn=Bvn).first()
+        farmer4 = CultivationTable.query.filter_by(Bvn=Bvn).first()
+        farmer5 = HarvestTable.query.filter_by(Bvn=Bvn).first()
+        if farmer1:
+            db.session.delete(farmer1)
+            db.session.commit()
+        if farmer2:
+            db.session.delete(farmer2)
+            db.session.commit()
+        if farmer3:
+            db.session.delete(farmer3)
+            db.session.commit()
+        if farmer4:
+            db.session.delete(farmer4)
+            db.session.commit()
+        if farmer5:
+            db.session.delete(farmer5)
+            db.session.commit()
+        return {'message':'success'}
+class Conditions5cBvn(Resource):
+    def get(self, Bvn):
+        farmer = ConditionsTable.query.filter_by(Bvn=Bvn).first()
+        if farmer:
+            return {'conditions':farmer.json()}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    def delete(self, Bvn):
+        farmer = ConditionsTable.query.filter_by(Bvn=Bvn).first()
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+        else:
+            print({"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not in FarmlandTable"})
+        return {'message':'success'}
 class CreditHistoryBvn(Resource):
     def get(self, Bvn):
         farmer = CreditHistoryTable.query.filter_by(Bvn=Bvn).first()
@@ -1289,6 +1374,30 @@ class AllCharacter5c(Resource):
         all_farmer5 = MobileDataTable.query.all()
         all_farmer5 = [farmer.json() for farmer in all_farmer5]
         return {'credithistory':all_farmer1,'productivity':all_farmer2,'agronomy':all_farmer3,'psychometrics':all_farmer4,'mobiledata':all_farmer5}
+class AllCollateral5c(Resource):
+    def get(self):
+        all_farmers = FarmlandTable.query.all()
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return {'farmland':all_farmers}
+class AllCapacity5c(Resource):
+    def get(self):
+        all_farmer1 = CapacityTable.query.all()
+        all_farmer1 = [farmer.json() for farmer in all_farmer1]
+        all_farmer2 = FarmPractice.query.all()
+        all_farmer2 = [farmer.json() for farmer in all_farmer2]
+        all_farmer3 = MechanizationTable.query.all()
+        all_farmer3 = [farmer.json() for farmer in all_farmer3]
+        all_farmer4 = CultivationTable.query.all()
+        all_farmer4 = [farmer.json() for farmer in all_farmer4]
+        all_farmer5 = HarvestTable.query.all()
+        all_farmer5 = [farmer.json() for farmer in all_farmer5]
+        return {'capacity':all_farmer1,'practice':all_farmer2,'mechanization':all_farmer3,'cultivation':all_farmer4,'harvest':all_farmer5}
+
+class AllConditions5c(Resource):
+    def get(self):
+        all_farmers = ConditionsTable.query.all()
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return {'conditions':all_farmers}
 class AllCreditHistory(Resource):
     def get(self):
         all_farmers = CreditHistoryTable.query.all()
@@ -1593,6 +1702,18 @@ capital5c.add_resource(AllCapital5c,'/all')
 character5c = api.namespace('api/5c/character', description='farmer 5c/character')
 character5c.add_resource(Character5cBvn,'/Bvn=<Bvn>')
 character5c.add_resource(AllCharacter5c,'/all')
+
+collateral5c = api.namespace('api/5c/collateral', description='farmer 5c/collateral')
+collateral5c.add_resource(Collateral5cBvn,'/Bvn=<Bvn>')
+collateral5c.add_resource(AllCollateral5c,'/all')
+
+capacity5c = api.namespace('api/5c/capacity', description='farmer 5c/capacity')
+capacity5c.add_resource(Capital5cBvn,'/Bvn=<Bvn>')
+capacity5c.add_resource(AllCapacity5c,'/all')
+
+conditions5c = api.namespace('api/5c/conditions', description='farmer 5c/conditions')
+conditions5c.add_resource(Conditions5cBvn,'/Bvn=<Bvn>')
+conditions5c.add_resource(AllConditions5c,'/all')
 
 # Running app
 if __name__ == '__main__':
