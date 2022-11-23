@@ -25,7 +25,37 @@ class Loan(db.Model):
     __tablename__ = 'loans'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     loan_type      = db.Column(db.String(200), unique=True)
+    repayment_months      = db.Column(db.Integer)
+    interest_rate_per_annum      = db.Column(db.Integer)
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
+
+    def json(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
+
+    def __repr__(self):
+        return '<Loan %r>' % self.loan_type
+
+class Cropcard(db.Model):
+    __tablename__ = 'crop_card'
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    farmer_name = db.Column(db.String(200))
+    Bvn     = db.Column(db.String(200))
+    crop_name = db.Column(db.String(200))
+    fertilizer_cost      = db.Column(db.String(200), unique=True)
+    fertilizer      = db.Column(db.String(200), unique=True)
+    mechanization_cost      = db.Column(db.String(200), unique=True)
+    mechanization      = db.Column(db.String(200), unique=True)
+    labour_cost      = db.Column(db.String(200), unique=True)
+    labour      = db.Column(db.String(200), unique=True)
+    harvest_cost      = db.Column(db.String(200), unique=True)
+    harvest      = db.Column(db.String(200), unique=True)
+    other_cost      = db.Column(db.String(200), unique=True)
+    others      = db.Column(db.String(200), unique=True)
+    date_filled      = db.Column(db.String(200), unique=True)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+
+    def json(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
 
     def __repr__(self):
         return '<Loan %r>' % self.loan_type
@@ -50,6 +80,12 @@ class ScoreCard(db.Model):
     is_in_a_cooperative = db.Column(db.String(200))
     no_of_agronomist_visits = db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
+
+    def json(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
+
+    def __repr__(self):
+        return '<ScoreCard %r>' % self.id
 
 class ScoreHistory(db.Model):
     __tablename__   = 'score_history'
@@ -80,7 +116,7 @@ class ScoreHistory(db.Model):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
 
     def __repr__(self):
-        return '<ScoreCard %r>' % self.id
+        return '<ScoreHistory %r>' % self.id
 
 
 class LoanTransfer(db.Model):
@@ -89,6 +125,7 @@ class LoanTransfer(db.Model):
     id     = db.Column(db.String(200), primary_key=True)
     loan_type      = db.Column(db.String(200))
     amount             = db.Column(db.String(200))
+    repayment_amount = db.Column(db.String(200))
     status      = db.Column(db.String(200))
     farmer_name     = db.Column(db.String(200))
     Bvn     = db.Column(db.String(200))

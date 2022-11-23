@@ -476,7 +476,7 @@ class AddConditions(Resource):
         else:
             db.session.add(farmercondition)
             db.session.commit()
-            return farmercondition.json()
+        return farmercondition.json()
 
 class AddConditions5c(Resource):	
     def post(self):
@@ -489,7 +489,7 @@ class AddConditions5c(Resource):
         else:
             db.session.add(farmercondition)
             db.session.commit()
-            return farmercondition.json()
+        return farmercondition.json()
 
 
 class AddScoreAnalytics(Resource):	
@@ -636,9 +636,23 @@ class AddRecommendation(Resource):
         db.session.commit()
         return new_data.json()
 
+class AddCropCard(Resource):	
+    def post(self):
+        card = Cropcard(Bvn=request.form['Bvn'],farmer_name=request.form['farmer_name'],
+        crop_name=request.form['crop_name'],fertilizer_cost=request.form['fertilizer_cost'],
+        fertilizer=request.form['fertilizer'],mechanization_cost=request.form['mechanization_cost'],
+        mechanization=request.form['mechanization'], labour_cost=request.form['labour_cost'],
+        labour=request.form['labour'],harvest_cost=request.form['harvest_cost'],
+        harvest=request.form['harvest'],other_cost=request.form['other_cost'],
+        others=request.form['others'],
+        date_filled=request.form['date_filled'])
+        db.session.add(card)
+        db.session.commit()
+        return {'message':'success'}
 # Credit Scoring
 class AddScoreCard(Resource):	
     def post(self):
+        recommendations = []
         card = ScoreCard(Bvn=request.form['Bvn'],age=request.form['age'],
         number_of_land=request.form['number_of_land'],address=request.form['address'],
         owner_caretaker=request.form['owner_caretaker'],crop=request.form['crop'],
@@ -650,21 +664,76 @@ class AddScoreCard(Resource):
         no_of_agronomist_visits=request.form['no_of_agronomist_visits'])
         db.session.add(card)
         db.session.commit()
-        return card.json()
+        Bvn=request.form['Bvn']
+        farmer = FarmerTable.query.filter_by(Bvn=Bvn).all()
+        if not farmer:
+            recommendations+=['Add KYF']
+        farmer = CapitalTable.query.filter_by(Bvn=Bvn).all()
+        if not farmer:
+            recommendations+=['Add 5c/capital']
+        farmer = CreditHistoryTable.query.filter_by(Bvn=Bvn).all()
+        if not farmer:
+            recommendations+=['Add 5c/character']
+        farmer = FarmlandTable.query.filter_by(Bvn=Bvn).all()
+        if not farmer:
+            recommendations+=['Add 5c/collateral']
+        farmer = CapacityTable.query.filter_by(Bvn=Bvn).all()
+        if not farmer:
+            recommendations+=['Add 5c/capacity']
+        farmer = ConditionsTable.query.filter_by(Bvn=Bvn).all()
+        if not farmer:
+            recommendations+=['Add 5c/conditions']
+        return {'recommendations':recommendations}
 
 class ScorecardBvn(Resource):
     def get(self, Bvn):
-        farmer = ScoreCard.query.filter_by(Bvn=Bvn).first()
-        if farmer:
-            return farmer.json()
+        cards = ScoreCard.query.filter_by(Bvn=Bvn).all()
+        if cards:
+            return [card.json() for card in cards]
         else:
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
-        farmer = ScoreCard.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
+        cards = ScoreCard.query.filter_by(Bvn=Bvn).all()
+        if cards:
+            for card in cards:
+                db.session.delete(card)
+            db.session.commit()
+        else:
+            print({"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"})
         return {'message':'success'}
 
+class CropcardBvn(Resource):
+    def get(self, Bvn):
+        cards = Cropcard.query.filter_by(Bvn=Bvn).all()
+        if cards:
+            return [card.json() for card in cards]
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
+    def delete(self, Bvn):
+        cards = Cropcard.query.filter_by(Bvn=Bvn).all()
+        if cards:
+            for card in cards:
+                db.session.delete(card)
+            db.session.commit()
+        else:
+            print({"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"})
+        return {'message':'success'}
+class Cropcardcrop_name(Resource):
+    def get(self, crop_name):
+        cards = Cropcard.query.filter_by(crop_name=crop_name).all()
+        if cards:
+            return [card.json() for card in cards]
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"crop_name Not Found"},404
+    def delete(self, crop_name):
+        cards = Cropcard.query.filter_by(crop_name=crop_name).all()
+        if cards:
+            for card in cards:
+                db.session.delete(card)
+            db.session.commit()
+        else:
+            print({"error":True,"message":"Sorry your request can not be processed at the moment","data":"crop_name Not Found"})
+        return {'message':'success'}
 class ScoreHistoryBvn(Resource):
     def get(self, Bvn):
         farmer = ScoreHistory.query.filter_by(Bvn=Bvn).first()
@@ -674,8 +743,11 @@ class ScoreHistoryBvn(Resource):
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"},404
     def delete(self, Bvn):
         farmer = ScoreHistory.query.filter_by(Bvn=Bvn).first()
-        db.session.delete(farmer)
-        db.session.commit()
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+        else:
+            print({"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not Found"})
         return {'message':'success'}
 
 class ScoreFarmer(Resource):
@@ -756,7 +828,10 @@ class ScoreFarmerDragAndDrop(Resource):
 class AddLoan(Resource):	
     def post(self):
         new_data = Loan(
-        loan_type=request.form['loan_type'])
+        loan_type=request.form['loan_type'],
+        repayment_months=request.form['repayment_months'],
+        interest_rate_per_annum=request.form['interest_rate_per_annum']
+        )
         db.session.add(new_data)
         db.session.commit()
         return new_data.json()
@@ -764,6 +839,7 @@ class AddLoan(Resource):
 class AddLoanTransfer(Resource):	
     def post(self):
         new_data = LoanTransfer(loan_type=request.form['loan_type'],amount=request.form['amount'],
+        repayment_amount=request.form['repayment_amount'],
         status=request.form['status'],farmer_name=request.form['farmer_name'],Bvn=request.form['Bvn'],
         transfer_date=request.form['transfer_date'],due_date=request.form['due_date'])
         db.session.add(new_data)
@@ -1037,7 +1113,7 @@ class Collateral5cBvn(Resource):
         else:
             print({"error":True,"message":"Sorry your request can not be processed at the moment","data":"Bvn Not in FarmlandTable"})
         return {'message':'success'}
-class Character5cBvn(Resource):
+class Capacity5cBvn(Resource):
     def get(self, Bvn):
         farmer1 = CapacityTable.query.filter_by(Bvn=Bvn).first()
         farmer2 = FarmPractice.query.filter_by(Bvn=Bvn).first()
@@ -1481,6 +1557,10 @@ class AllScorecard(Resource):
     def get(self):
         all_farmers = ScoreCard.query.all()
         return [farmer.json() for farmer in all_farmers]
+class AllCropcard(Resource):
+    def get(self):
+        all_cards = Cropcard.query.all()
+        return [card.json() for card in all_cards]
 class AllScoreHistory(Resource):
     def get(self):
         all_farmers = ScoreHistory.query.all()
@@ -1542,6 +1622,7 @@ class AddBulkFarmer(Resource):
 add = api.namespace('api/add',description='Add New Data')
 add.add_resource(AddFarmer,'/farmer')
 add.add_resource(AddScoreCard,'/scorecard')
+add.add_resource(AddCropCard,'/cropcard')
 add.add_resource(AddCapital,'/capital')
 add.add_resource(AddCreditAccess,'/creditaccess')
 add.add_resource(AddCreditHistory,'/credithistory')
@@ -1633,6 +1714,11 @@ scorecard = api.namespace('api/scorecard', description='scorecard')
 scorecard.add_resource(ScorecardBvn,'/Bvn=<Bvn>')
 scorecard.add_resource(AllScorecard,'/all')
 
+cropcard = api.namespace('api/cropcard', description='cropcard')
+cropcard.add_resource(CropcardBvn,'/Bvn=<Bvn>')
+cropcard.add_resource(Cropcardcrop_name,'/crop_name=<crop_name>')
+cropcard.add_resource(AllCropcard,'/all')
+
 scorehistory = api.namespace('api/scorehistory', description='scorehistory')
 scorehistory.add_resource(ScoreHistoryBvn,'/Bvn=<Bvn>')
 scorehistory.add_resource(AllScoreHistory,'/all')
@@ -1708,7 +1794,7 @@ collateral5c.add_resource(Collateral5cBvn,'/Bvn=<Bvn>')
 collateral5c.add_resource(AllCollateral5c,'/all')
 
 capacity5c = api.namespace('api/5c/capacity', description='farmer 5c/capacity')
-capacity5c.add_resource(Capital5cBvn,'/Bvn=<Bvn>')
+capacity5c.add_resource(Capacity5cBvn,'/Bvn=<Bvn>')
 capacity5c.add_resource(AllCapacity5c,'/all')
 
 conditions5c = api.namespace('api/5c/conditions', description='farmer 5c/conditions')
