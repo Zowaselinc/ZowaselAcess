@@ -8,15 +8,30 @@ from datetime import datetime
 from flask_mysqldb import MySQL
 import pymysql
 from sqlalchemy import create_engine, exc
+from flask_cors import CORS
+#from sqlalchemy.orm import *
+from sqlalchemy.dialects.postgresql import UUID
+
+import uuid
+
 import os
+
+def generate_uuid():
+    return "ZOWASEL-"+str(uuid.uuid4())
 
 # Initializing flask app
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 # connect to the database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://zowasel:Zowaseladmin@1234!@mydb.touchofcloud.com.ng:59714/zowasel'
+basedir = os.path.abspath(os.path.dirname(__file__))
+#app.config['SECRET_KEY'] = 'Utq:k5*fM["=gz`@EEOL=SgqK#{]~k'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'zowasel.db')
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://zowasel:Zowaseladmin@1234!@mydb.touchofcloud.com.ng:59714/zowasel'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://zowasekadmin:zowasel1234!A@zowaselaidb.celbaavi1fuh.us-east-1.rds.amazonaws.com/zowaselai'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+CORS(app, resources={r'/*': {'origins': '*'}})
+
 
 
 # Create Tables 
@@ -33,13 +48,13 @@ class Loan(db.Model):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
 
     def __repr__(self):
-        return '<Loan %r>' % self.loan_type
+        return '<Loan %r>' % self.id
 
 class Cropcard(db.Model):
     __tablename__ = 'crop_card'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     farmer_name = db.Column(db.String(200))
-    Bvn     = db.Column(db.String(200))
+    bvn     = db.Column(db.String(200))
     crop_name = db.Column(db.String(200))
     fertilizer_cost      = db.Column(db.String(200), unique=True)
     fertilizer      = db.Column(db.String(200), unique=True)
@@ -63,7 +78,7 @@ class Cropcard(db.Model):
 class ScoreCard(db.Model):
     __tablename__   = 'score_card'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    bvn     = db.Column(db.String(200))
     age = db.Column(db.String(200))
     number_of_land = db.Column(db.String(200))
     address = db.Column(db.String(200))
@@ -90,7 +105,7 @@ class ScoreCard(db.Model):
 class ScoreHistory(db.Model):
     __tablename__   = 'score_history'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    bvn     = db.Column(db.String(200))
     age = db.Column(db.String(200))
     number_of_land = db.Column(db.String(200))
     address = db.Column(db.String(200))
@@ -122,13 +137,13 @@ class ScoreHistory(db.Model):
 class LoanTransfer(db.Model):
 
     __tablename__   = 'loantransfers'
-    id     = db.Column(db.String(200), primary_key=True)
+    id     = db.Column(db.Integer, primary_key=True)
     loan_type      = db.Column(db.String(200))
     amount             = db.Column(db.String(200))
     repayment_amount = db.Column(db.String(200))
     status      = db.Column(db.String(200))
     farmer_name     = db.Column(db.String(200))
-    Bvn     = db.Column(db.String(200))
+    bvn     = db.Column(db.String(200))
     transfer_date   = db.Column(db.String(200))
     due_date   = db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
@@ -142,41 +157,97 @@ class LoanTransfer(db.Model):
 
 class FarmerTable(db.Model):
     __tablename__   = 'farmer_table'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
-    FirstName     = db.Column(db.String(200))
-    Surname     = db.Column(db.String(200))
-    Middlename     = db.Column(db.String(200))
-    Telephone     = db.Column(db.String(200))
-    Age     = db.Column(db.String(200))
-    Gender     = db.Column(db.String(200))
-    Language = db.Column(db.String(200))
-    MaritalStatus     = db.Column(db.String(200))
-    Bankname = db.Column(db.String(200))
-    Accountno     = db.Column(db.String(200))
-    Bvn     = db.Column(db.String(200))
-    MeansofID     = db.Column(db.String(200))
-    Issuedate     = db.Column(db.String(200))
-    Expirydate     = db.Column(db.String(200))
-    Nin     = db.Column(db.String(200))
-    PermanentAddress     = db.Column(db.String(200))
-    Landmark     = db.Column(db.String(200))
-    Stateoforigin     = db.Column(db.String(200))
-    IsinaGroup     = db.Column(db.String(200))
-    ReasonNoGroup     = db.Column(db.String(200))
-    Group     = db.Column(db.String(200))
-    NumberofMembers     = db.Column(db.String(200))
-    FirstNameNok     = db.Column(db.String(200))
-    SurnameNok     = db.Column(db.String(200))
-    MiddlenameNok     = db.Column(db.String(200))
-    RelationshipNok     = db.Column(db.String(200))
-    OccupationNok     = db.Column(db.String(200))
-    TelephoneNok     = db.Column(db.String(200))
-    PermanentAddressNok     = db.Column(db.String(200))
-    LandmarkNok     = db.Column(db.String(200))
-    NinNok     = db.Column(db.String(200))
+    id     = db.Column(db.Integer, unique=True, primary_key=True, autoincrement=True)
+    farmer_id = db.Column(db.String(200), default=generate_uuid, unique=True)
+    firstname     = db.Column(db.String(200))
+    surname     = db.Column(db.String(200))
+    middlename     = db.Column(db.String(200))
+    email     = db.Column(db.String(200), unique=True)
+    telephone     = db.Column(db.String(200))
+    age     = db.Column(db.String(200))
+    gender     = db.Column(db.String(200))
+    language = db.Column(db.String(200))
+    maritalstatus     = db.Column(db.String(200))
+    bankname = db.Column(db.String(200))
+    accountno     = db.Column(db.String(200))
+    bvn     = db.Column(db.String(200))
+    meansofid     = db.Column(db.String(200))
+    issuedate     = db.Column(db.String(200))
+    expirydate     = db.Column(db.String(200))
+    nin     = db.Column(db.String(200))
+    permanentaddress     = db.Column(db.String(200))
+    landmark     = db.Column(db.String(200))
+    stateoforigin     = db.Column(db.String(200))
+    isinagroup     = db.Column(db.String(200))
+    reasonnogroup     = db.Column(db.String(200))
+    group     = db.Column(db.String(200))
+    numberofmembers     = db.Column(db.String(200))
+    firstnamenok     = db.Column(db.String(200))
+    surnamenok     = db.Column(db.String(200))
+    middlenamenok     = db.Column(db.String(200))
+    relationshipnok     = db.Column(db.String(200))
+    occupationnok     = db.Column(db.String(200))
+    telephonenok     = db.Column(db.String(200))
+    permanentaddressnok     = db.Column(db.String(200))
+    landmarknok     = db.Column(db.String(200))
+    ninnok     = db.Column(db.String(200))
 
     def json(self):
-        return {column.name: str(getattr(self, column.name)) for column in self.__table__.columns}  
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}  
+
+    '''
+    def __init__(self,firstname,middlename,surname,telephone,email,age,gender,language,
+    maritalstatus,bvn,meansofid,bankname,accountno,
+	issuedate,expirydate,nin,permanentaddress,landmark,stateoforigin,isinagroup,reasonnogroup,group,
+    numberofmembers,firstnamenok,surnamenok,middlenamenok,relationshipnok,occupationnok,
+    telephonenok,permanentaddressnok,landmarknok,ninnok
+    ):
+        self.bankname = bankname
+        self.accountno = accountno
+        self.isinagroup = isinagroup
+        self.reasonnogroup = reasonnogroup
+        self.numberofmembers = numberofmembers
+        self.firstnamenok = firstnamenok
+        self.permanentaddressnok = permanentaddressnok
+        self.landmarknok = landmarknok
+        self.ninnok = ninnok
+        self.surnamenok = surnamenok
+        self.middlenamenok = middlenamenok
+        self.relationshipnok = relationshipnok
+        self.occupationnok = occupationnok
+        self.telephonenok = telephonenok
+        self.firstname = firstname
+        self.middlename = middlename
+        self.surname = surname
+        self.telephone = telephone
+        self.email = email
+        self.age = age
+        self.gender = gender
+        self.language = language
+        self.maritalstatus = maritalstatus
+        self.bvn = bvn
+        self.meansofid = meansofid
+        self.issuedate = issuedate
+        self.expirydate = expirydate
+        self.nin = nin
+        self.permanentaddress = permanentaddress
+        self.landmark = landmark
+        self.stateoforigin = stateoforigin
+        self.group = group
+
+    def json(self):
+        return {'id':self.id,'farmer_id':self.farmer_id,'firstname':self.firstname,
+        'surnamenok':self.surnamenok,'ninnok':self.ninnok,
+        'reasonnogroup':self.reasonnogroup,'isinagroup':self.isinagroup,'accountno':self.accountno,'bankname':self.bankname,
+        'landmarknok':self.landmarknok,'permanentaddressnok':self.permanentaddressnok,'firstnamenok':self.firstnamenok,'numberofmembers':self.numberofmembers,
+        'surnamenok':self.surnamenok,'middlenamenok':self.middlenamenok,'relationshipnok':self.relationshipnok,'occupationnok':self.occupationnok,'telephonenok':self.telephonenok,
+        'middlename':self.middlename,'surname':self.surname,'telephone':self.telephone,'email':self.email,
+        'age':self.age,'gender':self.gender,'language':self.language,'maritalstatus':self.maritalstatus,
+        'bvn':self.bvn,'meansofid':self.meansofid,
+        'issuedate':self.issuedate,'expirydate':self.expirydate,'nin':self.nin,
+        'permanentaddress':self.permanentaddress,
+        'landmark':self.landmark,'stateoforigin':self.stateoforigin,'group':self.group}  
+        '''
     def __repr__(self):
         return '<FarmerTable %r>' % self.id
 
@@ -184,8 +255,8 @@ class FarmerTable(db.Model):
 
 class CapitalTable(db.Model):
     __tablename__   = 'capital_table'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    bvn     = db.Column(db.String(200))
     MainIncomeSource     = db.Column(db.String(200))
     OtherIncomeSource     = db.Column(db.String(200))
     NoOfIncomeEarners     = db.Column(db.String(200))
@@ -203,8 +274,8 @@ class CapitalTable(db.Model):
 
 class CreditAccessTable(db.Model):
     __tablename__   = 'credit_access_table'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    bvn     = db.Column(db.String(200))
     HasServedAsTreasurer     = db.Column(db.String(200))
     DurationAsTreasurer     = db.Column(db.String(200))
     SavesMoneyMonthly     = db.Column(db.String(200))
@@ -230,8 +301,8 @@ class CreditAccessTable(db.Model):
         return '<CreditAccessTable %r>' % self.id
 class CreditHistoryTable(db.Model):
     __tablename__   = 'credit_history_table'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    bvn     = db.Column(db.String(200))
     HasTakenLoanBefore     = db.Column(db.String(200))
     SourceOfLoan     = db.Column(db.String(200))
     PastLoanAmount     = db.Column(db.String(200))
@@ -246,8 +317,8 @@ class CreditHistoryTable(db.Model):
 
 class ProductivityViabilityTable(db.Model):
     __tablename__   = 'productivity_viability_table'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    bvn     = db.Column(db.String(200))
     CropsCultivated     = db.Column(db.String(200))
     GrowsCrops     = db.Column(db.String(200))
     OilPalmFertilizers     = db.Column(db.String(200))
@@ -280,8 +351,8 @@ class ProductivityViabilityTable(db.Model):
 
 class AgronomyServicesTable(db.Model):
     __tablename__   = 'agronomy_services_table'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    bvn     = db.Column(db.String(200))
     KnowsAgriProcessed     = db.Column(db.String(200))
     AgronomistThatTrainedYou     = db.Column(db.String(200))
     CanManageEcosystem    = db.Column(db.String(200))
@@ -299,8 +370,8 @@ class AgronomyServicesTable(db.Model):
 
 class PsychometricsTable(db.Model):
     __tablename__   = 'psychometrics_table'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    bvn     = db.Column(db.String(200))
     FluidIntelligence     = db.Column(db.String(200))
     AttitudesandBeliefs     = db.Column(db.String(200))
     AgribusinessSkills     = db.Column(db.String(200))
@@ -313,8 +384,8 @@ class PsychometricsTable(db.Model):
         return '<PsychometricsTable %r>' % self.id
 class MobileDataTable(db.Model):
     __tablename__   = 'mobile_data_table'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    bvn     = db.Column(db.String(200))
     MobilePhoneType     = db.Column(db.String(200))
     Avweeklyphoneuse     = db.Column(db.String(200))
     Callsoutnumber     = db.Column(db.String(200))
@@ -335,8 +406,8 @@ class MobileDataTable(db.Model):
         return '<MobileDataTable %r>' % self.id
 class FarmlandTable(db.Model):
     __tablename__   = 'farmland_table'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    bvn     = db.Column(db.String(200))
     NoOfFarmlands     = db.Column(db.String(200))
     OwnerOrCaretaker     = db.Column(db.String(200))
     FarmOwnerName     = db.Column(db.String(200))
@@ -354,8 +425,8 @@ class FarmlandTable(db.Model):
         return '<FarmlandTable %r>' % self.id
 class CapacityTable(db.Model):
     __tablename__   = 'capacity_table'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    bvn     = db.Column(db.String(200))
     HowLongBeenFarming     = db.Column(db.String(200))
     ParticipatedInTraining     = db.Column(db.String(200))
     FarmingPractice     = db.Column(db.String(200))
@@ -371,8 +442,8 @@ class CapacityTable(db.Model):
 
 class FarmPractice(db.Model):
     __tablename__   = 'farm_practice_table'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    bvn     = db.Column(db.String(200))
     SizeOfFarm     = db.Column(db.String(200))
     FarmIsRentedorLeased     = db.Column(db.String(200))
     NoOfYearsLeased     = db.Column(db.String(200))
@@ -395,8 +466,8 @@ class FarmPractice(db.Model):
         return '<FarmPractice %r>' % self.id
 class MechanizationTable(db.Model):
     __tablename__   = 'mechanization_table'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    bvn     = db.Column(db.String(200))
     MachinesUsed     = db.Column(db.String(200))
     MachineHasHelped     = db.Column(db.String(200))
     AdviseMachineOrLabour     = db.Column(db.String(200))
@@ -409,8 +480,8 @@ class MechanizationTable(db.Model):
         return '<MechanizationTable %r>' % self.id
 class CultivationTable(db.Model):
     __tablename__   = 'cultivation_table'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    bvn     = db.Column(db.String(200))
     type_of_labor     = db.Column(db.String(200))
     pay_for_labor     = db.Column(db.String(200))
     how_many_housechildren_help     = db.Column(db.String(200))
@@ -425,8 +496,8 @@ class CultivationTable(db.Model):
         return '<CultivationTable %r>' % self.id
 class HarvestTable(db.Model):
     __tablename__   = 'harvest_table'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    bvn     = db.Column(db.String(200))
     when_is_harvest_season     = db.Column(db.String(200))
     no_of_hired_workers     = db.Column(db.String(200))
     no_of_family_workers     = db.Column(db.String(200))
@@ -441,7 +512,7 @@ class HarvestTable(db.Model):
 class CareTable(db.Model):
     __tablename__ = 'care_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    bvn     = db.Column(db.String(200))
     HealthCentLoc= db.Column(db.String(200))
     HealthCentCount= db.Column(db.String(200))
     HealthCentDistance= db.Column(db.String(200))
@@ -469,7 +540,7 @@ class CareTable(db.Model):
 class Planet(db.Model):
     __tablename__ = 'planet_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    bvn     = db.Column(db.String(200))
     PlanToExpand= db.Column(db.String(200))
     Crop= db.Column(db.String(200))
     Variety= db.Column(db.String(200))
@@ -510,7 +581,7 @@ class Planet(db.Model):
 class Safety(db.Model):
     __tablename__ = 'safety_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    bvn     = db.Column(db.String(200))
     Ferment  = db.Column(db.String(200))
     FermentDays  = db.Column(db.String(200))
     FermentReason  = db.Column(db.String(200))
@@ -536,7 +607,7 @@ class Safety(db.Model):
 class LivingTable(db.Model):
     __tablename__ = 'living_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    bvn     = db.Column(db.String(200))
     HouseOwned = db.Column(db.String(200))
     StaysWithFamily = db.Column(db.String(200))
     RelationshipWithOwner = db.Column(db.String(200))
@@ -558,7 +629,7 @@ class LivingTable(db.Model):
     Typeoftoilet = db.Column(db.String(200))
     KitchenSink = db.Column(db.String(200))
     HasGroup = db.Column(db.String(200))
-    Group = db.Column(db.String(200))
+    group = db.Column(db.String(200))
     Position = db.Column(db.String(200))
     HasAccessedInput = db.Column(db.String(200))
     Input = db.Column(db.String(200))
@@ -571,8 +642,8 @@ class LivingTable(db.Model):
 
 class ConditionsTable(db.Model):
     __tablename__   = 'conditions_table'
-    id     = db.Column(db.String(200), unique=True, primary_key=True)
-    Bvn     = db.Column(db.String(200))
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    bvn     = db.Column(db.String(200))
     duration     = db.Column(db.String(200))
     seller     = db.Column(db.String(200))
     seller_mou     = db.Column(db.String(200))
@@ -725,7 +796,7 @@ class ScoreAnalytics(db.Model):
     __tablename__   = 'score_analytics'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
-    Bvn     = db.Column(db.String(200))
+    bvn     = db.Column(db.String(200))
     Scores  = db.Column(db.String(200))
     Conditions  = db.Column(db.String(200))
     Capital  = db.Column(db.String(200))

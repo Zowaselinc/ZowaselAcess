@@ -1,0 +1,121 @@
+,age,numberOfLand,address(original),address,size(original),size,owner_caretaker,crop,cropVariety,intercropping,intercropCrop,machines(original),machines,estimateMonthlyIncome,applyLoanAmount,yearsCultivating,notPayupLoan
+0,35-44,4,,,,,Owner,Oil Palm,Presco and Nifor,Yes,Cassava at tender age of palms,Non,n,,10000000,7,No
+1,65-Above,2,,,Option 1,4,Owner,Oil Palm,Tenera,Yes,Cassava and yam,Non,n,500000,5000000,22,
+2,,,,,,,,,,,,,,,,,
+3,,,,,,,,,,,,,,,,,
+4,35-44,2,,,,,Inherited,Rice,Rice,Yes,Millet and groundnut,Hand Tiller,y,,200000,15,Yes
+5,35-44,3,,,,,Owner,Rice,Rice,Yes,Sorghum and sesame,Hand Tiller,y,,200000,15,Yes
+6,35-44,3,,,Option 1,4,Owner,Rice,Faro 44,Yes,Rice and maize,Hand Tiller,y,,150000,13,No
+7,45-54,2,,,Option 1,4,Owner,sesame,Sesame,Yes,Sorghum and sesame,Hand Tiller,y,,250000,20,No
+8,25-34,,,,Option 1,4,Owner,Rice,Rice,Yes,Rice and maize,Hand Tiller,y,30000,100000,8,No
+9,35-44,1,,,Option 1,4,Owner,Rice,Rice,Yes,Millet and beans,Tractor;Hand Tiller,y,15000,1500000,12,No
+10,55-64,,,,,,Owner,Oil Palm,,Yes,Cassava,Tractor,y,,,,No
+11,45-54,1,Bardo taura local,majia,Option 1,4,Owner,Rice,Faro 44,Yes,Sesame and sorghum,Tractor;Hand Tiller,y,,200000,17,No
+12,55-64,2,"Bardo in taura local govt, majia bus stop",majia,Option 1,4,Inherited,Rice,Faro 44,Yes,Sorghum and sesame,Tractor;Hand Tiller,y,,130000,12,No
+13,35-44,2,"Wasai, Minjibir",wasai,Option 1,4,Owner,Tomato,Roma for tomato and farrow 44 gof rice,No,,Tractor,y,1500000,2000000,25,No
+14,45-54,5,"Bardo taura local govt,  majia bus stop",majia,Option 1,4,Owner,Sorghum,Faro 44,Yes,Rice some time with maize,Tractor;Hand Tiller,y,,150000,32,No
+15,45-54,3,"Bardo taura local, majia bus stop",majia,Option 1,4,Owner,Sorghum,Rice faro 44,Yes,Millet and sorghum,Tractor;Hand Tiller,y,5000,200000,28,No
+16,35-44,2,"Bardo taura local govt, majia bus stop",majia,Option 1,4,Owner,Rice,Rice faro 44,Yes,Millet and sorghum,Tractor;Hand Tiller,y,10000,200000,21,No
+17,45-54,2,"Bardo taura local govt ,majia bus stop",majia,Option 1,4,Owner,Rice,Rice faro 44,Yes,Rice and sorghum,Tractor;Hand Tiller,y,,180000,23,No
+18,55-64,4,Bardo taura local govt majia bus stop,majia,Option 1,4,Owner,Sorghum,Faro 44,Yes,Millet and 3,Tractor;Hand Tiller,y,,140000,38,No
+19,35-44,,"Bardo taura local govt, majia bus stop",majia,Option 1,4,Owner,Rice,Rice faro 44,Yes,Rice and sorghum,Tractor;Hand Tiller,y,,250000,25,No
+20,55-64,3,Bardo taura local govt m majia bus stop,majia,Option 1,4,Inherited,Sorghum,Sorghum,Yes,Sorghum and sesame,Tractor;Hand Tiller,y,,200000,27,No
+21,55-64,3,Bardo Taura local govt Majia Bus Stop,majia,3,3,Owner,Rice,Rice,Yes,Sesame and sorghum,Tractor;Hand Tiller,y,,200000,40,No
+22,45-54,2,Bardo Taura local govt Majia Bus Stop,majia,3,3,Owner,Rice,Rice,Yes,Millet and sorghum,Tractor;Hand Tiller,y,,200000,18,No
+23,35-44,3,,,Option 1,4,Owner,Rice,Faro 44,No,,Tractor,y,,,,
+24,35-44,3,,,,,Owner,,,,,,,,,,
+25,45-54,4,Alwaza,alwaza,5,5,Owner,maize,,,,,,,,,
+26,65-Above,,Bardo Taura Local Govt Majia Bus Stop,majia,1,1,Inherited,Rice,Rice,Yes,Millet and sorghum,Tractor;Hand Tiller,y,,300000,12,No
+27,25-34,2,Bardo Taura Local Govt Jigawa State Majia Bus Stop,majia,2,2,Owner,Sorghum,Sorghum,Yes,Millet and sorghum,Tractor;Hand Tiller,y,,300000,17,No
+28,25-34,2,Bardo Taura local govt Majia Bus Stop,majia,2,2,Owner,Rice,Rice,Yes,Sesame and sorghum,Tractor;Hand Tiller,y,,300000,22,No
+29,35-44,2,Bardo taura local govt majia bus stop,majia,5,5,Inherited,Sorghum,Sorghum,Yes,Sesame and sorghum,Tractor;Hand Tiller,y,,150000,12,No
+30,25-34,1,Bardo taura local govt majia bus stop,majia,1,1,Owner,Sorghum,Sorghum,Yes,,Tractor;Hand Tiller,y,,100000,23,No
+31,45-54,2,Bardo taura local govt jigawa state majia bus stop,majia,3,3,Owner,Sorghum,Sorghum,Yes,Sesame and sorghum,Tractor;Hand Tiller,y,,150000,34,No
+32,45-54,2,Bardo taura local govt jigawa state majia bus stop,majia,2,2,Owner,Rice,Rice,Yes,,Tractor;Hand Tiller,y,,200000,19,No
+33,35-44,2,Bardo taura local govt jigawa state majia bus stop,majia,1,1,Owner,Rice,Rice,Yes,Sesame and sorghum,Tractor;Hand Tiller,y,,250000,30,No
+34,35-44,2,Bardo taura local govt jigawa state majia bus stop,majia,2,2,Owner,Sorghum,Sorghum,Yes,Sesame and 3,Tractor;Hand Tiller,y,,100000,8,No
+35,35-44,2,Bardo taura local govt majia bus stop,majia,2,2,Inherited,Rice,Rice,No,Sesame and sorghum,Tractor;Hand Tiller,y,,200000,19,No
+36,,,,,,,,,,,,,,,,,
+37,45-54,2,Bardo Taura Local Govt jigawa state Majia Bus Stop,majia,1,1,Inherited,Sorghum,Sorghum,Yes,Sesame and sorghum,Tractor;Hand Tiller,y,,120000,26,No
+38,55-64,2,Bardo taura local govt majia bus stop,majia,1,1,Owner,Sorghum,Sorghum,Yes,Millet and sorghum,Tractor;Hand Tiller,y,,120000,8,No
+39,55-64,2,Bardo taura local govt majia bus stop,majia,2.5,2.5,Owner,Sorghum,Sorghum,Yes,Sorghum and sesame,Tractor;Hand Tiller,y,,170000,27,No
+40,55-64,3,Bardo taura local govt majia bus stop,majia,3,3,Inherited,Rice,Rice,No,,Tractor;Hand Tiller,y,,250000,12,No
+41,,,,,,,,,,,,,,,,,
+42,55-64,,"Maheme garki local govt, garki bus stop",garki,1,1,Owner,Sorghum,Sorghum,Yes,,Tractor;Hand Tiller,y,,200000,23,No
+43,35-44,2,Maheme garki local govt garki bus stop,garki,1.5,1.5,Owner,sesame,Sesame,Yes,Sesame and sorghum,Tractor;Hand Tiller,y,,130000,5,No
+44,35-44,1,Maheme garki local govt garki bus stop,garki,1,2,Owner,sesame,Sesame,Yes,Sesame and sorghum,Tractor;Hand Tiller,y,,100000,4,No
+45,55-64,2,"Akasan Taura local govt, Taura bus stop",taura,,,Owner,Sorghum,Sorghum,Yes,Sesame and sorghum,Tractor;Hand Tiller,y,,120000,8,No
+46,25-34,,,,,,,,,,,,,,,,
+47,,,,,,,,,,,,,,,,,
+48,45-54,3,Kawo Doma,kawo Doma,,,Owner,Casava,,No,,,,,,,
+49,,,,,,,,,,,,,,,,,
+50,,,,,,,,,,,,,,,,,
+51,,,,,,,,,,,,,,,,,
+52,,,,,,,,,,,,,,,,,
+53,,,,,,,,,,,,,,,,,
+54,45-54,1,"Akasan  taura local govt, taura bus stop",taura,1,1,Owner,Sorghum,Sorghum,Yes,Eat grass,Tractor;Hand Tiller,y,,200000,12,No
+55,55-64,2,"Akasan taura local govt jigawa state, Taura bus stop",taura,2,2,Owner,Sorghum,Sorghum,Yes,Millet and sorghum,Tractor;Hand Tiller,y,,150000,8,No
+56,55-64,2,"Akasan taura local govt jigawa state, taura bus stop",taura,3,3,Owner,Millet,Millet,No,,Tractor;Hand Tiller,y,,150000,9,No
+57,55-64,3,"Akasan taura local govt jigawa state, taura bus stop",taura,2,2,Owner,Sorghum,Sorghum,No,,Tractor;Hand Tiller,y,,120000,12,No
+58,25-34,1,Taura local govt jigawa state Akasan taura bus stop,taura,0.5,0.5,Inherited,sesame,Sesame,No,,Tractor;Hand Tiller,y,,,6,No
+59,35-44,1,"Akasan taura local govt jigawa state,",taura,0.8,0.9,Owner,sesame,Sesame,No,,Tractor;Hand Tiller,y,,160000,7,No
+60,55-64,1,"Akasan taura local govt, taura bus stop",taura,2,2,Owner,Sorghum,Sorghum,No,,Tractor;Hand Tiller,y,,150000,,No
+61,55-64,3,Akasan taura local govt jigawa state  taura bus stop,taura,4,4,Owner,Groundnut,Groundnut/ millet,Yes,Groundnut and millet,Tractor;Hand Tiller,y,,200000,40,No
+62,25-34,1,Taura bus stop,taura,0.8,0.8,Owner,Millet,Millet,Yes,Millet and sorghum,Tractor;Hand Tiller,y,,120000,4,No
+63,45-54,1,Akasan taura bus stop,taura,0.8,0.9,Owner,Millet,Millet,Yes,Millet and Groundnut,Tractor;Hand Tiller,y,,150000,8,No
+64,35-44,2,Kwatau Pampaida,Kwatau Pampaida,0.5,0.6,Owner,maize,Hybrid,Yes,Cowpea,Other (specify),y,2000000,,15,No
+65,45-54,1,Kwatau Pampaida,Kwatau Pampaida,1,1,Owner,maize,Hybrid,Yes,Soyabeans,Non,n,15000,,14,No
+66,65-Above,3,Mathew street Doma,doma,,,Owner,maize,Mixed,,,,,,,,
+67,45-54,2,"Galadima ward, timber shied","Galadima ward, timber shied",,,Owner,sesame,,,,Tractor,y,,,,
+68,35-44,4,Alwaza Doma,doma,,,Owner,Rice,,No,,Non,n,,,,
+69,35-44,4,"Alwaza, Doma",doma,,,Owner,Ground nut,,,,,,,,,
+70,45-54,7,Alwaza,Alwaza,,,Owner,maize,,No,,Non,n,,,,
+71,55-64,1,Bardo taura local govt jigawa state majia bus stop,majia,1,1,Owner,Sorghum,Sorghum,No,,Tractor;Hand Tiller,y,,100000,8,No
+72,55-64,1,Bardo maji bus stop,majia,,,Owner,Rice,Rice,No,Rice,Tractor;Hand Tiller,y,,200000,19,No
+73,55-64,1,Bardo majia bus stop,majia,2,2,Owner,Rice,Rice,No,,Tractor;Hand Tiller,y,,200000,25,No
+74,55-64,4,Majia bus stop,majia,3,3,Owner,Rice,Rice,No,,Tractor;Hand Tiller,y,,250000,35,No
+75,45-54,3,Akasan taura bus stop,Akasan taura ,2,2,Owner,Sorghum,Sorghum,Yes,Sorghum and sesame,Tractor;Hand Tiller,y,,150000,34,No
+76,35-44,1,Akasan bus stop,Akasan taura ,1,1,Owner,sesame,Sesame,No,,Tractor;Hand Tiller,y,,200000,12,No
+77,45-54,1,Akasan taura bus stop,Akasan taura ,1,1,Owner,sesame,Sesame,Yes,Sesame and sorghum,Tractor;Hand Tiller,y,,160000,6,No
+78,45-54,1,Akasan taura bus stop,Akasan taura ,2,2,Owner,Sorghum,Sorghum,No,Sorghum and sesame,Tractor;Hand Tiller,y,,170000,7,No
+79,45-54,1,Akasan gidan kuka,Akasan gidan kuka,0.5,0.5,Owner,Millet,6 kg,Yes,Sesame and sorghum,Tractor;Hand Tiller,y,,100000,,No
+80,25-34,4,,,,,Owner,maize,,No,,Tractor,y,,,,
+81,35-44,4,Alwaza Doma,Alwaza Doma,1,1,Owner,Rice,,,,Non,n,,,,
+82,55-64,1,Doma,Doma,,,Owner,Rice,,,,Non,n,,,,
+83,55-64,3,Doma,Doma,,,Owner,sesame,,,,,,,,,
+84,35-44,2,Doma,Doma,,,Owner,Rice,,No,,Non,n,7000,,,
+85,25-34,4,Alwaza,Alwaza,,,Owner,Rice,Cp,,,Tractor,y,35000,,,
+86,35-44,6,Alwaza,Alwaza,,,Owner,Rice,,No,,Tractor,y,,,,
+87,25-34,5,FCT Abuja,FCT Abuja,200,200,Caretaker,maize,Maize,No,,Tractor;Planter,y,,,,No
+88,45-54,2,,,,,Owner,Rice,,No,,Non,n,,,,
+89,45-54,2,Doma,Doma,,,Owner,maize,,,,Non,n,,,,
+90,35-44,2,Doma,Doma,1,1,Owner,maize,,,,Non,n,,,,
+91,35-44,5,Doma,Doma,3,3,Owner,Rice,,,,,,,,,
+92,55-64,3,Bamikemo,Bamikemo,6,6,Inherited,Cocoa,,Yes,Maize,Non,n,,,,
+93,55-64,2,Gurjawa Kwalam bus stop,Gurjawa Kwalam ,2,2,Owner,Rice,Rice,No,,Tractor;Hand Tiller,y,0,160000,40,No
+94,35-44,1,Gurjawa Kwalam bus stop,Gurjawa Kwalam ,1,1,Inherited,Sorghum,Sorghum,No,Sesame and sorghum,Tractor;Hand Tiller,y,,,,No
+95,45-54,3,Akasan taura bus stop,Akasan taura ,2,2,Owner,Sorghum,Sorghum,Yes,Sesame and sorghum,Tractor;Hand Tiller,y,,180000,17,
+96,35-44,1,Akasan taura bus stop,Akasan taura ,1,1,Owner,Sorghum,Sorghum,Yes,Sesame and sorghum,Tractor;Hand Tiller,y,,150000,12,No
+97,35-44,2,Akasan taura bus stop,Akasan taura ,1,1,Owner,Sorghum,Sorghum,Yes,Sesame and sorghum,Tractor;Hand Tiller,y,,120000,,No
+98,55-64,2,Bamikemo,Bamikemo,14,14,Owner,Cocoa,,Yes,Maize,Non,n,,20000,,No
+99,45-54,4,Bamikemo,Bamikemo,60,60,Owner,Cocoa,,Yes,Palm oil,Non,n,,,17,No
+100,45-54,1,Akasan taura bus stop,Akasan taura,1,2,Owner,Sorghum,Sorghum,Yes,Sesame and 3,Tractor;Hand Tiller,y,,140009,12,No
+101,45-54,1,Akasan taura bus stop,Akasan taura ,2,2,Owner,Sorghum,Sesame and sorghum,Yes,Sorghum and sesame,Tractor;Hand Tiller,y,0,100000,9,No
+102,35-44,1,Akasan taura bus stop,Akasan taura ,1,1,Owner,sesame,Sesame,Yes,Sesame and sorghum,Tractor;Hand Tiller,y,,100000,12,No
+103,45-54,1,Akasan taura bus stop,Akasan taura ,1,1,Owner,Sorghum,Sorghum,Yes,Sesame and sorghum,Tractor;Hand Tiller,y,0,200000,15,No
+104,45-54,2,Bamikemo,Bamikemo,,,Owner,Cocoa,,Yes,Maize,Non,n,,300000,17,No
+105,45-54,2,Bamikemo,Bamikemo,55,55,Owner,Cocoa,,Yes,Palm oil,Non,n,,250000,,No
+106,45-54,4,Bamikemo,Bamikemo,,,Owner,Cocoa,,Yes,Cassava,Non,n,,,10,No
+107,35-44,3,Bamikemo,Bamikemo,,,Owner,Cocoa,,Yes,Maize,Non,n,,200000,7,No
+108,25-34,,8 Alao street Moniya Ibadan,Ibadan,24,24,Owner,Maize,"plantain, cocoa,cashew, oil palm, cassava pepper",Yes,Plantain and cocoa,Tractor;Planter,y,2000000,,,No
+109,25-34,3,Ercc bus stop behind zanang victory school karu LGA Auta-balefi Nassarawa state,Ercc ,5,5,Owner,Soya bean,,No,,Tractor,y,150000,1500000,3,No
+110,25-34,4,"Flat 1, Orita Merin Avenue, Agbagi. Ilero",Ilero,150,150,Owner,maize,White Maize,Yes,Maize vs Soybeans and Maize vs Cassava,Tractor,y,4000000,1500000,7,No
+111,55-64,5,Lipaunu,Lipaunu,,,Owner,Cocoa,,,,Non,n,,,,
+112,35-44,2,Lipanu,Lipanu,30,30,Owner,Cocoa,,,,Non,n,,200000,,
+113,45-54,3,Lipanu,Lipanu,,,Owner,Cocoa,,,,Non,n,,,,No
+114,25-34,5,"premier school, ijegun, ikotun ,Lagos.",Lagos,6,6,Owner,Cucumber,"pepper, tomatoes, cassava and maize(yellow),Hybrid F1",Yes,Cucumber and maize,Non,n,285000,1600000,8,No
+115,35-44,3,,,,,Owner,Rice,Rice,No,,Tractor,y,,,,
+116,35-44,2,OFATURA OBUBRA LGA,Ofatura,3,3,Owner,Cassava,"Dura,oil palm,",Yes,Cassava and Maize,Non,n,50000,2000000,10,No
+117,55-64,3,OFATURA OBUBRA LGA CRS,Ofatura,3,3,Inherited,Oil palm,"cassava,Hybrid",Yes,"Cassava,groundnut",Non,n,1500000,5000000,15,No
+118,45-54,1,Ofatura,Ofatura,1,1,Inherited,Cassava,"oil palm Dura,TME 419",Yes,"Cassava,maize",Non,n,60000,3000000,7,No
+119,45-54,1,"Before Ovonum,Ofatura",Ofatura,1,1,Owner,Oil palm,"cassava,Dura,TMS 419",Yes,"Maize,cassava",Non,n,3000000,3000000,12,No

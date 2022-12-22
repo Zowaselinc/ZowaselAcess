@@ -6,7 +6,7 @@ warnings.filterwarnings("ignore")
 
 # Preprocessing
 def preprocess_yearsCultivating(df):
-    cleanup={"yearsCultivating":{'Less than 5 years':1,"below-5":1,
+    cleanup={"yearsCultivating":{'Less than 5 years':1,"below-5":1,"1-5":1,
                                  '5 to 10 years':2,"6-10":2,
                                 "11-20":3,'10 to 15 years':3,'15 to 20 years':3,
                                 "21-30":4,"31-40":4,"41-Above":4,'20 to 25 years':4,'25 years and more':4}}
