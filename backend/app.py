@@ -657,7 +657,7 @@ class AddCropCard(Resource):
 # Credit Scoring
 class AddScoreCard(Resource):	
     def post(self):
-        recommendations = []
+        recommendations = 'Success!'
         card = ScoreCard(bvn=request.json['bvn'],age=request.json['age'],
         number_of_land=request.json['number_of_land'],address=request.json['address'],
         owner_caretaker=request.json['owner_caretaker'],crop=request.json['crop'],
@@ -672,23 +672,24 @@ class AddScoreCard(Resource):
         bvn=request.json['bvn']
         farmer = FarmerTable.query.filter_by(bvn=bvn).all()
         if not farmer:
-            recommendations+=['Add KYF']
+            recommendations+='Add KYF!'
         farmer = CapitalTable.query.filter_by(bvn=bvn).all()
         if not farmer:
-            recommendations+=['Add 5c_capital']
+            recommendations+='Add Capital!'
         farmer = CreditHistoryTable.query.filter_by(bvn=bvn).all()
         if not farmer:
-            recommendations+=['Add 5c_character']
+            recommendations+='Add Character!'
         farmer = FarmlandTable.query.filter_by(bvn=bvn).all()
         if not farmer:
-            recommendations+=['Add 5c_collateral']
+            recommendations+='Add Collateral!'
         farmer = CapacityTable.query.filter_by(bvn=bvn).all()
         if not farmer:
-            recommendations+=['Add 5c_capacity']
+            recommendations+='Add Capacity!'
         farmer = ConditionsTable.query.filter_by(bvn=bvn).all()
         if not farmer:
-            recommendations+=['Add 5c_conditions']
-        return {'recommendations':recommendations}
+            recommendations+='Add Conditions!'
+        #return {'message':recommendations}
+        return jsonify({'message':recommendations})
 
 class Scorecardbvn(Resource):
     def get(self, bvn):
@@ -1411,32 +1412,38 @@ class AllFarmers(Resource):
 class AllAgronomy(Resource):
     def get(self):
         all_farmers = AgronomyServicesTable.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllCapacity(Resource):
     def get(self):
         all_farmers = CapacityTable.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllCapital(Resource):
     def get(self):
         all_farmers = CapitalTable.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllCare(Resource):
     def get(self):
         all_farmers = CareTable.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllConditions(Resource):
     def get(self):
         all_farmers = ConditionsTable.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllCreditAccess(Resource):
     def get(self):
         all_farmers = CreditAccessTable.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 class AllCapital5c(Resource):
     def get(self):
         all_farmer1 = CapitalTable.query.all()
@@ -1484,86 +1491,103 @@ class AllConditions5c(Resource):
 class AllCreditHistory(Resource):
     def get(self):
         all_farmers = CreditHistoryTable.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllCropInfo(Resource):
     def get(self):
         all_farmers = CropInfo.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllCropQuality(Resource):
     def get(self):
         all_farmers = CropQuality.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllCultivation(Resource):
     def get(self):
         all_farmers = CultivationTable.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllFarmland(Resource):
     def get(self):
         all_farmers = FarmlandTable.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllHarvest(Resource):
     def get(self):
         all_farmers = HarvestTable.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllInputsInfo(Resource):
     def get(self):
         all_farmers = InputsInfo.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllLiving(Resource):
     def get(self):
         all_farmers = LivingTable.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllMechanization(Resource):
     def get(self):
         all_farmers = MechanizationTable.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllMobileData(Resource):
     def get(self):
         all_farmers = MobileDataTable.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllPlanet(Resource):
     def get(self):
         all_farmers = Planet.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllPractice(Resource):
     def get(self):
         all_farmers = FarmPractice.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllProductivity(Resource):
     def get(self):
         all_farmers = ProductivityViabilityTable.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllPsychometrics(Resource):
     def get(self):
         all_farmers = PsychometricsTable.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllRecommendation(Resource):
     def get(self):
         all_farmers = Recommendation.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllSafety(Resource):
     def get(self):
         all_farmers = Safety.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 class AllScorecard(Resource):
     def get(self):
         all_farmers = ScoreCard.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 class AllCropcard(Resource):
     def get(self):
         all_cards = Cropcard.query.all()
@@ -1571,28 +1595,33 @@ class AllCropcard(Resource):
 class AllScoreHistory(Resource):
     def get(self):
         all_farmers = ScoreHistory.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 
 class AllShipment(Resource):
     def get(self):
         all_farmers = Shipment.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllTransfer(Resource):
     def get(self):
         all_farmers = LoanTransfer.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllWarehouse(Resource):
     def get(self):
         all_farmers = Warehouse.query.all()
-        return [farmer.json() for farmer in all_farmers]
+        all_farmers = [farmer.json() for farmer in all_farmers]
+        return jsonify({'status': 'success','farmers': all_farmers})
 
 class AllLoans(Resource):
     def get(self):
-        loans = db.session.query(Loan).all()
-        return [loan.json() for loan in loans]
+        all_loans = db.session.query(Loan).all()
+        all_loans = [loan.json() for loan in all_loans]
+        return jsonify({'status': 'success','loans': all_loans})
 
 
 

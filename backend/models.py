@@ -195,59 +195,7 @@ class FarmerTable(db.Model):
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}  
 
-    '''
-    def __init__(self,firstname,middlename,surname,telephone,email,age,gender,language,
-    maritalstatus,bvn,meansofid,bankname,accountno,
-	issuedate,expirydate,nin,permanentaddress,landmark,stateoforigin,isinagroup,reasonnogroup,group,
-    numberofmembers,firstnamenok,surnamenok,middlenamenok,relationshipnok,occupationnok,
-    telephonenok,permanentaddressnok,landmarknok,ninnok
-    ):
-        self.bankname = bankname
-        self.accountno = accountno
-        self.isinagroup = isinagroup
-        self.reasonnogroup = reasonnogroup
-        self.numberofmembers = numberofmembers
-        self.firstnamenok = firstnamenok
-        self.permanentaddressnok = permanentaddressnok
-        self.landmarknok = landmarknok
-        self.ninnok = ninnok
-        self.surnamenok = surnamenok
-        self.middlenamenok = middlenamenok
-        self.relationshipnok = relationshipnok
-        self.occupationnok = occupationnok
-        self.telephonenok = telephonenok
-        self.firstname = firstname
-        self.middlename = middlename
-        self.surname = surname
-        self.telephone = telephone
-        self.email = email
-        self.age = age
-        self.gender = gender
-        self.language = language
-        self.maritalstatus = maritalstatus
-        self.bvn = bvn
-        self.meansofid = meansofid
-        self.issuedate = issuedate
-        self.expirydate = expirydate
-        self.nin = nin
-        self.permanentaddress = permanentaddress
-        self.landmark = landmark
-        self.stateoforigin = stateoforigin
-        self.group = group
-
-    def json(self):
-        return {'id':self.id,'farmer_id':self.farmer_id,'firstname':self.firstname,
-        'surnamenok':self.surnamenok,'ninnok':self.ninnok,
-        'reasonnogroup':self.reasonnogroup,'isinagroup':self.isinagroup,'accountno':self.accountno,'bankname':self.bankname,
-        'landmarknok':self.landmarknok,'permanentaddressnok':self.permanentaddressnok,'firstnamenok':self.firstnamenok,'numberofmembers':self.numberofmembers,
-        'surnamenok':self.surnamenok,'middlenamenok':self.middlenamenok,'relationshipnok':self.relationshipnok,'occupationnok':self.occupationnok,'telephonenok':self.telephonenok,
-        'middlename':self.middlename,'surname':self.surname,'telephone':self.telephone,'email':self.email,
-        'age':self.age,'gender':self.gender,'language':self.language,'maritalstatus':self.maritalstatus,
-        'bvn':self.bvn,'meansofid':self.meansofid,
-        'issuedate':self.issuedate,'expirydate':self.expirydate,'nin':self.nin,
-        'permanentaddress':self.permanentaddress,
-        'landmark':self.landmark,'stateoforigin':self.stateoforigin,'group':self.group}  
-        '''
+    
     def __repr__(self):
         return '<FarmerTable %r>' % self.id
 
