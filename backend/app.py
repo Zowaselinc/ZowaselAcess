@@ -1,10 +1,15 @@
 # Import flask 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, current_app
 from flask_cors import CORS,cross_origin
 from flask_sqlalchemy import SQLAlchemy
 from flask_restplus import Resource, Api, fields
 from flask_mysqldb import MySQL
 from models import *
+import csv
+import io
+from io import StringIO
+
+
 # Import database models with app context
 #with app.app_context():
   #from models import *
@@ -1629,27 +1634,56 @@ class AllLoans(Resource):
 
 class AddBulkFarmer(Resource):
     def post(self):
-        #new_file = request.files['file']
-        new_file = request.files.get("file")
-        if new_file.ends_with('xls'|'xlsx'):
-            df = pd.read_excel(new_file)
-        elif new_file.ends_with('csv'):
-            df = pd.read_csv(new_file)
-        else:
-            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"csv or excel file not found"}
+        #new_file = request.files['kyf_file']
+        #df = request.files.get("kyf_file")#.read().decode("utf-8")#.decode("latin-1")
+        #df = df.stream.read() # This line uses the same variable and worked fine
+            #Convert the FileStorage to list of lists here.
+        #print(df)
+        #stream = io.StringIO(df.decode("UTF8"), newline=None)
+        #print(stream)
+        #reader = csv.reader(stream)
+        #for row in reader:
+            #print(', '.join(row))
+        #df = pd.DataFrame(df)
+        csv_raw = request.files.get("kyf_file").read().decode("utf-8")
+        csv = StringIO(csv_raw)
+        df = pd.read_csv(csv)
+        print(df.shape)
+        #with open(new_file, 'rb') as f:
+            #new_file = f.read()
+        #new_file = new_file.read()
+        #new_file = io.BytesIO(open(new_file, 'rb'))
+        #print(new_file)
+        #ext_type = new_file.split('.')[-1]
+        #if (ext_type=='xlsx'|ext_type=='xls'):
+        #storage_filename = 'newfile.xlsx'
+        #filepath = os.path.join(current_app.root_path, 'public\uploads')
+        #filepath = os.path.join(os.environ["HOMEDRIVE"], os.environ["HOMEPATH"], "Desktop")
+        #new_file.save(filepath)
+        #df = pd.read_excel(filepath+'kyf_test.xlsx')
+        #if new_file.ends_with('xls'|'xlsx'):
+            #df = pd.read_excel(new_file)
+        #elif new_file.ends_with('csv'):
+            #df = pd.read_csv(new_file)
+        #else:
+            #return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"csv or excel file not found"}
             
-        if df:
+        if len(df)>0:
             for r in range(1,len(df)):
                 dfr = df.iloc[r,:]
-                farmerkyf = FarmerTable(id=dfr['bvn'], firstname=dfr['firstname'], surname = dfr['surname'], middlename=dfr['middlename'],
-        email=dfr['email'],telephone=dfr['telephone'], age=dfr['age'], gender=dfr['gender'], language = dfr['language'], maritalstatus=dfr['maritalstatus'],
-        bankname = dfr['bankname'], accountno = dfr['accountno'], bvn=dfr['bvn'], meansofid=dfr['meansofid'], issuedate=dfr['issuedate'],
-        expirydate=dfr['expirydate'], nin=dfr['nin'], permanentaddress=dfr['permanentaddress'], landmark=dfr['landmark'],
-        stateoforigin=dfr['stateoforigin'], isinagroup = dfr['isinagroup'], reasonnogroup = dfr['reasonnogroup'], group=dfr['group'],
-        numberofmembers = dfr['numberofmembers'], firstnamenok = dfr['firstnamenok'], surnamenok = dfr['surnamenok'],
-        middlenamenok = dfr['middlenamenok'], relationshipnok = dfr['relationshipnok'], occupationnok = dfr['occupationnok'],
-        telephonenok  = dfr['telephonenok'], permanentaddressnok = dfr['permanentaddressnok'], landmarknok  = dfr['landmarknok'],
-        ninnok  = dfr['ninnok'])
+                farmerkyf = FarmerTable(firstname=dfr['firstname'],surname=dfr['surname'],
+        middlename=dfr['middlename'],email=dfr['email'],telephone=dfr['telephone'],age=dfr['age'],
+        gender=dfr['gender'],language = dfr['language'],maritalstatus=dfr['maritalstatus'],
+        bankname = dfr['bankname'],accountno = dfr['accountno'],bvn=dfr['bvn'],
+        meansofid=dfr['meansofid'],issuedate=dfr['issuedate'],expirydate=dfr['expirydate'],
+        nin=dfr['nin'],permanentaddress=dfr['permanentaddress'],landmark=dfr['landmark'],
+        stateoforigin=dfr['stateoforigin'],isinagroup = dfr['isinagroup'],
+        reasonnogroup = dfr['reasonnogroup'],group=dfr['group'],
+        numberofmembers = dfr['numberofmembers'],firstnamenok = dfr['firstnamenok'],
+        surnamenok = dfr['surnamenok'],middlenamenok = dfr['middlenamenok'], 
+        relationshipnok = dfr['relationshipnok'],occupationnok     = dfr['occupationnok'],
+        telephonenok  = dfr['telephonenok'],permanentaddressnok  = dfr['permanentaddressnok'],
+        landmarknok  = dfr['landmarknok'],ninnok  = dfr['ninnok'])
                 db.session.add(farmerkyf)
             db.session.commit()
             return {'message':'Upload success'}
