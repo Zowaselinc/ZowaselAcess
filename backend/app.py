@@ -694,6 +694,48 @@ class AddScoreCard(Resource):
         if not farmer:
             recommendations+='Add Conditions!'
         #return {'message':recommendations}
+        
+        farmer = pd.DataFrame([['bvn','age','number_of_land','address',
+        'owner_caretaker','crop','intercropping', 'machines',
+        'estimate_monthly_income','years_cultivating','gender',
+        'owns_a_bank_account','size_of_farm','number_of_crops','is_in_a_cooperative',
+        'no_of_agronomist_visits']],columns=['bvn','age','number_of_land','address',
+        'owner_caretaker','crop','intercropping', 'machines',
+        'estimate_monthly_income','years_cultivating','gender',
+        'owns_a_bank_account','size_of_farm','number_of_crops','is_in_a_cooperative',
+        'no_of_agronomist_visits'])
+        for col in farmer.columns:
+            farmer[col] = request.json[col]
+        #farmer = pd.DataFrame(card, index=[0])
+        print(farmer)
+        farmer['applyLoanAmount'] = 50000
+        farmer = farmer.rename({
+            'number_of_land':'numberOfLand','estimate_monthly_income':'estimateMonthlyIncome',
+            'years_cultivating':'yearsCultivating'
+        },axis=1)
+        cols=['age', 'numberOfLand', 'owner_caretaker', 'crop','applyLoanAmount',
+            'intercropping', 'machines', 'estimateMonthlyIncome','yearsCultivating']
+        tdf = preprocess_df(farmer[cols])
+        train_cols = ['numberOfLand', 'owner_caretaker', 'intercropping', 'machines',
+       'estimateMonthlyIncome',
+        'applyLoanAmount',
+         'yearsCultivating',
+       'crop1', 'crop2', 'age1', 'age2', 'age3', 'age4']
+        score = model.predict_proba(tdf[train_cols])[:,1].round(2)
+        bin=bin_target(score)
+        history = ScoreHistory(bvn=request.json['bvn'],age=request.json['age'],
+        number_of_land=request.json['number_of_land'],address=request.json['address'],
+        owner_caretaker=request.json['owner_caretaker'],crop=request.json['crop'],
+        intercropping=request.json['intercropping'], machines=request.json['machines'],
+        estimate_monthly_income=request.json['estimate_monthly_income'],
+        years_cultivating=request.json['years_cultivating'],gender=request.json['gender'],
+        owns_a_bank_account=request.json['owns_a_bank_account'],size_of_farm=request.json['size_of_farm'],
+        number_of_crops=request.json['number_of_crops'],is_in_a_cooperative=request.json['is_in_a_cooperative'],
+        no_of_agronomist_visits=request.json['no_of_agronomist_visits'],
+        applyLoanAmount=farmer['applyLoanAmount'][0],
+        term_months='term_months',score=score[0], bin=bin[0])
+        db.session.add(history)
+        db.session.commit()
         return jsonify({'message':recommendations})
 
 class Scorecardbvn(Resource):
@@ -764,7 +806,7 @@ class ScoreHistorybvn(Resource):
 class ScoreFarmer(Resource):
     def post(self):
         bvn=request.json['bvn']
-        applyLoanAmount=request.json['applyLoanAmount']
+        #applyLoanAmount=request.json['applyLoanAmount']
         #term_months=request.json['term_months']
         farmer = ScoreCard.query.filter_by(bvn=bvn).first()
         cols=['age', 'number_of_land', 'owner_caretaker', 'crop',
@@ -774,7 +816,7 @@ class ScoreFarmer(Resource):
             farmer = pd.DataFrame(farmer, index=[0])
             tdf = preprocess_df(farmer[cols])
             train_cols = ['number_of_land', 'owner_caretaker', 'intercropping', 'machines',
-       'estimate_monthly_income', 'apply_loan_amount', 'years_cultivating',
+       'estimate_monthly_income', 'applyLoanAmount', 'years_cultivating',
        'crop1', 'crop2', 'age1', 'age2', 'age3', 'age4']
             score = model.predict_proba(tdf[train_cols])[:,1]
             bin=bin_target(score)
@@ -813,7 +855,7 @@ class ScoreFarmerDragAndDrop(Resource):
                 farmer[col] = np.nan
             tdf = preprocess_df(farmer[cols])
             train_cols = ['number_of_land', 'owner_caretaker', 'intercropping', 'machines',
-       'estimate_monthly_income', 'apply_loan_amount', 'years_cultivating',
+       'estimate_monthly_income', 'applyLoanAmount', 'years_cultivating',
        'crop1', 'crop2', 'age1', 'age2', 'age3', 'age4']
             score = model.predict_proba(tdf[train_cols])[:,1]
             bin=bin_target(score)

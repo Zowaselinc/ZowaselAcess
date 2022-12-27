@@ -76,5 +76,5 @@ def preprocess_df(df):
     return df
 def bin_target(y):
     score_cardbin = np.concatenate(([0], [0.5,0.9,0.98], [1]))
-    y = pd.cut(y,score_cardbin,labels=['D - Low Probability of Repayment','C - Average Probability of Repayment','B - Good Probability of Repayment','A - Highest Probability of Repayment'])
+    y = pd.cut(y,score_cardbin,labels=['D','C','B','A'])
     return y
