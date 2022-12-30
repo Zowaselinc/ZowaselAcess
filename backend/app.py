@@ -659,6 +659,7 @@ class AddCropCard(Resource):
 class AddScoreCard(Resource):	
     def post(self):
         recommendations = 'Success!'
+        bvn=request.json['bvn']
         farmer = ScoreCard.query.filter_by(bvn=bvn).all()
         if farmer:
             recommendations+='Scorecard Exists!'
