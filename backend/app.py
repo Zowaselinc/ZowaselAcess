@@ -13,10 +13,6 @@ from io import StringIO
 # Import database models with app context
 #with app.app_context():
   #from models import *
-#from models import app, db,FarmerTable,ScoreCard, Loan, CapitalTable,CreditAccessTable,CreditHistoryTable,ProductivityViabilityTable,LoanTransfer
-#from models import AgronomyServicesTable, PsychometricsTable, MobileDataTable, FarmlandTable, CapacityTable, FarmPractice, MechanizationTable, CultivationTable, HarvestTable, ConditionsTable
-#from models import CareTable, Planet, Safety, LivingTable, CropInfo, CropQuality, InputsInfo, Warehouse, Shipment, Recommendation, ScoreAnalytics
-#from models import ScoreHistory
 #from flasgger import Swagger
 import os
 from datetime import datetime
@@ -663,7 +659,11 @@ class AddCropCard(Resource):
 class AddScoreCard(Resource):	
     def post(self):
         recommendations = 'Success!'
-        card = ScoreCard(bvn=request.json['bvn'],age=request.json['age'],
+        farmer = ScoreCard.query.filter_by(bvn=bvn).all()
+        if farmer:
+            recommendations+='Scorecard Exists!'
+        if not farmer:
+            card = ScoreCard(bvn=request.json['bvn'],age=request.json['age'],
         number_of_land=request.json['number_of_land'],address=request.json['address'],
         owner_caretaker=request.json['owner_caretaker'],crop=request.json['crop'],
         intercropping=request.json['intercropping'], machines=request.json['machines'],
@@ -672,8 +672,8 @@ class AddScoreCard(Resource):
         owns_a_bank_account=request.json['owns_a_bank_account'],size_of_farm=request.json['size_of_farm'],
         number_of_crops=request.json['number_of_crops'],is_in_a_cooperative=request.json['is_in_a_cooperative'],
         no_of_agronomist_visits=request.json['no_of_agronomist_visits'])
-        db.session.add(card)
-        db.session.commit()
+            db.session.add(card)
+            db.session.commit()
         bvn=request.json['bvn']
         farmer = FarmerTable.query.filter_by(bvn=bvn).all()
         if not farmer:
@@ -695,7 +695,9 @@ class AddScoreCard(Resource):
             recommendations+='Add Conditions!'
         #return {'message':recommendations}
         
-        farmer = pd.DataFrame([['bvn','age','number_of_land','address',
+        farmer = ScoreHistory.query.filter_by(bvn=bvn).all()
+        if not farmer:
+            farmer = pd.DataFrame([['bvn','age','number_of_land','address',
         'owner_caretaker','crop','intercropping', 'machines',
         'estimate_monthly_income','years_cultivating','gender',
         'owns_a_bank_account','size_of_farm','number_of_crops','is_in_a_cooperative',
@@ -704,26 +706,26 @@ class AddScoreCard(Resource):
         'estimate_monthly_income','years_cultivating','gender',
         'owns_a_bank_account','size_of_farm','number_of_crops','is_in_a_cooperative',
         'no_of_agronomist_visits'])
-        for col in farmer.columns:
-            farmer[col] = request.json[col]
+            for col in farmer.columns:
+                farmer[col] = request.json[col]
         #farmer = pd.DataFrame(card, index=[0])
-        print(farmer)
-        farmer['applyLoanAmount'] = 50000
-        farmer = farmer.rename({
+            print(farmer)
+            farmer['applyLoanAmount'] = 50000
+            farmer = farmer.rename({
             'number_of_land':'numberOfLand','estimate_monthly_income':'estimateMonthlyIncome',
             'years_cultivating':'yearsCultivating'
         },axis=1)
-        cols=['age', 'numberOfLand', 'owner_caretaker', 'crop','applyLoanAmount',
+            cols=['age', 'numberOfLand', 'owner_caretaker', 'crop','applyLoanAmount',
             'intercropping', 'machines', 'estimateMonthlyIncome','yearsCultivating']
-        tdf = preprocess_df(farmer[cols])
-        train_cols = ['numberOfLand', 'owner_caretaker', 'intercropping', 'machines',
+            tdf = preprocess_df(farmer[cols])
+            train_cols = ['numberOfLand', 'owner_caretaker', 'intercropping', 'machines',
        'estimateMonthlyIncome',
         'applyLoanAmount',
          'yearsCultivating',
        'crop1', 'crop2', 'age1', 'age2', 'age3', 'age4']
-        score = model.predict_proba(tdf[train_cols])[:,1].round(2)
-        bin=bin_target(score)
-        history = ScoreHistory(bvn=request.json['bvn'],age=request.json['age'],
+            score = model.predict_proba(tdf[train_cols])[:,1].round(2)
+            bin=bin_target(score)
+            history = ScoreHistory(bvn=request.json['bvn'],age=request.json['age'],
         number_of_land=request.json['number_of_land'],address=request.json['address'],
         owner_caretaker=request.json['owner_caretaker'],crop=request.json['crop'],
         intercropping=request.json['intercropping'], machines=request.json['machines'],
@@ -734,8 +736,8 @@ class AddScoreCard(Resource):
         no_of_agronomist_visits=request.json['no_of_agronomist_visits'],
         applyLoanAmount=farmer['applyLoanAmount'][0],
         term_months='term_months',score=score[0], bin=bin[0])
-        db.session.add(history)
-        db.session.commit()
+            db.session.add(history)
+            db.session.commit()
         return jsonify({'message':recommendations})
 
 class Scorecardbvn(Resource):
@@ -801,6 +803,22 @@ class ScoreHistorybvn(Resource):
             db.session.commit()
         else:
             print({"error":True,"message":"Sorry your request can not be processed at the moment","data":"bvn Not Found"})
+        return {'message':'success'}
+
+class ScoreHistoryid(Resource):
+    def get(self, id):
+        farmer = ScoreHistory.query.filter_by(id=id).first()
+        if farmer:
+            return farmer.json()
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"id Not Found"},404
+    def delete(self, id):
+        farmer = ScoreHistory.query.filter_by(id=id).first()
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+        else:
+            print({"error":True,"message":"Sorry your request can not be processed at the moment","data":"id Not Found"})
         return {'message':'success'}
 
 class ScoreFarmer(Resource):
@@ -880,14 +898,20 @@ class ScoreFarmerDragAndDrop(Resource):
 
 class AddLoan(Resource):	
     def post(self):
-        new_data = Loan(
+        loan_type=request.json['loan_type']
+        loan = Loan.query.filter_by(loan_type=loan_type).first()
+        if loan:
+            message = {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Loan type already exists!"}
+        if not loan:
+            new_data = Loan(
         loan_type=request.json['loan_type'],
         repayment_months=request.json['repayment_months'],
         interest_rate_per_annum=request.json['interest_rate_per_annum']
         )
-        db.session.add(new_data)
-        db.session.commit()
-        return new_data.json()
+            db.session.add(new_data)
+            db.session.commit()
+            message = {'message':'success'}
+        return message
 
 class AddLoanTransfer(Resource):	
     def post(self):
@@ -899,7 +923,18 @@ class AddLoanTransfer(Resource):
         db.session.commit()
         return new_data.json()
 
-
+class Loanloan_type(Resource):
+    def get(self, loan_type):
+        loan = Loan.query.filter_by(loan_type=loan_type).first()
+        if loan:
+            return loan.json()
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"loan_type Not Found"},404
+    def delete(self, loan_type):
+        loan = Loan.query.filter_by(loan_type=loan_type).first()
+        db.session.delete(loan)
+        db.session.commit()
+        return {'message':'success'}
 
 # -----------Traceability----------------------------------------------------------------------------------------
 
@@ -1435,7 +1470,8 @@ class Transferbvn(Resource):
     def get(self, bvn):
         farmer = LoanTransfer.query.filter_by(bvn=bvn).all()
         if farmer:
-            return [transfer.json() for transfer in farmer]
+            transfers= [transfer.json() for transfer in farmer]
+            return jsonify({'status': 'success','transfers': transfers})
         else:
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"bvn Not Found"},404
     def delete(self, bvn):
@@ -1446,6 +1482,23 @@ class Transferbvn(Resource):
             return {'message':'success'}
         else:
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"bvn Not Found"},404
+    
+class Transferid(Resource):
+    def get(self, id):
+        farmer = LoanTransfer.query.filter_by(id=id).all()
+        if farmer:
+            transfers= [transfer.json() for transfer in farmer]
+            return jsonify({'status': 'success','transfers': transfers})
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"id Not Found"},404
+    def delete(self, id):
+        farmer = LoanTransfer.query.filter_by(id=id).all()
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {'message':'success'}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"id Not Found"},404
     
 # All Loans, Farmers
 
@@ -1676,40 +1729,10 @@ class AllLoans(Resource):
 
 class AddBulkFarmer(Resource):
     def post(self):
-        #new_file = request.files['kyf_file']
-        #df = request.files.get("kyf_file")#.read().decode("utf-8")#.decode("latin-1")
-        #df = df.stream.read() # This line uses the same variable and worked fine
-            #Convert the FileStorage to list of lists here.
-        #print(df)
-        #stream = io.StringIO(df.decode("UTF8"), newline=None)
-        #print(stream)
-        #reader = csv.reader(stream)
-        #for row in reader:
-            #print(', '.join(row))
-        #df = pd.DataFrame(df)
         csv_raw = request.files.get("kyf_file").read().decode("utf-8")
         csv = StringIO(csv_raw)
         df = pd.read_csv(csv)
         print(df.shape)
-        #with open(new_file, 'rb') as f:
-            #new_file = f.read()
-        #new_file = new_file.read()
-        #new_file = io.BytesIO(open(new_file, 'rb'))
-        #print(new_file)
-        #ext_type = new_file.split('.')[-1]
-        #if (ext_type=='xlsx'|ext_type=='xls'):
-        #storage_filename = 'newfile.xlsx'
-        #filepath = os.path.join(current_app.root_path, 'public\uploads')
-        #filepath = os.path.join(os.environ["HOMEDRIVE"], os.environ["HOMEPATH"], "Desktop")
-        #new_file.save(filepath)
-        #df = pd.read_excel(filepath+'kyf_test.xlsx')
-        #if new_file.ends_with('xls'|'xlsx'):
-            #df = pd.read_excel(new_file)
-        #elif new_file.ends_with('csv'):
-            #df = pd.read_csv(new_file)
-        #else:
-            #return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"csv or excel file not found"}
-            
         if len(df)>0:
             for r in range(1,len(df)):
                 dfr = df.iloc[r,:]
@@ -1816,6 +1839,7 @@ farmland.add_resource(AllFarmland,'/all')
 
 transfer = api.namespace('api/transfer', description='loan transfers')
 transfer.add_resource(Transferbvn,'/bvn=<bvn>')
+transfer.add_resource(Transferid,'/id=<id>')
 transfer.add_resource(AllTransfer,'/all')
 
 practice = api.namespace('api/practice', description='farm practice')
@@ -1833,6 +1857,7 @@ cropcard.add_resource(AllCropcard,'/all')
 
 scorehistory = api.namespace('api/scorehistory', description='scorehistory')
 scorehistory.add_resource(ScoreHistorybvn,'/bvn=<bvn>')
+scorehistory.add_resource(ScoreHistoryid,'/id=<id>')
 scorehistory.add_resource(AllScoreHistory,'/all')
 
 conditions = api.namespace('api/conditions', description='conditions')
@@ -1888,6 +1913,7 @@ recommendation.add_resource(RecommendationTracing,'/tracing_id=<tracing_id>')
 recommendation.add_resource(AllRecommendation,'/all')
 
 loans = api.namespace('api/loan',description='load loans')
+loans.add_resource(Loanloan_type,'/loan_type=<loan_type>')
 loans.add_resource(AllLoans,'/all')
 
 bulk = api.namespace('api/bulk', description='bulk files')
