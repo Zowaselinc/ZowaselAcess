@@ -2,7 +2,7 @@ from datetime import datetime
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_restplus import Resource, Api, fields
+#from flask_restplus import Resource, Api, fields
 #from flask_migrate import Migrate
 from datetime import datetime
 from flask_mysqldb import MySQL
@@ -24,25 +24,26 @@ app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 # connect to the database
 basedir = os.path.abspath(os.path.dirname(__file__))
-#app.config['SECRET_KEY'] = 'Utq:k5*fM["=gz`@EEOL=SgqK#{]~k'
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'zowasel.db')
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://zowasel:Zowaseladmin@1234!@mydb.touchofcloud.com.ng:59714/zowasel'
+
+#app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{USER}:{PASSWORD}@{URLDB}'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://zowasekadmin:zowasel1234!A@zowaselaidb.celbaavi1fuh.us-east-1.rds.amazonaws.com/zowaselai'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 CORS(app, resources={r'/*': {'origins': '*'}})
-
+#CORS(app, resources=r'/api/*', headers='Content-Type')
 
 
 # Create Tables 
 
 class Loan(db.Model):
     __tablename__ = 'loans'
+    
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    loan_type      = db.Column(db.String(200), unique=True)
+    type      = db.Column(db.String(200), unique=True)
+    company      = db.Column(db.String(200))
     repayment_months      = db.Column(db.Integer)
     interest_rate_per_annum      = db.Column(db.Integer)
-    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -50,33 +51,112 @@ class Loan(db.Model):
     def __repr__(self):
         return '<Loan %r>' % self.id
 
-class Cropcard(db.Model):
-    __tablename__ = 'crop_card'
+class BuyersDailyPrice(db.Model):
+    __tablename__ = 'buyers_daily_price'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    farmer_name = db.Column(db.String(200))
-    bvn     = db.Column(db.String(200))
-    crop_name = db.Column(db.String(200))
-    fertilizer_cost      = db.Column(db.String(200), unique=True)
-    fertilizer      = db.Column(db.String(200), unique=True)
-    mechanization_cost      = db.Column(db.String(200), unique=True)
-    mechanization      = db.Column(db.String(200), unique=True)
-    labour_cost      = db.Column(db.String(200), unique=True)
-    labour      = db.Column(db.String(200), unique=True)
-    harvest_cost      = db.Column(db.String(200), unique=True)
-    harvest      = db.Column(db.String(200), unique=True)
-    other_cost      = db.Column(db.String(200), unique=True)
-    others      = db.Column(db.String(200), unique=True)
-    date_filled      = db.Column(db.String(200), unique=True)
-    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    crop      = db.Column(db.String(200))
+    location      = db.Column(db.String(200))
+    classification      = db.Column(db.String(200))
+    min_price      = db.Column(db.Integer)
+    ave_price      = db.Column(db.Integer)
+    max_price      = db.Column(db.Integer)
+    date_filled = db.Column(db.String(200))
+    quality_spec = db.Column(db.String(200))
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
 
     def __repr__(self):
-        return '<Loan %r>' % self.loan_type
+        return '<BuyersDailyPrice %r>' % self.id
 
+class BuyersOffers(db.Model):
+    __tablename__ = 'buyers_offers'
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    crop      = db.Column(db.String(200))
+    location      = db.Column(db.String(200))
+    classification      = db.Column(db.String(200))
+    min_price      = db.Column(db.Integer)
+    ave_price      = db.Column(db.Integer)
+    max_price      = db.Column(db.Integer)
+    date_filled = db.Column(db.String(200))
+    quality_spec = db.Column(db.String(200))
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def json(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
+
+    def __repr__(self):
+        return '<BuyersOffers %r>' % self.id
+
+class FarmGatePrices(db.Model):
+    __tablename__ = 'farmgate_prices'
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    crop      = db.Column(db.String(200))
+    location      = db.Column(db.String(200))
+    classification      = db.Column(db.String(200))
+    min_price      = db.Column(db.Integer)
+    ave_price      = db.Column(db.Integer)
+    max_price      = db.Column(db.Integer)
+    date_filled = db.Column(db.String(200))
+    quality_spec = db.Column(db.String(200))
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def json(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
+
+    def __repr__(self):
+        return '<FarmGatePrices %r>' % self.id
+
+class MarketPrices(db.Model):
+    __tablename__ = 'market_prices'
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    crop      = db.Column(db.String(200))
+    location      = db.Column(db.String(200))
+    classification      = db.Column(db.String(200))
+    min_price      = db.Column(db.Integer)
+    ave_price      = db.Column(db.Integer)
+    max_price      = db.Column(db.Integer)
+    date_filled = db.Column(db.String(200))
+    quality_spec = db.Column(db.String(200))
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def json(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
+
+    def __repr__(self):
+        return '<MarketPrices %r>' % self.id
+
+class Cropcard(db.Model):
+    __tablename__ = 'crop_card'
+    
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    farmer_name = db.Column(db.String(200))
+    bvn     = db.Column(db.String(200))
+    crop_name = db.Column(db.String(200))
+    fertilizer_cost      = db.Column(db.String(200))
+    fertilizer      = db.Column(db.String(200))
+    mechanization_cost      = db.Column(db.String(200))
+    mechanization      = db.Column(db.String(200))
+    labour_cost      = db.Column(db.String(200))
+    labour      = db.Column(db.String(200))
+    harvest_cost      = db.Column(db.String(200))
+    harvest      = db.Column(db.String(200))
+    other_cost      = db.Column(db.String(200))
+    others      = db.Column(db.String(200))
+    date_filled      = db.Column(db.String(200))
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def json(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
+
+    def __repr__(self):
+        return '<Loan %r>' % self.type
+'''
 class ScoreCard(db.Model):
     __tablename__   = 'score_card'
+    
+
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
     age = db.Column(db.String(200))
@@ -94,16 +174,16 @@ class ScoreCard(db.Model):
     number_of_crops = db.Column(db.String(200))
     is_in_a_cooperative = db.Column(db.String(200))
     no_of_agronomist_visits = db.Column(db.String(200))
-    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
 
     def __repr__(self):
         return '<ScoreCard %r>' % self.id
-
-class ScoreHistory(db.Model):
-    __tablename__   = 'score_history'
+'''
+class ScoreCard(db.Model):
+    __tablename__   = 'score_card'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
     age = db.Column(db.String(200))
@@ -125,28 +205,35 @@ class ScoreHistory(db.Model):
     term_months     = db.Column(db.String(200))
     score     = db.Column(db.String(200))
     bin     = db.Column(db.String(200))
-    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
 
     def __repr__(self):
-        return '<ScoreHistory %r>' % self.id
+        return '<ScoreCard %r>' % self.id
 
 
 class LoanTransfer(db.Model):
 
     __tablename__   = 'loantransfers'
-    id     = db.Column(db.Integer, primary_key=True)
-    loan_type      = db.Column(db.String(200))
+    
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    type      = db.Column(db.String(200))
+    company      = db.Column(db.String(200))
     amount             = db.Column(db.String(200))
     repayment_amount = db.Column(db.String(200))
+    repayment_months = db.Column(db.String(200))
     status      = db.Column(db.String(200))
-    farmer_name     = db.Column(db.String(200))
+    group     = db.Column(db.String(200))
     bvn     = db.Column(db.String(200))
+    score     = db.Column(db.String(200))
+    bin     = db.Column(db.String(200))
     transfer_date   = db.Column(db.String(200))
     due_date   = db.Column(db.String(200))
-    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    repaid = db.Column(db.String(200))
+    balance = db.Column(db.String(200))
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -157,8 +244,9 @@ class LoanTransfer(db.Model):
 
 class FarmerTable(db.Model):
     __tablename__   = 'farmer_table'
-    id     = db.Column(db.Integer, unique=True, primary_key=True, autoincrement=True)
-    farmer_id = db.Column(db.String(200), default=generate_uuid, unique=True)
+    #id     = db.Column(db.Integer, unique=True, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, unique=True, primary_key=True)
+    tag = db.Column(db.String(200), default=generate_uuid, unique=True)
     firstname     = db.Column(db.String(200))
     surname     = db.Column(db.String(200))
     middlename     = db.Column(db.String(200))
@@ -170,7 +258,7 @@ class FarmerTable(db.Model):
     maritalstatus     = db.Column(db.String(200))
     bankname = db.Column(db.String(200))
     accountno     = db.Column(db.String(200))
-    bvn     = db.Column(db.String(200))
+    bvn     = db.Column(db.String(200), unique=True)
     meansofid     = db.Column(db.String(200))
     issuedate     = db.Column(db.String(200))
     expirydate     = db.Column(db.String(200))
@@ -205,15 +293,15 @@ class CapitalTable(db.Model):
     __tablename__   = 'capital_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
-    MainIncomeSource     = db.Column(db.String(200))
-    OtherIncomeSource     = db.Column(db.String(200))
-    NoOfIncomeEarners     = db.Column(db.String(200))
-    HasBankAccount     = db.Column(db.String(200))
-    FirstFundingOption     = db.Column(db.String(200))
-    NeedsALoan     = db.Column(db.String(200))
-    PayBackMonths     = db.Column(db.String(200))
-    HarvestQtyChanged     = db.Column(db.String(200))
-    PestExpenseChanged     = db.Column(db.String(200))
+    mainincomesource     = db.Column(db.String(200))
+    otherincomesource     = db.Column(db.String(200))
+    noofincomeearners     = db.Column(db.String(200))
+    hasbankaccount     = db.Column(db.String(200))
+    firstfundingoption     = db.Column(db.String(200))
+    needsaloan     = db.Column(db.String(200))
+    paybackmonths     = db.Column(db.String(200))
+    harvestqtychanged     = db.Column(db.String(200))
+    pestexpensechanged     = db.Column(db.String(200))
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}  
@@ -224,24 +312,24 @@ class CreditAccessTable(db.Model):
     __tablename__   = 'credit_access_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
-    HasServedAsTreasurer     = db.Column(db.String(200))
-    DurationAsTreasurer     = db.Column(db.String(200))
-    SavesMoneyMonthly     = db.Column(db.String(200))
-    SavingsAmount     = db.Column(db.String(200))
-    HadDifficultyRepaying     = db.Column(db.String(200))
-    DifficultLoanAmount     = db.Column(db.String(200))
-    DifficultyReason     = db.Column(db.String(200))
-    NoOfDifficultLoans     = db.Column(db.String(200))
-    NoOfRepaidLoans     = db.Column(db.String(200))
-    NoOfLoansOnTime     = db.Column(db.String(200))
-    EstMonthlyIncome  = db.Column(db.String(200))
-    CostOfCultivation     = db.Column(db.String(200))
-    FarmProduceExchanged    = db.Column(db.String(200))
-    NoOfTimesExchanged     = db.Column(db.String(200))
-    Collateral    = db.Column(db.String(200))
-    ApplyLoanAmount     = db.Column(db.String(200))
-    YearsOfCultivating     = db.Column(db.String(200))
-    AnnualTurnover     = db.Column(db.String(200))
+    hasservedastreasurer     = db.Column(db.String(200))
+    durationastreasurer     = db.Column(db.String(200))
+    savesmoneymonthly     = db.Column(db.String(200))
+    savingsamount     = db.Column(db.String(200))
+    haddifficultyrepaying     = db.Column(db.String(200))
+    difficultloanamount     = db.Column(db.String(200))
+    difficultyreason     = db.Column(db.String(200))
+    noofdifficultloans     = db.Column(db.String(200))
+    noofrepaidloans     = db.Column(db.String(200))
+    noofloansontime     = db.Column(db.String(200))
+    estmonthlyincome  = db.Column(db.String(200))
+    costofcultivation     = db.Column(db.String(200))
+    farmproduceexchanged    = db.Column(db.String(200))
+    nooftimesexchanged     = db.Column(db.String(200))
+    collateral    = db.Column(db.String(200))
+    applyloanamount     = db.Column(db.String(200))
+    yearsofcultivating     = db.Column(db.String(200))
+    annualturnover     = db.Column(db.String(200))
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -251,13 +339,13 @@ class CreditHistoryTable(db.Model):
     __tablename__   = 'credit_history_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
-    HasTakenLoanBefore     = db.Column(db.String(200))
-    SourceOfLoan     = db.Column(db.String(200))
-    PastLoanAmount     = db.Column(db.String(200))
-    HowLoanWasRepaid     = db.Column(db.String(200))
-    IsReadyToPayInterest     = db.Column(db.String(200))
-    CanProvideCollateral     = db.Column(db.String(200))
-    WhyNoCollateral = db.Column(db.String(200))
+    hastakenloanbefore     = db.Column(db.String(200))
+    sourceofloan     = db.Column(db.String(200))
+    pastloanamount     = db.Column(db.String(200))
+    howloanwasrepaid     = db.Column(db.String(200))
+    isreadytopayinterest     = db.Column(db.String(200))
+    canprovidecollateral     = db.Column(db.String(200))
+    whynocollateral = db.Column(db.String(200))
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
@@ -267,29 +355,29 @@ class ProductivityViabilityTable(db.Model):
     __tablename__   = 'productivity_viability_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
-    CropsCultivated     = db.Column(db.String(200))
-    GrowsCrops     = db.Column(db.String(200))
-    OilPalmFertilizers     = db.Column(db.String(200))
-    CocoaFertilizers     = db.Column(db.String(200))
-    FertilizerFrequency     = db.Column(db.String(200))
-    PestFungHerbicides     = db.Column(db.String(200))
-    StageChemicalApplied     = db.Column(db.String(200))
-    NoOfOilDrums     = db.Column(db.String(200))
-    NoOfBagsSesame     = db.Column(db.String(200))
-    NoOfBagsSoyaBeans     = db.Column(db.String(200))
-    NoOfBagsMaize     = db.Column(db.String(200))
-    NoOfBagsSorghum    = db.Column(db.String(200))
-    NoOfBagsCocoaBeans     = db.Column(db.String(200))
-    CropTrainedOn     = db.Column(db.String(200))
-    WhereWhenWhoTrained     = db.Column(db.String(200))
-    NoOfTraining     = db.Column(db.String(200))
-    PruningFrequency     = db.Column(db.String(200))
-    CropBasedProblems     = db.Column(db.String(200))
-    TooYoungCrops     = db.Column(db.String(200))
-    YoungCropsAndStage     = db.Column(db.String(200))
-    CultivationStartdate     = db.Column(db.String(200))
-    IsIntensiveFarmingPractised     = db.Column(db.String(200))
-    EconomicActivities     = db.Column(db.String(200))
+    cropscultivated     = db.Column(db.String(200))
+    growscrops     = db.Column(db.String(200))
+    oilpalmfertilizers     = db.Column(db.String(200))
+    cocoafertilizers     = db.Column(db.String(200))
+    fertilizerfrequency     = db.Column(db.String(200))
+    pestfungherbicides     = db.Column(db.String(200))
+    stagechemicalapplied     = db.Column(db.String(200))
+    noofoildrums     = db.Column(db.String(200))
+    noofbagssesame     = db.Column(db.String(200))
+    noofbagssoyabeans     = db.Column(db.String(200))
+    noofbagsmaize     = db.Column(db.String(200))
+    noofbagssorghum    = db.Column(db.String(200))
+    noofbagscocoabeans     = db.Column(db.String(200))
+    croptrainedon     = db.Column(db.String(200))
+    wherewhenwhotrained     = db.Column(db.String(200))
+    nooftraining     = db.Column(db.String(200))
+    pruningfrequency     = db.Column(db.String(200))
+    cropbasedproblems     = db.Column(db.String(200))
+    tooyoungcrops     = db.Column(db.String(200))
+    youngcropsandstage     = db.Column(db.String(200))
+    cultivationstartdate     = db.Column(db.String(200))
+    isintensivefarmingpractised     = db.Column(db.String(200))
+    economicactivities     = db.Column(db.String(200))
     
     
     def json(self):
@@ -301,16 +389,16 @@ class AgronomyServicesTable(db.Model):
     __tablename__   = 'agronomy_services_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
-    KnowsAgriProcessed     = db.Column(db.String(200))
-    AgronomistThatTrainedYou     = db.Column(db.String(200))
-    CanManageEcosystem    = db.Column(db.String(200))
-    HowToManageEcosystem     = db.Column(db.String(200))
-    IsTrainingBeneficial     = db.Column(db.String(200))
-    FieldRoutines     = db.Column(db.String(200))
-    HarvestingChanges     = db.Column(db.String(200))
-    IsCropCalendarBeneficial     = db.Column(db.String(200))
-    CropCalendarBenefits     = db.Column(db.String(200))
-    RecordKeepingBenefits     = db.Column(db.String(200))
+    knowsagriprocessed     = db.Column(db.String(200))
+    agronomistthattrainedyou     = db.Column(db.String(200))
+    canmanageecosystem    = db.Column(db.String(200))
+    howtomanageecosystem     = db.Column(db.String(200))
+    istrainingbeneficial     = db.Column(db.String(200))
+    fieldroutines     = db.Column(db.String(200))
+    harvestingchanges     = db.Column(db.String(200))
+    iscropcalendarbeneficial     = db.Column(db.String(200))
+    cropcalendarbenefits     = db.Column(db.String(200))
+    recordkeepingbenefits     = db.Column(db.String(200))
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
@@ -320,12 +408,12 @@ class PsychometricsTable(db.Model):
     __tablename__   = 'psychometrics_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
-    FluidIntelligence     = db.Column(db.String(200))
-    AttitudesandBeliefs     = db.Column(db.String(200))
-    AgribusinessSkills     = db.Column(db.String(200))
-    EthicsandHonesty     = db.Column(db.String(200))
-    SavesEnough     = db.Column(db.String(200))
-    HasLazyNeighbors     = db.Column(db.String(200))
+    fluidintelligence     = db.Column(db.String(200))
+    attitudesandbeliefs     = db.Column(db.String(200))
+    agribusinessskills     = db.Column(db.String(200))
+    ethicsandhonesty     = db.Column(db.String(200))
+    savesenough     = db.Column(db.String(200))
+    haslazyneighbors     = db.Column(db.String(200))
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
@@ -334,20 +422,20 @@ class MobileDataTable(db.Model):
     __tablename__   = 'mobile_data_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
-    MobilePhoneType     = db.Column(db.String(200))
-    Avweeklyphoneuse     = db.Column(db.String(200))
-    Callsoutnumber     = db.Column(db.String(200))
-    Callsoutminutes     = db.Column(db.String(200))
-    Callsinnumber     = db.Column(db.String(200))
-    Callinminutes     = db.Column(db.String(200))
-    SMSsent     = db.Column(db.String(200))
-    Dataprecedingplanswitch     = db.Column(db.String(200))
-    Billpaymenthistory     = db.Column(db.String(200))
-    Avweeklydatarefill     = db.Column(db.String(200))
-    NoOfmobileapps     = db.Column(db.String(200))
-    AvTimeSpentOnApp     = db.Column(db.String(200))
-    MobileAppKinds     = db.Column(db.String(200))
-    AppDeleteRate     = db.Column(db.String(200))
+    mobilephonetype     = db.Column(db.String(200))
+    avweeklyphoneuse     = db.Column(db.String(200))
+    callsoutnumber     = db.Column(db.String(200))
+    callsoutminutes     = db.Column(db.String(200))
+    callsinnumber     = db.Column(db.String(200))
+    callinminutes     = db.Column(db.String(200))
+    smssent     = db.Column(db.String(200))
+    dataprecedingplanswitch     = db.Column(db.String(200))
+    billpaymenthistory     = db.Column(db.String(200))
+    avweeklydatarefill     = db.Column(db.String(200))
+    noOfmobileapps     = db.Column(db.String(200))
+    avtimespentonapp     = db.Column(db.String(200))
+    mobileappkinds     = db.Column(db.String(200))
+    appdeleterate     = db.Column(db.String(200))
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
@@ -356,17 +444,17 @@ class FarmlandTable(db.Model):
     __tablename__   = 'farmland_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
-    NoOfFarmlands     = db.Column(db.String(200))
-    OwnerOrCaretaker     = db.Column(db.String(200))
-    FarmOwnerName     = db.Column(db.String(200))
-    FarmOwnerPhoneNo     = db.Column(db.String(200))
-    RelationshipWithOwner     = db.Column(db.String(200))
-    InheritedFrom     = db.Column(db.String(200))
-    SizeOfFarm     = db.Column(db.String(200))
-    FarmCoordinates     = db.Column(db.String(200))
-    FarmAddress     = db.Column(db.String(200))
-    KeepsAnimals     = db.Column(db.String(200))
-    AnimalsFeedOn     = db.Column(db.String(200))
+    nooffarmlands     = db.Column(db.String(200))
+    ownerorcaretaker     = db.Column(db.String(200))
+    farmownername     = db.Column(db.String(200))
+    farmownerphoneno     = db.Column(db.String(200))
+    relationshipwithowner     = db.Column(db.String(200))
+    inheritedfrom     = db.Column(db.String(200))
+    sizeoffarm     = db.Column(db.String(200))
+    farmcoordinates     = db.Column(db.String(200))
+    farmaddress     = db.Column(db.String(200))
+    keepsanimals     = db.Column(db.String(200))
+    animalsfeedon     = db.Column(db.String(200))
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
@@ -375,13 +463,13 @@ class CapacityTable(db.Model):
     __tablename__   = 'capacity_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
-    HowLongBeenFarming     = db.Column(db.String(200))
-    ParticipatedInTraining     = db.Column(db.String(200))
-    FarmingPractice     = db.Column(db.String(200))
-    KeepsAnimals     = db.Column(db.String(200))
-    HasCooperative     = db.Column(db.String(200))
-    CooperativeName     = db.Column(db.String(200))
-    EducationLevel     = db.Column(db.String(200))
+    howlongbeenfarming     = db.Column(db.String(200))
+    participatedintraining     = db.Column(db.String(200))
+    farmingpractice     = db.Column(db.String(200))
+    keepsanimals     = db.Column(db.String(200))
+    hascooperative     = db.Column(db.String(200))
+    cooperativename     = db.Column(db.String(200))
+    educationlevel     = db.Column(db.String(200))
     
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -392,20 +480,20 @@ class FarmPractice(db.Model):
     __tablename__   = 'farm_practice_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
-    SizeOfFarm     = db.Column(db.String(200))
-    FarmIsRentedorLeased     = db.Column(db.String(200))
-    NoOfYearsLeased     = db.Column(db.String(200))
-    UsesMachines     = db.Column(db.String(200))
-    RotatesCrops     = db.Column(db.String(200))
-    NoOfHectaresProducedYearly     = db.Column(db.String(200))
-    ApproxFertilizerUse     = db.Column(db.String(200))
-    NoOfFertlizerApplications     = db.Column(db.String(200))
-    DecisionForSpraying     = db.Column(db.String(200))
-    WeedControlPractice     = db.Column(db.String(200))
-    EstimatedIncomePerCrop     = db.Column(db.String(200))
-    CropthatcanSellWell     = db.Column(db.String(200))
-    HasFarmPlanOrProject     = db.Column(db.String(200))
-    FarmProjectInfo     = db.Column(db.String(200))
+    sizeoffarm     = db.Column(db.String(200))
+    farmisrentedorleased     = db.Column(db.String(200))
+    noofyearsleased     = db.Column(db.String(200))
+    usesmachines     = db.Column(db.String(200))
+    rotatescrops     = db.Column(db.String(200))
+    noOfhectaresproducedyearly     = db.Column(db.String(200))
+    approxfertilizeruse     = db.Column(db.String(200))
+    nooffertlizerapplications     = db.Column(db.String(200))
+    decisionforspraying     = db.Column(db.String(200))
+    weedcontrolpractice     = db.Column(db.String(200))
+    estimatedincomepercrop     = db.Column(db.String(200))
+    cropthatcansellwell     = db.Column(db.String(200))
+    hasfarmplanorproject     = db.Column(db.String(200))
+    farmprojectinfo     = db.Column(db.String(200))
     
     
     def json(self):
@@ -416,12 +504,12 @@ class MechanizationTable(db.Model):
     __tablename__   = 'mechanization_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
-    MachinesUsed     = db.Column(db.String(200))
-    MachineHasHelped     = db.Column(db.String(200))
-    AdviseMachineOrLabour     = db.Column(db.String(200))
-    OtherMachinesNeeded     = db.Column(db.String(200))
-    CanAcquireMoreLands     = db.Column(db.String(200))
-    PercentCostSaved     = db.Column(db.String(200)) 
+    machinesused     = db.Column(db.String(200))
+    machinehashelped     = db.Column(db.String(200))
+    advisemachineorlabour     = db.Column(db.String(200))
+    othermachinesneeded     = db.Column(db.String(200))
+    canacquiremorelands     = db.Column(db.String(200))
+    percentcostsaved     = db.Column(db.String(200)) 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
@@ -461,24 +549,24 @@ class CareTable(db.Model):
     __tablename__ = 'care_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
-    HealthCentLoc= db.Column(db.String(200))
-    HealthCentCount= db.Column(db.String(200))
-    HealthCentDistance= db.Column(db.String(200))
-    HealthCentFunctional= db.Column(db.String(200))
-    Affordable= db.Column(db.String(200))
-    FarmDistance= db.Column(db.String(200))
-    InjuryEvent= db.Column(db.String(200))
-    FirstAid= db.Column(db.String(200))
-    LastCheck= db.Column(db.String(200))
-    InSchool= db.Column(db.String(200))
-    Level= db.Column(db.String(200))
-    SchoolCount= db.Column(db.String(200))
-    SchoolFunctional= db.Column(db.String(200))
-    Qualification= db.Column(db.String(200))
-    StudyTime= db.Column(db.String(200))
-    StudyWhere= db.Column(db.String(200))
-    AltIncomeSource= db.Column(db.String(200))
-    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    healthcentloc= db.Column(db.String(200))
+    healthcentcount= db.Column(db.String(200))
+    healthcentdistance= db.Column(db.String(200))
+    healthcentfunctional= db.Column(db.String(200))
+    affordable= db.Column(db.String(200))
+    farmdistance= db.Column(db.String(200))
+    injuryevent= db.Column(db.String(200))
+    firstaid= db.Column(db.String(200))
+    lastcheck= db.Column(db.String(200))
+    inschool= db.Column(db.String(200))
+    level= db.Column(db.String(200))
+    schoolcount= db.Column(db.String(200))
+    schoolfunctional= db.Column(db.String(200))
+    qualification= db.Column(db.String(200))
+    studytime= db.Column(db.String(200))
+    studywhere= db.Column(db.String(200))
+    altIncomesource= db.Column(db.String(200))
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -489,37 +577,37 @@ class Planet(db.Model):
     __tablename__ = 'planet_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
-    PlanToExpand= db.Column(db.String(200))
-    Crop= db.Column(db.String(200))
-    Variety= db.Column(db.String(200))
-    RaiseOrBuy= db.Column(db.String(200))
-    BuyWhere= db.Column(db.String(200))
-    SeedlingPrice= db.Column(db.String(200))
-    QtyBought= db.Column(db.String(200))
-    DegradedLand= db.Column(db.String(200))
-    CropRotation= db.Column(db.String(200))
-    Season= db.Column(db.String(200))
-    Disaster= db.Column(db.String(200))
-    Burning= db.Column(db.String(200))
-    Mill= db.Column(db.String(200))
-    EnergySource= db.Column(db.String(200))
-    ReplacedTree= db.Column(db.String(200))
-    Placement= db.Column(db.String(200))
-    SourceOfWater= db.Column(db.String(200))
-    CoverCrops= db.Column(db.String(200))
-    Intercrop= db.Column(db.String(200))
-    CropIntercropped= db.Column(db.String(200))
-    WasteMgt= db.Column(db.String(200))
-    WasteDisposal= db.Column(db.String(200))
-    RecycleWaste= db.Column(db.String(200))
-    Suffered= db.Column(db.String(200))
-    WhenSuffered= db.Column(db.String(200))
-    GreyWater= db.Column(db.String(200))
-    RecycleGreyWater= db.Column(db.String(200))
-    Pollution= db.Column(db.String(200))
-    PollutionFreq= db.Column(db.String(200))
-    Measures= db.Column(db.String(200))
-    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    plantoexpand= db.Column(db.String(200))
+    crop= db.Column(db.String(200))
+    variety= db.Column(db.String(200))
+    raiseorbuy= db.Column(db.String(200))
+    buywhere= db.Column(db.String(200))
+    seedlingprice= db.Column(db.String(200))
+    qtybought= db.Column(db.String(200))
+    degradedland= db.Column(db.String(200))
+    croprotation= db.Column(db.String(200))
+    season= db.Column(db.String(200))
+    disaster= db.Column(db.String(200))
+    burning= db.Column(db.String(200))
+    mill= db.Column(db.String(200))
+    energysource= db.Column(db.String(200))
+    replacedtree= db.Column(db.String(200))
+    placement= db.Column(db.String(200))
+    sourceofwater= db.Column(db.String(200))
+    covercrops= db.Column(db.String(200))
+    intercrop= db.Column(db.String(200))
+    cropintercropped= db.Column(db.String(200))
+    wastemgt= db.Column(db.String(200))
+    wastedisposal= db.Column(db.String(200))
+    recyclewaste= db.Column(db.String(200))
+    suffered= db.Column(db.String(200))
+    whensuffered= db.Column(db.String(200))
+    greywater= db.Column(db.String(200))
+    recyclegreywater= db.Column(db.String(200))
+    pollution= db.Column(db.String(200))
+    pollutionfreq= db.Column(db.String(200))
+    measures= db.Column(db.String(200))
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -530,22 +618,22 @@ class Safety(db.Model):
     __tablename__ = 'safety_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
-    Ferment  = db.Column(db.String(200))
-    FermentDays  = db.Column(db.String(200))
-    FermentReason  = db.Column(db.String(200))
-    BrokenQty  = db.Column(db.String(200))
-    DoWithBroken  = db.Column(db.String(200))
-    UnripeQty  = db.Column(db.String(200))
-    DoWithUnripe  = db.Column(db.String(200))
-    CocoaStore  = db.Column(db.String(200))
-    FFBStore  = db.Column(db.String(200))
-    Herbicide  = db.Column(db.String(200))
-    HerbicideStore  = db.Column(db.String(200))
-    AgroChemSource  = db.Column(db.String(200))
-    HarvestTool  = db.Column(db.String(200))
-    Wear  = db.Column(db.String(200))
-    Disposal  = db.Column(db.String(200))
-    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    ferment  = db.Column(db.String(200))
+    fermentdays  = db.Column(db.String(200))
+    fermentreason  = db.Column(db.String(200))
+    brokenqty  = db.Column(db.String(200))
+    dowithbroken  = db.Column(db.String(200))
+    unripeqty  = db.Column(db.String(200))
+    dowithunripe  = db.Column(db.String(200))
+    cocoastore  = db.Column(db.String(200))
+    ffbstore  = db.Column(db.String(200))
+    herbicide  = db.Column(db.String(200))
+    herbicidestore  = db.Column(db.String(200))
+    agrochemsource  = db.Column(db.String(200))
+    harvesttool  = db.Column(db.String(200))
+    wear  = db.Column(db.String(200))
+    disposal  = db.Column(db.String(200))
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -556,32 +644,32 @@ class LivingTable(db.Model):
     __tablename__ = 'living_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
-    HouseOwned = db.Column(db.String(200))
-    StaysWithFamily = db.Column(db.String(200))
-    RelationshipWithOwner = db.Column(db.String(200))
-    HouseHoldEats = db.Column(db.String(200))
-    MaleUnderAge = db.Column(db.String(200))
-    FemaleUnderAge = db.Column(db.String(200))
-    ChildrenUnderAge = db.Column(db.String(200))
-    MaleAboveAge = db.Column(db.String(200))
-    FemaleAboveAge = db.Column(db.String(200))
-    ChildrenAboveAge = db.Column(db.String(200))
-    LivesWith = db.Column(db.String(200))
-    OwnOtherLands = db.Column(db.String(200))
-    StandardofLiving = db.Column(db.String(200))
-    SourceOfWater = db.Column(db.String(200))
-    SourceEverytime = db.Column(db.String(200))
-    CookingMethod = db.Column(db.String(200))
-    HaveElectricity = db.Column(db.String(200))
-    PowerPayment = db.Column(db.String(200))
-    Typeoftoilet = db.Column(db.String(200))
-    KitchenSink = db.Column(db.String(200))
-    HasGroup = db.Column(db.String(200))
+    houseowned = db.Column(db.String(200))
+    stayswithfamily = db.Column(db.String(200))
+    relationshipwithowner = db.Column(db.String(200))
+    householdeats = db.Column(db.String(200))
+    maleunderage = db.Column(db.String(200))
+    femaleunderage = db.Column(db.String(200))
+    childrenunderage = db.Column(db.String(200))
+    maleaboveage = db.Column(db.String(200))
+    femaleaboveage = db.Column(db.String(200))
+    childrenaboveage = db.Column(db.String(200))
+    liveswith = db.Column(db.String(200))
+    ownotherlands = db.Column(db.String(200))
+    standardofliving = db.Column(db.String(200))
+    sourceofwater = db.Column(db.String(200))
+    sourceeverytime = db.Column(db.String(200))
+    cookingmethod = db.Column(db.String(200))
+    haveelectricity = db.Column(db.String(200))
+    powerpayment = db.Column(db.String(200))
+    typeoftoilet = db.Column(db.String(200))
+    kitchensink = db.Column(db.String(200))
+    hasgroup = db.Column(db.String(200))
     group = db.Column(db.String(200))
-    Position = db.Column(db.String(200))
-    HasAccessedInput = db.Column(db.String(200))
-    Input = db.Column(db.String(200))
-    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    position = db.Column(db.String(200))
+    hasaccessedInput = db.Column(db.String(200))
+    input = db.Column(db.String(200))
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -595,9 +683,9 @@ class ConditionsTable(db.Model):
     duration     = db.Column(db.String(200))
     seller     = db.Column(db.String(200))
     seller_mou     = db.Column(db.String(200))
-    CropYieldPrediction     = db.Column(db.String(200), default='0')
-    CropExpectedMarketValue      = db.Column(db.String(200), default='0')
-    ZowaselMarketplacePriceOffers     = db.Column(db.String(200), default='0')
+    cropyieldprediction     = db.Column(db.String(200), default='0')
+    cropexpectedmarketvalue      = db.Column(db.String(200), default='0')
+    zowaselmarketplacepriceoffers     = db.Column(db.String(200), default='0')
     
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -607,7 +695,7 @@ class ConditionsTable(db.Model):
 class CropInfo(db.Model):
     __tablename__   = 'crop_info'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
     tracing_id     = db.Column(db.String(200))
     crop_type  = db.Column(db.String(200))
     sourcing_location  = db.Column(db.String(200))
@@ -627,7 +715,7 @@ class CropInfo(db.Model):
 class CropQuality(db.Model):
     __tablename__   = 'crop_quality'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
     tracing_id     = db.Column(db.String(200))
     moisture_content  = db.Column(db.String(200))
     foreign_matter  = db.Column(db.String(200))
@@ -660,13 +748,13 @@ class CropQuality(db.Model):
 class InputsInfo(db.Model):
     __tablename__   = 'inputs_info'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
     tracing_id     = db.Column(db.String(200))
-    Fertilizers  = db.Column(db.String(200))
-    Herbicides  = db.Column(db.String(200))
-    Fungicides  = db.Column(db.String(200))
-    Insecticides  = db.Column(db.String(200))
-    Seeds  = db.Column(db.String(200))
+    fertilizers  = db.Column(db.String(200))
+    herbicides  = db.Column(db.String(200))
+    fungicides  = db.Column(db.String(200))
+    insecticides  = db.Column(db.String(200))
+    seeds  = db.Column(db.String(200))
     
 
     def json(self):
@@ -677,7 +765,7 @@ class InputsInfo(db.Model):
 class Warehouse(db.Model):
     __tablename__   = 'warehouse_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
     tracing_id     = db.Column(db.String(200))
     location  = db.Column(db.String(200))
     warehouse_type  = db.Column(db.String(200))
@@ -695,7 +783,7 @@ class Warehouse(db.Model):
 class Shipment(db.Model):
     __tablename__   = 'shipment_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
     tracing_id     = db.Column(db.String(200))
     location  = db.Column(db.String(200))
     loading_date  = db.Column(db.String(200))
@@ -729,7 +817,7 @@ class Shipment(db.Model):
 class Recommendation(db.Model):
     __tablename__   = 'recommendation_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
     tracing_id     = db.Column(db.String(200))
     rec_one  = db.Column(db.String(200))
     rec_two  = db.Column(db.String(200))
@@ -743,14 +831,14 @@ class Recommendation(db.Model):
 class ScoreAnalytics(db.Model):
     __tablename__   = 'score_analytics'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    date_created    = db.Column(db.String(200), default=datetime.utcnow)
+    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
     bvn     = db.Column(db.String(200))
-    Scores  = db.Column(db.String(200))
-    Conditions  = db.Column(db.String(200))
-    Capital  = db.Column(db.String(200))
-    Collateral  = db.Column(db.String(200))
-    Capacity  = db.Column(db.String(200))
-    Character  = db.Column(db.String(200))
+    scores  = db.Column(db.String(200))
+    conditions  = db.Column(db.String(200))
+    capital  = db.Column(db.String(200))
+    collateral  = db.Column(db.String(200))
+    capacity  = db.Column(db.String(200))
+    character  = db.Column(db.String(200))
     
 
     def json(self):

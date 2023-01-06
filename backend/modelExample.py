@@ -11,12 +11,14 @@ def preprocess_yearsCultivating(df):
                                 "11-20":3,'10 to 15 years':3,'15 to 20 years':3,
                                 "21-30":4,"31-40":4,"41-Above":4,'20 to 25 years':4,'25 years and more':4}}
     df=df.replace(cleanup)
+    df.yearsCultivating[~df.yearsCultivating.isin(list(range(0,10)))]=-999
     return(df)
 def preprocess_estimateMonthlyIncome(df):
     cleanup={"estimateMonthlyIncome":{"below-50k":1,"50k-100k":1,"100k-250k":1,"250k-500k":1,'Less than 500,000':1,
                                       "500k-1m":2,'500,000 to 1,000,000':2,
                                       "1m-Above":3,'1,000,000 and more':3}}
     df=df.replace(cleanup)
+    df.estimateMonthlyIncome[~df.estimateMonthlyIncome.isin(list(range(0,4)))]=-999
     return(df)
 #def preprocess_applyLoanAmount(df):
     #cleanup={"applyLoanAmount":{"below-50k":50,"50k-100k":100,"100k-250k":250,"250k-500k":500,"500k-1m":500,"1m-Above":1000}}
@@ -26,16 +28,19 @@ def preprocess_intercropping(df):
     cleanup={"intercropping":{"No":1,'Mixed cropping':1,
                               "Yes":2,'Intercropping':2}}
     df=df.replace(cleanup)
+    df.intercropping[~df.intercropping.isin(list(range(0,3)))]=-999
     return(df)
 def preprocess_machines(df):
     cleanup={"machines":{"No":0,"Yes":2}}
     df=df.replace(cleanup)
+    df.machines[~df.machines.isin(list(range(0,3)))]=-999
     return(df)
 def preprocess_owner_caretaker(df):
     cleanup={"owner_caretaker":{"Owner":3,
                                 "Rental":1,"Lease":1,"Inherited":1,
                                 "Caretaker":1}}
     df=df.replace(cleanup)
+    df.owner_caretaker[~df.owner_caretaker.isin(list(range(0,3)))]=-999
     return(df)
 
 def preprocess_crop(df):
@@ -75,6 +80,6 @@ def preprocess_df(df):
     df=preprocess_age(df)
     return df
 def bin_target(y):
-    score_cardbin = np.concatenate(([0], [0.5,0.9,0.98], [1]))
+    score_cardbin = np.concatenate(([0], [0.5,0.67,0.83], [1]))
     y = pd.cut(y,score_cardbin,labels=['D','C','B','A'])
     return y

@@ -1,0 +1,7 @@
+bvn,age,number_of_land,address,owner_caretaker,crop,intercropping,machines,estimate_monthly_income,years_cultivating,gender,owns_a_bank_account,size_of_farm,number_of_crops,is_in_a_cooperative,no_of_agronomist_visits
+8ujj,25 or less,Less than 3 farms,Located in one area,Owner,Food crops,Mixed cropping,Yes,"Less than 500,000",Less than 5 years,Male,Yes,below 25 hectars,Yes,Yes,More than once a month
+980k,25-34,More than 3 farms,Located in different area,Rental,Cash crops,Intercropping,No,"500,000 to 1,000,000",5 to 10 years,Female,No,25 hectars and more,No,No,Less than once a month
+088m,35 to 45,More than 3 farms,Located in one area,Lease,Food crops,Mixed cropping,Yes,"1,000,000 and more",10 to 15 years,Male,Yes,below 25 hectars,Yes,Yes,More than once a month
+088mh,45 or more,Less than 3 farms,Located in different area,Inherited,Cash crops,Intercropping,No,"1,000,000 and more",15 to 20 years,Female,No,25 hectars and more,No,No,Less than once a month
+709788,45 or more,More than 3 farms,Located in one area,Caretaker,Food crops,Mixed cropping,Yes,"1,000,000 and more",20 to 25 years,Male,Yes,below 25 hectars,Yes,Yes,More than once a month
+i8988,45 or more,More than 3 farms,Located in different area,Inherited,Cash crops,Intercropping,No,"1,000,000 and more",25 years and more,Female,No,25 hectars and more,No,No,Less than once a month
