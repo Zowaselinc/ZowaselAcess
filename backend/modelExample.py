@@ -78,6 +78,7 @@ def preprocess_df(df):
     df=preprocess_owner_caretaker(df)
     df=preprocess_crop(df)
     df=preprocess_age(df)
+    df=df.rename({'numberOfLand':'number_of_land','estimateMonthlyIncome':'estimate_monthly_income','yearsCultivating':'years_cultivating','applyLoanAmount':'apply_loan_amount'},axis=1)
     return df
 def bin_target(y):
     score_cardbin = np.concatenate(([0], [0.5,0.67,0.83], [1]))

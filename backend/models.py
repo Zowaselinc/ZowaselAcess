@@ -202,7 +202,6 @@ class ScoreCard(db.Model):
     is_in_a_cooperative = db.Column(db.String(200))
     no_of_agronomist_visits = db.Column(db.String(200))
     applyLoanAmount     = db.Column(db.String(200))
-    term_months     = db.Column(db.String(200))
     score     = db.Column(db.String(200))
     bin     = db.Column(db.String(200))
     date_created    = db.Column(db.DateTime, default=datetime.utcnow)
