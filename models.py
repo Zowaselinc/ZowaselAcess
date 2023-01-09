@@ -43,7 +43,7 @@ class Loan(db.Model):
     company      = db.Column(db.String(200))
     repayment_months      = db.Column(db.Integer)
     interest_rate_per_annum      = db.Column(db.Integer)
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -62,7 +62,7 @@ class BuyersDailyPrice(db.Model):
     max_price      = db.Column(db.Integer)
     date_filled = db.Column(db.String(200))
     quality_spec = db.Column(db.String(200))
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -81,7 +81,7 @@ class BuyersOffers(db.Model):
     max_price      = db.Column(db.Integer)
     date_filled = db.Column(db.String(200))
     quality_spec = db.Column(db.String(200))
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -100,7 +100,7 @@ class FarmGatePrices(db.Model):
     max_price      = db.Column(db.Integer)
     date_filled = db.Column(db.String(200))
     quality_spec = db.Column(db.String(200))
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -119,7 +119,7 @@ class MarketPrices(db.Model):
     max_price      = db.Column(db.Integer)
     date_filled = db.Column(db.String(200))
     quality_spec = db.Column(db.String(200))
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -145,7 +145,7 @@ class Cropcard(db.Model):
     other_cost      = db.Column(db.String(200))
     others      = db.Column(db.String(200))
     date_filled      = db.Column(db.String(200))
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -174,7 +174,7 @@ class ScoreCard(db.Model):
     number_of_crops = db.Column(db.String(200))
     is_in_a_cooperative = db.Column(db.String(200))
     no_of_agronomist_visits = db.Column(db.String(200))
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -204,7 +204,7 @@ class ScoreCard(db.Model):
     applyLoanAmount     = db.Column(db.String(200))
     score     = db.Column(db.String(200))
     bin     = db.Column(db.String(200))
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -232,7 +232,7 @@ class LoanTransfer(db.Model):
     due_date   = db.Column(db.String(200))
     repaid = db.Column(db.String(200))
     balance = db.Column(db.String(200))
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -565,7 +565,7 @@ class CareTable(db.Model):
     studytime= db.Column(db.String(200))
     studywhere= db.Column(db.String(200))
     altIncomesource= db.Column(db.String(200))
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -606,7 +606,7 @@ class Planet(db.Model):
     pollution= db.Column(db.String(200))
     pollutionfreq= db.Column(db.String(200))
     measures= db.Column(db.String(200))
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -632,7 +632,7 @@ class Safety(db.Model):
     harvesttool  = db.Column(db.String(200))
     wear  = db.Column(db.String(200))
     disposal  = db.Column(db.String(200))
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -668,7 +668,7 @@ class LivingTable(db.Model):
     position = db.Column(db.String(200))
     hasaccessedInput = db.Column(db.String(200))
     input = db.Column(db.String(200))
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -694,7 +694,7 @@ class ConditionsTable(db.Model):
 class CropInfo(db.Model):
     __tablename__   = 'crop_info'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
     tracing_id     = db.Column(db.String(200))
     crop_type  = db.Column(db.String(200))
     sourcing_location  = db.Column(db.String(200))
@@ -714,7 +714,7 @@ class CropInfo(db.Model):
 class CropQuality(db.Model):
     __tablename__   = 'crop_quality'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
     tracing_id     = db.Column(db.String(200))
     moisture_content  = db.Column(db.String(200))
     foreign_matter  = db.Column(db.String(200))
@@ -747,7 +747,7 @@ class CropQuality(db.Model):
 class InputsInfo(db.Model):
     __tablename__   = 'inputs_info'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
     tracing_id     = db.Column(db.String(200))
     fertilizers  = db.Column(db.String(200))
     herbicides  = db.Column(db.String(200))
@@ -764,7 +764,7 @@ class InputsInfo(db.Model):
 class Warehouse(db.Model):
     __tablename__   = 'warehouse_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
     tracing_id     = db.Column(db.String(200))
     location  = db.Column(db.String(200))
     warehouse_type  = db.Column(db.String(200))
@@ -782,7 +782,7 @@ class Warehouse(db.Model):
 class Shipment(db.Model):
     __tablename__   = 'shipment_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
     tracing_id     = db.Column(db.String(200))
     location  = db.Column(db.String(200))
     loading_date  = db.Column(db.String(200))
@@ -816,7 +816,7 @@ class Shipment(db.Model):
 class Recommendation(db.Model):
     __tablename__   = 'recommendation_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
     tracing_id     = db.Column(db.String(200))
     rec_one  = db.Column(db.String(200))
     rec_two  = db.Column(db.String(200))
@@ -830,7 +830,7 @@ class Recommendation(db.Model):
 class ScoreAnalytics(db.Model):
     __tablename__   = 'score_analytics'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    date_created    = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created    = db.Column(db.String(200), default=datetime.utcnow)
     bvn     = db.Column(db.String(200))
     scores  = db.Column(db.String(200))
     conditions  = db.Column(db.String(200))
