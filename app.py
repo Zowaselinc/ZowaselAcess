@@ -194,7 +194,7 @@ class AddCreditHistory(Resource):
         whynocollateral=request.json['whynocollateral'])
             db.session.add(farmercredithistory)
             db.session.commit()
-            return farmercredithistory.json()
+            return {"error":False,"message":"success","data":farmercredithistory.json()}
 
 class AddProductivityViability(Resource):
     def post(self):
@@ -218,7 +218,7 @@ class AddProductivityViability(Resource):
         economicactivities=request.json['economicactivities'])
             db.session.add(farmerproductivity)
             db.session.commit()
-            return farmerproductivity.json()
+            return {"error":False,"message":"success","data":farmerproductivity.json()}
 
 class AddAgronomyServices(Resource):	
     def post(self):
@@ -235,7 +235,7 @@ class AddAgronomyServices(Resource):
         cropcalendarbenefits=request.json['cropcalendarbenefits'],recordkeepingbenefits=request.json['recordkeepingbenefits'])
             db.session.add(farmeragronomy)
             db.session.commit()
-            return farmeragronomy.json()
+            return {"error":False,"message":"success","data":farmeragronomy.json()}
 class AddPsychometrics(Resource):	
     def post(self):
         farmer = PsychometricsTable.query.filter_by(bvn=request.json['bvn']).first()
@@ -248,7 +248,7 @@ class AddPsychometrics(Resource):
         haslazyneighbors=request.json['haslazyneighbors'])
             db.session.add(farmerpsychometrics)
             db.session.commit()
-            return farmerpsychometrics.json()
+            return {"error":False,"message":"success","data":farmerpsychometrics.json()}
 
 class AddMobileData(Resource):	
     def post(self):
@@ -266,7 +266,7 @@ class AddMobileData(Resource):
         appdeleterate=request.json['appdeleterate'])
             db.session.add(farmermobiledata)
             db.session.commit()
-            return farmermobiledata.json()
+            return {"error":False,"message":"success","data":farmermobiledata.json()}
 
 
 class AddCharacter5c(Resource):
@@ -347,30 +347,30 @@ class AddFarmlandData(Resource):
         else:
             farmerland = FarmlandTable(bvn=request.json['bvn'],nooffarmlands=request.json['nooffarmlands'],
         ownerorcaretaker=request.json['ownerorcaretaker'],farmownername=request.json['farmownername'],
-        FarmOwnerPhoneNo=request.json['FarmOwnerPhoneNo'],relationshipwithowner=request.json['relationshipwithowner'],
+        farmownerphoneno=request.json['farmownerphoneno'],relationshipwithowner=request.json['relationshipwithowner'],
         inheritedfrom=request.json['inheritedfrom'],sizeoffarm=request.json['sizeoffarm'],
         farmcoordinates=request.json['farmcoordinates'],farmaddress=request.json['farmaddress'],
         keepsanimals=request.json['keepsanimals'],animalsfeedon=request.json['animalsfeedon'])
             db.session.add(farmerland)
             db.session.commit()
-            return farmerland.json()
+            return {"error":False,"message":"success","data":farmerland.json()}
 
 class AddCollateral5c(Resource):	
     def post(self):
         farmerland = FarmlandTable(bvn=request.json['bvn'],nooffarmlands=request.json['nooffarmlands'],
         ownerorcaretaker=request.json['ownerorcaretaker'],farmownername=request.json['farmownername'],
-        FarmOwnerPhoneNo=request.json['FarmOwnerPhoneNo'],relationshipwithowner=request.json['relationshipwithowner'],
+        farmownerphoneno=request.json['farmownerphoneno'],relationshipwithowner=request.json['relationshipwithowner'],
         inheritedfrom=request.json['inheritedfrom'],sizeoffarm=request.json['sizeoffarm'],
         farmcoordinates=request.json['farmcoordinates'],farmaddress=request.json['farmaddress'],
         keepsanimals=request.json['keepsanimals'],animalsfeedon=request.json['animalsfeedon'])
 
         farmer = FarmlandTable.query.filter_by(bvn=request.json['bvn']).first()
         if farmer:
-            pass
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Record with bvn already exists"}
         else:
             db.session.add(farmerland)
-        db.session.commit()
-        return {"error":False,"message":"success"}
+            db.session.commit()
+            return {"error":False,"message":"success"}
 
 #  4.capacity
 
@@ -515,15 +515,16 @@ class AddCapacity5c(Resource):
 class AddConditions(Resource):	
     def post(self):
         farmercondition = ConditionsTable(bvn=request.json['bvn'],duration=request.json['duration'],
-        seller=request.json['seller'],seller_mou=request.json['seller_mou'])
+        seller=request.json['seller'],seller_mou=request.json['seller_mou'],cropyieldprediction=0,
+        cropexpectedmarketvalue=0,zowaselmarketplacepriceoffers=0)
         
         farmer = ConditionsTable.query.filter_by(bvn=request.json['bvn']).first()
         if farmer:
-            pass
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"Record with bvn already exists"}
         else:
             db.session.add(farmercondition)
             db.session.commit()
-        return {"error":False,"message":"success","data":farmercondition.json()}
+            return {"error":False,"message":"success","data":farmercondition.json()}
 
 class AddConditions5c(Resource):	
     def post(self):
@@ -536,7 +537,7 @@ class AddConditions5c(Resource):
         else:
             db.session.add(farmercondition)
             db.session.commit()
-        return {"error":False,"message":"success","data":farmercondition.json()}
+            return {"error":False,"message":"success","data":farmercondition.json()}
 
 
 class AddScoreAnalytics(Resource):	

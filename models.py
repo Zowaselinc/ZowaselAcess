@@ -682,9 +682,9 @@ class ConditionsTable(db.Model):
     duration     = db.Column(db.String(200))
     seller     = db.Column(db.String(200))
     seller_mou     = db.Column(db.String(200))
-    cropyieldprediction     = db.Column(db.String(200), default='0')
-    cropexpectedmarketvalue      = db.Column(db.String(200), default='0')
-    zowaselmarketplacepriceoffers     = db.Column(db.String(200), default='0')
+    cropyieldprediction     = db.Column(db.String(200))
+    cropexpectedmarketvalue      = db.Column(db.String(200))
+    zowaselmarketplacepriceoffers     = db.Column(db.String(200))
     
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
