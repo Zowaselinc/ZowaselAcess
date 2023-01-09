@@ -402,7 +402,7 @@ class AddFarmPractice(Resource):
         nooffertlizerapplications=request.json['nooffertlizerapplications'],decisionforspraying=request.json['decisionforspraying'],
         weedcontrolpractice=request.json['weedcontrolpractice'],estimatedincomepercrop=request.json['estimatedincomepercrop'],
         cropthatcansellwell=request.json['cropthatcansellwell'],hasfarmplanorproject=request.json['hasfarmplanorproject'],
-        FarmProjectInfo=request.json['FarmProjectInfo'])
+        farmprojectinfo=request.json['farmprojectinfo'])
             db.session.add(farmerpractice)
             db.session.commit()
             return {"error":False,"message":"success","data":farmerpractice.json()}
@@ -463,7 +463,7 @@ class AddCapacity5c(Resource):
         nooffertlizerapplications=request.json['nooffertlizerapplications'],decisionforspraying=request.json['decisionforspraying'],
         weedcontrolpractice=request.json['weedcontrolpractice'],estimatedincomepercrop=request.json['estimatedincomepercrop'],
         cropthatcansellwell=request.json['cropthatcansellwell'],hasfarmplanorproject=request.json['hasfarmplanorproject'],
-        FarmProjectInfo=request.json['FarmProjectInfo'])
+        farmprojectinfo=request.json['farmprojectinfo'])
         farmermechanization = MechanizationTable(bvn=request.json['bvn'],
         machinesused=request.json['machinesused'],machinehashelped=request.json['machinehashelped'],
         advisemachineorlabour=request.json['advisemachineorlabour'],othermachinesneeded=request.json['othermachinesneeded'],
