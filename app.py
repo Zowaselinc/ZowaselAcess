@@ -1290,78 +1290,108 @@ class Loancompany(Resource):
 
 class CropInfoTracing(Resource):
     def get(self, tracing_id):
-        farmer = CropInfo.query.filter_by(tracing_id=tracing_id).first()
+        farmer = CropInfo.query.filter_by(tracing_id=tracing_id).all()
         if farmer:
-            return {"error":False,"message":"success","data":farmer.json()}
+            return {"error":False,"message":"success","data":[farmers.json() for farmers in farmer]}
         else:
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"tracing_id not found"}
     def delete(self, tracing_id):
-        farmer = CropInfo.query.filter_by(tracing_id=tracing_id).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {"error":False,"message":"success"}
+        farmer = CropInfo.query.filter_by(tracing_id=tracing_id).all()
+        if farmer:
+            for farmers in farmer:
+                db.session.delete(farmers)
+            db.session.commit()
+            return {"error":False,"message":"success"}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"tracing_id not found"}
+
 
 class CropQualityTracing(Resource):
     def get(self, tracing_id):
-        farmer = CropQuality.query.filter_by(tracing_id=tracing_id).first()
+        farmer = CropQuality.query.filter_by(tracing_id=tracing_id).all()
         if farmer:
-            return {"error":False,"message":"success","data":farmer.json()}
+            return {"error":False,"message":"success","data":[farmers.json() for farmers in farmer]}
         else:
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"tracing_id not found"}
     def delete(self, tracing_id):
-        farmer = CropQuality.query.filter_by(tracing_id=tracing_id).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {"error":False,"message":"success"}
+        farmer = CropQuality.query.filter_by(tracing_id=tracing_id).all()
+        if farmer:
+            for farmers in farmer:
+                db.session.delete(farmers)
+            db.session.commit()
+            return {"error":False,"message":"success"}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"tracing_id not found"}
+
 
 class ShipmentTracing(Resource):
     def get(self, tracing_id):
-        farmer = Shipment.query.filter_by(tracing_id=tracing_id).first()
+        farmer = Shipment.query.filter_by(tracing_id=tracing_id).all()
         if farmer:
-            return {"error":False,"message":"success","data":farmer.json()}
+            return {"error":False,"message":"success","data":[farmers.json() for farmers in farmer]}
         else:
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"tracing_id not found"}
     def delete(self, tracing_id):
-        farmer = Shipment.query.filter_by(tracing_id=tracing_id).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {"error":False,"message":"success"}
+        farmer = Shipment.query.filter_by(tracing_id=tracing_id).all()
+        if farmer:
+            for farmers in farmer:
+                db.session.delete(farmers)
+            db.session.commit()
+            return {"error":False,"message":"success"}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"tracing_id not found"}
+
 class InputsInfoTracing(Resource):
     def get(self, tracing_id):
-        farmer = InputsInfo.query.filter_by(tracing_id=tracing_id).first()
+        farmer = InputsInfo.query.filter_by(tracing_id=tracing_id).all()
         if farmer:
-            return {"error":False,"message":"success","data":farmer.json()}
+            return {"error":False,"message":"success","data":[farmers.json() for farmers in farmer]}
         else:
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"tracing_id not found"}
     def delete(self, tracing_id):
-        farmer = InputsInfo.query.filter_by(tracing_id=tracing_id).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {"error":False,"message":"success"}
+        farmer = InputsInfo.query.filter_by(tracing_id=tracing_id).all()
+        if farmer:
+            for farmers in farmer:
+                db.session.delete(farmers)
+            db.session.commit()
+            return {"error":False,"message":"success"}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"tracing_id not found"}
+
 class WarehouseTracing(Resource):
     def get(self, tracing_id):
-        farmer = Warehouse.query.filter_by(tracing_id=tracing_id).first()
+        farmer = Warehouse.query.filter_by(tracing_id=tracing_id).all()
         if farmer:
-            return {"error":False,"message":"success","data":farmer.json()}
+            return {"error":False,"message":"success","data":[farmers.json() for farmers in farmer]}
         else:
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"tracing_id not found"}
     def delete(self, tracing_id):
-        farmer = Warehouse.query.filter_by(tracing_id=tracing_id).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {"error":False,"message":"success"}
+        farmer = Warehouse.query.filter_by(tracing_id=tracing_id).all()
+        if farmer:
+            for farmers in farmer:
+                db.session.delete(farmers)
+            db.session.commit()
+            return {"error":False,"message":"success"}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"tracing_id not found"}
+
 class RecommendationTracing(Resource):
     def get(self, tracing_id):
-        farmer = Recommendation.query.filter_by(tracing_id=tracing_id).first()
+        farmer = Recommendation.query.filter_by(tracing_id=tracing_id).all()
         if farmer:
-            return {"error":False,"message":"success","data":farmer.json()}
+            return {"error":False,"message":"success","data":[farmers.json() for farmers in farmer]}
         else:
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"tracing_id not found"}
     def delete(self, tracing_id):
-        farmer = Recommendation.query.filter_by(tracing_id=tracing_id).first()
-        db.session.delete(farmer)
-        db.session.commit()
-        return {"error":False,"message":"success"}
+        farmer = Recommendation.query.filter_by(tracing_id=tracing_id).all()
+        if farmer:
+            for farmers in farmer:
+                db.session.delete(farmers)
+            db.session.commit()
+            return {"error":False,"message":"success"}
+        else:
+            return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"tracing_id not found"}
+
 
 # ------------Get Requests-------------------------------------------------------------------------------------------------
 
@@ -1467,20 +1497,21 @@ class Capitalbvn(Resource):
     
 class Carebvn(Resource):
     def get(self, bvn):
-        farmer = CareTable.query.filter_by(bvn=bvn).first()
+        farmer = CareTable.query.filter_by(bvn=bvn).all()
         if farmer:
-            return {"error":False,"message":"success","data":farmer.json()}
+            return {"error":False,"message":"success","data":[farmers.json() for farmers in farmer]}
         else:
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"bvn not found"}
     def delete(self, bvn):
-        farmer = CareTable.query.filter_by(bvn=bvn).first()
+        farmer = CareTable.query.filter_by(bvn=bvn).all()
         if farmer:
-            db.session.delete(farmer)
+            for farmers in farmer:
+                db.session.delete(farmers)
             db.session.commit()
             return {"error":False,"message":"success"}
         else:
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"bvn not found"}
-    
+
 class Conditionsbvn(Resource):
     def get(self, bvn):
         farmer = ConditionsTable.query.filter_by(bvn=bvn).first()
@@ -1745,20 +1776,21 @@ class Harvestbvn(Resource):
     
 class Livingbvn(Resource):
     def get(self, bvn):
-        farmer = LivingTable.query.filter_by(bvn=bvn).first()
+        farmer = LivingTable.query.filter_by(bvn=bvn).all()
         if farmer:
-            return {"error":False,"message":"success","data":farmer.json()}
+            return {"error":False,"message":"success","data":[farmers.json() for farmers in farmer]}
         else:
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"bvn not found"}
     def delete(self, bvn):
-        farmer = LivingTable.query.filter_by(bvn=bvn).first()
+        farmer = LivingTable.query.filter_by(bvn=bvn).all()
         if farmer:
-            db.session.delete(farmer)
+            for farmers in farmer:
+                db.session.delete(farmers)
             db.session.commit()
             return {"error":False,"message":"success"}
         else:
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"bvn not found"}
-    
+
 class Mechanizationbvn(Resource):
     def get(self, bvn):
         farmer = MechanizationTable.query.filter_by(bvn=bvn).first()
@@ -1795,20 +1827,21 @@ class MobileDatabvn(Resource):
 
 class Planetbvn(Resource):
     def get(self, bvn):
-        farmer = Planet.query.filter_by(bvn=bvn).first()
+        farmer = Planet.query.filter_by(bvn=bvn).all()
         if farmer:
-            return {"error":False,"message":"success","data":farmer.json()}
+            return {"error":False,"message":"success","data":[farmers.json() for farmers in farmer]}
         else:
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"bvn not found"}
     def delete(self, bvn):
-        farmer = Planet.query.filter_by(bvn=bvn).first()
+        farmer = Planet.query.filter_by(bvn=bvn).all()
         if farmer:
-            db.session.delete(farmer)
+            for farmers in farmer:
+                db.session.delete(farmers)
             db.session.commit()
             return {"error":False,"message":"success"}
         else:
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"bvn not found"}
-    
+  
 class Practicebvn(Resource):
     def get(self, bvn):
         farmer = FarmPractice.query.filter_by(bvn=bvn).first()
@@ -1861,15 +1894,16 @@ class Psychometricsbvn(Resource):
     
 class Safetybvn(Resource):
     def get(self, bvn):
-        farmer = Safety.query.filter_by(bvn=bvn).first()
+        farmer = Safety.query.filter_by(bvn=bvn).all()
         if farmer:
-            return {"error":False,"message":"success","data":farmer.json()}
+            return {"error":False,"message":"success","data":[farmers.json() for farmers in farmer]}
         else:
             return {"error":True,"message":"Sorry your request can not be processed at the moment","data":"bvn not found"}
     def delete(self, bvn):
-        farmer = Safety.query.filter_by(bvn=bvn).first()
+        farmer = Safety.query.filter_by(bvn=bvn).all()
         if farmer:
-            db.session.delete(farmer)
+            for farmers in farmer:
+                db.session.delete(farmers)
             db.session.commit()
             return {"error":False,"message":"success"}
         else:

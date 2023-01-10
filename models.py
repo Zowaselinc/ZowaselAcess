@@ -23,8 +23,11 @@ def generate_uuid():
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 # connect to the database
-basedir = os.path.abspath(os.path.dirname(__file__))
+basedir = os.path.abspath(os.path.dirname(__file__)) 
 
+#USER = os.getenv('USER')
+#PASSWORD = os.environ.get('PASSWORD')
+#URLDB = os.environ.get('URLDB')
 #app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{USER}:{PASSWORD}@{URLDB}'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://zowasekadmin:zowasel1234!A@zowaselaidb.celbaavi1fuh.us-east-1.rds.amazonaws.com/zowaselai'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
