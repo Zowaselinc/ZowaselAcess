@@ -20,6 +20,10 @@ class AddMechanization(Resource):
                 return {"error":False,"message":f'mechanization{added}',"data":farmermechanization.json()}
         except KeyError:
             return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 
 # get mechanization with bvn
 class Mechanizationbvn(Resource):

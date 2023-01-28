@@ -26,6 +26,10 @@ class AddCreditAccess(Resource):
                 return {"error":False,"message":f'credit access{added}'}
         except KeyError:
             return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 
 # get credit access by bvn
 class CreditAccessbvn(Resource):

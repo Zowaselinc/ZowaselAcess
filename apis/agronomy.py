@@ -22,6 +22,10 @@ class AddAgronomyServices(Resource):
                 return {"error":False,"message":f'agronomy{added}',"data":farmeragronomy.json()}
         except KeyError:
             return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 
 # get agronomy by bvn
 class Agronomybvn(Resource):

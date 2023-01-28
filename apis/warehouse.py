@@ -15,6 +15,10 @@ class AddWarehouse(Resource):
             return {"error":False,"message":f'Warehouse{added}',"data":new_data.json()}
         except KeyError:
             return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 
 # get warehouse with id
 class WarehouseTracing(Resource):

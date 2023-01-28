@@ -6,7 +6,8 @@ from models import *
 # buyers daily price
 class AddBuyersDailyPrice(Resource):	
     def post(self):
-        new_data = BuyersDailyPrice(
+        try:
+            new_data = BuyersDailyPrice(
         crop=request.json['crop'],
         location=request.json['location'],
         classification=request.json['classification'],
@@ -16,14 +17,21 @@ class AddBuyersDailyPrice(Resource):
         quality_spec=request.json['quality_spec'],
         date_filled=request.json['date_filled']
         )
-        db.session.add(new_data)
-        db.session.commit()
-        message = {"error":False,"message":f'price{added}'}
-        return message
+            db.session.add(new_data)
+            db.session.commit()
+            message = {"error":False,"message":f'price{added}'}
+            return message
+        except KeyError:
+            return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 # add buyers offers
 class AddBuyersOffers(Resource):	
     def post(self):
-        new_data = BuyersOffers(
+        try:
+            new_data = BuyersOffers(
         crop=request.json['crop'],
         location=request.json['location'],
         classification=request.json['classification'],
@@ -33,14 +41,21 @@ class AddBuyersOffers(Resource):
         quality_spec=request.json['quality_spec'],
         date_filled=request.json['date_filled']
         )
-        db.session.add(new_data)
-        db.session.commit()
-        message = {"error":False,"message":f'price{added}'}
-        return message   
+            db.session.add(new_data)
+            db.session.commit()
+            message = {"error":False,"message":f'price{added}'}
+            return message 
+        except KeyError:
+            return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}  
 # add farmgate prices
 class AddFarmGatePrices(Resource):	
     def post(self):
-        new_data = FarmGatePrices(
+        try:
+            new_data = FarmGatePrices(
         crop=request.json['crop'],
         location=request.json['location'],
         classification=request.json['classification'],
@@ -50,14 +65,21 @@ class AddFarmGatePrices(Resource):
         quality_spec=request.json['quality_spec'],
         date_filled=request.json['date_filled']
         )
-        db.session.add(new_data)
-        db.session.commit()
-        message = {"error":False,"message":f'price{added}'}
-        return message  
+            db.session.add(new_data)
+            db.session.commit()
+            message = {"error":False,"message":f'price{added}'}
+            return message  
+        except KeyError:
+            return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 # add marketprices
 class AddMarketPrices(Resource):	
     def post(self):
-        new_data = MarketPrices(
+        try:
+            new_data = MarketPrices(
         crop=request.json['crop'],
         location=request.json['location'],
         classification=request.json['classification'],
@@ -67,10 +89,16 @@ class AddMarketPrices(Resource):
         quality_spec=request.json['quality_spec'],
         date_filled=request.json['date_filled']
         )
-        db.session.add(new_data)
-        db.session.commit()
-        message = {"error":False,"message":f'price{added}'}
-        return message  
+            db.session.add(new_data)
+            db.session.commit()
+            message = {"error":False,"message":f'price{added}'}
+            return message  
+        except KeyError:
+            return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 # get buyers daily price by id  
 class BuyersDailyPriceid(Resource):
     def get(self, id):

@@ -22,6 +22,10 @@ class AddPlanet(Resource):
             return {"error":False,"message":f'planet{added}',"data":new_data.json()}
         except KeyError:
             return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 
 # get planet with bvn
 class Planetbvn(Resource):

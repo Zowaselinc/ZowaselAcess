@@ -6,21 +6,28 @@ from models import *
 # add loan class
 class AddLoan(Resource):	
     def post(self):
-        type=request.json['type']
-        loan = Loan.query.filter_by(type=type).first()
-        if loan:
-            message = {"error":True,"message":loanexists}
-        if not loan:
-            new_data = Loan(
+        try:
+            type=request.json['type']
+            loan = Loan.query.filter_by(type=type).first()
+            if loan:
+                message = {"error":True,"message":loanexists}
+            if not loan:
+                new_data = Loan(
         type=request.json['type'],
         company=request.json['company'],
         repayment_months=request.json['repayment_months'],
         interest_rate_per_annum=request.json['interest_rate_per_annum']
         )
-            db.session.add(new_data)
-            db.session.commit()
-            message = {"error":False,"message":f'loan{added}'}
-        return message
+                db.session.add(new_data)
+                db.session.commit()
+                message = {"error":False,"message":f'loan{added}'}
+            return message
+        except KeyError:
+            return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 
 # get loan by type
 class Loantype(Resource):

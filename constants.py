@@ -23,9 +23,8 @@ groupnotfound = "group not found"
 statusnotfound = "status not found"
 loannotfound = "loan type not found"
 companynotfound = "company not found"
+invalidinput = "invalid input"
 missingentry = "Provide all required fields"
-#sorry = "Sorry your request can not be processed at the moment"
-
 # define functions
 
 # paginated lists

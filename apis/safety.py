@@ -18,6 +18,10 @@ class AddSafety(Resource):
             return {"error":False,"message":f'safety{added}',"data":new_data.json()}
         except KeyError:
             return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 
 # get safety by bvn
 class Safetybvn(Resource):

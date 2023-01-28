@@ -11,31 +11,32 @@ model = pickle.load(open('modelExample.pkl','rb'))
 # add scorecard
 class AddScoreCard(Resource):	
     def post(self):
-        bvn=request.json['bvn']
-        farmer = ScoreCard.query.filter_by(bvn=bvn).all()
-        if farmer:
-            return {"error":True,"message":bvnexists}
-        else:
-            farmer = pd.DataFrame([['bvn','age','number_of_land','address','owner_caretaker','crop','intercropping', 'machines',
+        try:
+            bvn=request.json['bvn']
+            farmer = ScoreCard.query.filter_by(bvn=bvn).all()
+            if farmer:
+                return {"error":True,"message":bvnexists}
+            else:
+                farmer = pd.DataFrame([['bvn','age','number_of_land','address','owner_caretaker','crop','intercropping', 'machines',
         'estimate_monthly_income','years_cultivating','gender','owns_a_bank_account','size_of_farm','number_of_crops','is_in_a_cooperative',
         'no_of_agronomist_visits']],columns=['bvn','age','number_of_land','address','owner_caretaker','crop','intercropping', 'machines',
         'estimate_monthly_income','years_cultivating','gender','owns_a_bank_account','size_of_farm','number_of_crops','is_in_a_cooperative',
         'no_of_agronomist_visits'])
-            for col in farmer.columns:
-                farmer[col] = request.json[col]
-            #print(farmer)
-            farmer['applyLoanAmount'] = applyLoan(bvn)
-            farmer = farmer.rename({'number_of_land':'numberOfLand',
+                for col in farmer.columns:
+                    farmer[col] = request.json[col]
+                #print(farmer)
+                farmer['applyLoanAmount'] = applyLoan(bvn)
+                farmer = farmer.rename({'number_of_land':'numberOfLand',
             'estimate_monthly_income':'estimateMonthlyIncome','years_cultivating':'yearsCultivating'},axis=1)
-            cols=['age', 'numberOfLand', 'owner_caretaker', 'crop','applyLoanAmount',
+                cols=['age', 'numberOfLand', 'owner_caretaker', 'crop','applyLoanAmount',
             'intercropping', 'machines', 'estimateMonthlyIncome','yearsCultivating']
-            tdf = preprocess_df(farmer[cols])
-            train_cols = ['number_of_land', 'owner_caretaker', 'intercropping', 'machines',
+                tdf = preprocess_df(farmer[cols])
+                train_cols = ['number_of_land', 'owner_caretaker', 'intercropping', 'machines',
        'estimate_monthly_income', 'apply_loan_amount', 'years_cultivating',
        'crop1', 'crop2', 'age1', 'age2', 'age3', 'age4']
-            score = model.predict_proba(tdf[train_cols])[:,1].round(2)
-            bin=bin_target(score)
-            history = ScoreCard(bvn=request.json['bvn'],age=request.json['age'],
+                score = model.predict_proba(tdf[train_cols])[:,1].round(2)
+                bin=bin_target(score)
+                history = ScoreCard(bvn=request.json['bvn'],age=request.json['age'],
         number_of_land=request.json['number_of_land'],address=request.json['address'],
         owner_caretaker=request.json['owner_caretaker'],crop=request.json['crop'],
         intercropping=request.json['intercropping'], machines=request.json['machines'],
@@ -46,9 +47,15 @@ class AddScoreCard(Resource):
         no_of_agronomist_visits=request.json['no_of_agronomist_visits'],
         applyLoanAmount=farmer['applyLoanAmount'][0],
         score=score[0], bin=bin[0])
-            db.session.add(history)
-            db.session.commit()
-        return jsonify({"error":False,"message":f'scorecard{added}'})
+                db.session.add(history)
+                db.session.commit()
+            return jsonify({"error":False,"message":f'scorecard{added}'})
+        except KeyError:
+            return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 
 # get scorecard by bvn
 class Scorecardbvn(Resource):

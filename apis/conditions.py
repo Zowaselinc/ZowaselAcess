@@ -20,6 +20,10 @@ class AddConditions(Resource):
                 return {"error":False,"message":f'Conditions{added}',"data":farmercondition.json()}
         except KeyError:
             return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 
 # get condition by bvn
 class Conditionsbvn(Resource):

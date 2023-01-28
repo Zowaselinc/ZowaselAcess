@@ -21,6 +21,10 @@ class AddCreditHistory(Resource):
                 return {"error":False,"message":f'credit history{added}',"data":farmercredithistory.json()}
         except KeyError:
             return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 
 # get credit history by bvn
 class CreditHistorybvn(Resource):

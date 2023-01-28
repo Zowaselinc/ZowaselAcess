@@ -20,6 +20,10 @@ class AddPsychometrics(Resource):
                 return {"error":False,"message":f'psychometrics{added}',"data":farmerpsychometrics.json()}
         except KeyError:
             return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 
 # get psychometrics by bvn
 class Psychometricsbvn(Resource):

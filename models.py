@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 #from flask_restplus import Resource, Api, fields
@@ -11,6 +10,7 @@ from sqlalchemy import create_engine, exc
 from flask_cors import CORS
 #from sqlalchemy.orm import *
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import validates
 
 import uuid
 
@@ -26,7 +26,7 @@ app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 # connect to the database
 basedir = os.path.abspath(os.path.dirname(__file__)) 
-
+forbidden = ("", " ")
 #USER = os.getenv('USER')
 #PASSWORD = os.environ.get('PASSWORD')
 #URLDB = os.environ.get('URLDB')
@@ -43,13 +43,19 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 class Loan(db.Model):
     __tablename__ = 'loans'
     
-    id     = db.Column(db.Integer, unique=True, primary_key=True,nullable=False)
-    type      = db.Column(db.String(200), unique=True,nullable=False)
-    company      = db.Column(db.String(200),nullable=False)
-    repayment_months      = db.Column(db.Integer,nullable=False)
-    interest_rate_per_annum      = db.Column(db.Integer,nullable=False)
+    id     = db.Column(db.Integer, unique=True, primary_key=True)
+    type      = db.Column(db.String(200), unique=True)
+    company      = db.Column(db.String(200))
+    repayment_months      = db.Column(db.Integer)
+    interest_rate_per_annum      = db.Column(db.Integer)
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
+    @validates('type','company','repayment_months','interest_rate_per_annum')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
+    
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
 
@@ -68,6 +74,13 @@ class BuyersDailyPrice(db.Model):
     date_filled = db.Column(db.String(200))
     quality_spec = db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
+
+    @validates('crop','location','classification','min_price','ave_price','max_price',
+    'date_filled','quality_spec')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -88,6 +101,12 @@ class BuyersOffers(db.Model):
     quality_spec = db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
+    @validates('crop','location','classification','min_price','ave_price','max_price',
+    'date_filled','quality_spec')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
 
@@ -106,6 +125,13 @@ class FarmGatePrices(db.Model):
     date_filled = db.Column(db.String(200))
     quality_spec = db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
+
+    @validates('crop','location','classification','min_price','ave_price','max_price',
+    'date_filled','quality_spec')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -126,6 +152,13 @@ class MarketPrices(db.Model):
     quality_spec = db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
+    @validates('crop','location','classification','min_price','ave_price','max_price',
+    'date_filled','quality_spec')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
+
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
 
@@ -137,7 +170,7 @@ class Cropcard(db.Model):
     
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     farmer_name = db.Column(db.String(200))
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     crop_name = db.Column(db.String(200))
     fertilizer_cost      = db.Column(db.String(200))
     fertilizer      = db.Column(db.String(200))
@@ -152,6 +185,13 @@ class Cropcard(db.Model):
     date_filled      = db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)    
 
+    @validates('farmer_name','bvn','crop_name','fertilizer_cost','fertilizer','mechanization_cost',
+    'mechanization','labour_cost','labour','harvest_cost','other_cost','others','date_filled')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
+
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
 
@@ -161,7 +201,7 @@ class Cropcard(db.Model):
 class ScoreCard(db.Model):
     __tablename__   = 'score_card'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     age = db.Column(db.String(200))
     number_of_land = db.Column(db.String(200))
     address = db.Column(db.String(200))
@@ -181,8 +221,15 @@ class ScoreCard(db.Model):
     score     = db.Column(db.String(200))
     bin     = db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
 
+    @validates('bvn','age','number_of_land','address','owner_caretaker','crop','intercropping',
+    'machines','estimate_monthly_income','years_cultivating','gender','owns_a_bank_account','size_of_farm',
+    'number_of_crops','is_in_a_cooperative','no_of_agronomist_visits')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
+    
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
 
@@ -196,14 +243,14 @@ class LoanTransfer(db.Model):
     
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     tag = db.Column(db.String(200), default=generate_tid, unique=True)
-    type      = db.Column(db.String(200),db.ForeignKey('loans.type'))
+    type      = db.Column(db.String(200))
     company      = db.Column(db.String(200))
     amount             = db.Column(db.String(200))
     repayment_amount = db.Column(db.String(200))
     repayment_months = db.Column(db.String(200))
     status      = db.Column(db.String(200))
     group     = db.Column(db.String(200))
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     score     = db.Column(db.String(200))
     bin     = db.Column(db.String(200))
     transfer_date   = db.Column(db.String(200))
@@ -212,8 +259,11 @@ class LoanTransfer(db.Model):
     balance = db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
-    loan         = db.relationship('Loan', foreign_keys=type)
+    @validates('type','bvn','amount')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -259,9 +309,18 @@ class FarmerTable(db.Model):
     landmarknok     = db.Column(db.String(200))
     ninnok     = db.Column(db.String(200))
 
+    @validates('firstname','surname','middlename','email','telephone',
+    'age','gender','language','maritalstatus',
+    'bankname','accountno','bvn','meansofid','issuedate','expirydate',
+    'nin','permanentaddress','landmark','stateoforigin','isinagroup',
+    'reasonnogroup','group','numberofmembers','firstnamenok','surnamenok','middlenamenok',
+    'relationshipnok','occupationnok','telephonenok','permanentaddressnok','landmarknok','ninnok')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}  
-
     
     def __repr__(self):
         return '<FarmerTable %r>' % self.id
@@ -271,7 +330,7 @@ class FarmerTable(db.Model):
 class CapitalTable(db.Model):
     __tablename__   = 'capital_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     mainincomesource     = db.Column(db.String(200))
     otherincomesource     = db.Column(db.String(200))
     noofincomeearners     = db.Column(db.String(200))
@@ -281,7 +340,14 @@ class CapitalTable(db.Model):
     paybackmonths     = db.Column(db.String(200))
     harvestqtychanged     = db.Column(db.String(200))
     pestexpensechanged     = db.Column(db.String(200))
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
+
+    @validates('bvn','mainincomesource','otherincomesource','noofincomeearners',
+    'hasbankaccount','firstfundingoption','needsaloan','paybackmonths','harvestqtychanged',
+    'pestexpensechanged')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}  
@@ -291,7 +357,7 @@ class CapitalTable(db.Model):
 class CreditAccessTable(db.Model):
     __tablename__   = 'credit_access_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     hasservedastreasurer     = db.Column(db.String(200))
     durationastreasurer     = db.Column(db.String(200))
     savesmoneymonthly     = db.Column(db.String(200))
@@ -310,8 +376,16 @@ class CreditAccessTable(db.Model):
     applyloanamount     = db.Column(db.String(200))
     yearsofcultivating     = db.Column(db.String(200))
     annualturnover     = db.Column(db.String(200))
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
-
+    
+    @validates('bvn','hasservedastreasurer','durationastreasurer','savesmoneymonthly',
+    'savingsamount','haddifficultyrepaying','difficultloanamount','difficultyreason',
+    'noofdifficultloans','noofrepaidloans','noofloansontime','estmonthlyincome','costofcultivation',
+    'farmproduceexchanged','nooftimesexchanged','collateral','applyloanamount','yearsofcultivating',
+    'annualturnover')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
@@ -319,7 +393,7 @@ class CreditAccessTable(db.Model):
 class CreditHistoryTable(db.Model):
     __tablename__   = 'credit_history_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     hastakenloanbefore     = db.Column(db.String(200))
     sourceofloan     = db.Column(db.String(200))
     pastloanamount     = db.Column(db.String(200))
@@ -327,8 +401,13 @@ class CreditHistoryTable(db.Model):
     isreadytopayinterest     = db.Column(db.String(200))
     canprovidecollateral     = db.Column(db.String(200))
     whynocollateral = db.Column(db.String(200))
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
-
+    
+    @validates('bvn','hastakenloanbefore','sourceofloan','pastloanamount','howloanwasrepaid',
+    'isreadytopayinterest','canprovidecollateral','whynocollateral')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
@@ -337,7 +416,7 @@ class CreditHistoryTable(db.Model):
 class ProductivityViabilityTable(db.Model):
     __tablename__   = 'productivity_viability_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     cropscultivated     = db.Column(db.String(200))
     growscrops     = db.Column(db.String(200))
     oilpalmfertilizers     = db.Column(db.String(200))
@@ -361,7 +440,17 @@ class ProductivityViabilityTable(db.Model):
     cultivationstartdate     = db.Column(db.String(200))
     isintensivefarmingpractised     = db.Column(db.String(200))
     economicactivities     = db.Column(db.String(200))
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
+    
+    @validates('bvn','cropscultivated','growscrops','oilpalmfertilizers','cocoafertilizers',
+    'fertilizerfrequency','pestfungherbicides','stagechemicalapplied','noofoildrums',
+    'noofbagssesame','noofbagssoyabeans','noofbagsmaize','noofbagssorghum','noofbagscocoabeans',
+    'croptrainedon','wherewhenwhotrained','nooftraining','pruningfrequency','cropbasedproblems',
+    'tooyoungcrops','youngcropsandstage','cultivationstartdate','isintensivefarmingpractised',
+    'economicactivities')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
     
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -371,7 +460,7 @@ class ProductivityViabilityTable(db.Model):
 class AgronomyServicesTable(db.Model):
     __tablename__   = 'agronomy_services_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     knowsagriprocessed     = db.Column(db.String(200))
     agronomistthattrainedyou     = db.Column(db.String(200))
     canmanageecosystem    = db.Column(db.String(200))
@@ -382,8 +471,14 @@ class AgronomyServicesTable(db.Model):
     iscropcalendarbeneficial     = db.Column(db.String(200))
     cropcalendarbenefits     = db.Column(db.String(200))
     recordkeepingbenefits     = db.Column(db.String(200))
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
-
+    
+    @validates('bvn','knowsagriprocessed','agronomistthattrainedyou','canmanageecosystem',
+    'howtomanageecosystem','istrainingbeneficial','fieldroutines','harvestingchanges',
+    'iscropcalendarbeneficial','cropcalendarbenefits','recordkeepingbenefits')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
@@ -392,14 +487,20 @@ class AgronomyServicesTable(db.Model):
 class PsychometricsTable(db.Model):
     __tablename__   = 'psychometrics_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     fluidintelligence     = db.Column(db.String(200))
     attitudesandbeliefs     = db.Column(db.String(200))
     agribusinessskills     = db.Column(db.String(200))
     ethicsandhonesty     = db.Column(db.String(200))
     savesenough     = db.Column(db.String(200))
     haslazyneighbors     = db.Column(db.String(200))
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
+
+    @validates('bvn','fluidintelligence','attitudesandbeliefs','agribusinessskills','ethicsandhonesty',
+    'savesenough','haslazyneighbors')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -408,7 +509,7 @@ class PsychometricsTable(db.Model):
 class MobileDataTable(db.Model):
     __tablename__   = 'mobile_data_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     mobilephonetype     = db.Column(db.String(200))
     avweeklyphoneuse     = db.Column(db.String(200))
     callsoutnumber     = db.Column(db.String(200))
@@ -423,8 +524,14 @@ class MobileDataTable(db.Model):
     avtimespentonapp     = db.Column(db.String(200))
     mobileappkinds     = db.Column(db.String(200))
     appdeleterate     = db.Column(db.String(200))
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
-
+    
+    @validates('bvn','mobilephonetype','avweeklyphoneuse','callsoutnumber','callsoutminutes',
+    'callsinnumber','callinminutes','smssent','dataprecedingplanswitch','billpaymenthistory',
+    'avweeklydatarefill','noOfmobileapps','avtimespentonapp','mobileappkinds','appdeleterate')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
@@ -432,7 +539,7 @@ class MobileDataTable(db.Model):
 class FarmlandTable(db.Model):
     __tablename__   = 'farmland_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     nooffarmlands     = db.Column(db.String(200))
     ownerorcaretaker     = db.Column(db.String(200))
     farmownername     = db.Column(db.String(200))
@@ -444,7 +551,14 @@ class FarmlandTable(db.Model):
     farmaddress     = db.Column(db.String(200))
     keepsanimals     = db.Column(db.String(200))
     animalsfeedon     = db.Column(db.String(200))
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
+    
+    @validates('bvn','nooffarmlands','ownerorcaretaker','farmownername','farmownerphoneno',
+    'relationshipwithowner','inheritedfrom','sizeoffarm','farmcoordinates','farmaddress',
+    'keepsanimals','animalsfeedon')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -453,7 +567,7 @@ class FarmlandTable(db.Model):
 class CapacityTable(db.Model):
     __tablename__   = 'capacity_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     howlongbeenfarming     = db.Column(db.String(200))
     participatedintraining     = db.Column(db.String(200))
     farmingpractice     = db.Column(db.String(200))
@@ -461,7 +575,13 @@ class CapacityTable(db.Model):
     hascooperative     = db.Column(db.String(200))
     cooperativename     = db.Column(db.String(200))
     educationlevel     = db.Column(db.String(200))
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
+    
+    @validates('bvn','howlongbeenfarming','participatedintraining','farmingpractice',
+    'keepsanimals','hascooperative','cooperativename','educationlevel')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
     
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -471,7 +591,7 @@ class CapacityTable(db.Model):
 class FarmPractice(db.Model):
     __tablename__   = 'farm_practice_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     sizeoffarm     = db.Column(db.String(200))
     farmisrentedorleased     = db.Column(db.String(200))
     noofyearsleased     = db.Column(db.String(200))
@@ -486,7 +606,15 @@ class FarmPractice(db.Model):
     cropthatcansellwell     = db.Column(db.String(200))
     hasfarmplanorproject     = db.Column(db.String(200))
     farmprojectinfo     = db.Column(db.String(200))
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
+    
+    @validates('bvn','sizeoffarm','farmisrentedorleased','noofyearsleased','usesmachines',
+    'rotatescrops','noOfhectaresproducedyearly','approxfertilizeruse',
+    'nooffertlizerapplications','decisionforspraying','weedcontrolpractice',
+    'estimatedincomepercrop','cropthatcansellwell','hasfarmplanorproject','farmprojectinfo')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
     
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -495,15 +623,20 @@ class FarmPractice(db.Model):
 class MechanizationTable(db.Model):
     __tablename__   = 'mechanization_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     machinesused     = db.Column(db.String(200))
     machinehashelped     = db.Column(db.String(200))
     advisemachineorlabour     = db.Column(db.String(200))
     othermachinesneeded     = db.Column(db.String(200))
     canacquiremorelands     = db.Column(db.String(200))
     percentcostsaved     = db.Column(db.String(200)) 
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
-
+    
+    @validates('bvn','machinesused','machinehashelped','advisemachineorlabour','othermachinesneeded',
+    'canacquiremorelands','percentcostsaved')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
@@ -511,7 +644,7 @@ class MechanizationTable(db.Model):
 class CultivationTable(db.Model):
     __tablename__   = 'cultivation_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     type_of_labor     = db.Column(db.String(200))
     pay_for_labor     = db.Column(db.String(200))
     how_many_housechildren_help     = db.Column(db.String(200))
@@ -520,7 +653,14 @@ class CultivationTable(db.Model):
     household_vs_hire_cost     = db.Column(db.String(200))
     labor_women_do     = db.Column(db.String(200))
     percent_female_hired     = db.Column(db.String(200)) 
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
+    
+    @validates('bvn','type_of_labor','pay_for_labor','how_many_housechildren_help','season_children_help',
+    'labor_children_do','household_vs_hire_cost','labor_women_do','percent_female_hired')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
+
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
@@ -528,13 +668,19 @@ class CultivationTable(db.Model):
 class HarvestTable(db.Model):
     __tablename__   = 'harvest_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     when_is_harvest_season     = db.Column(db.String(200))
     no_of_hired_workers     = db.Column(db.String(200))
     no_of_family_workers     = db.Column(db.String(200))
     no_of_permanent_workers    = db.Column(db.String(200))
     no_hired_constantly     = db.Column(db.String(200))
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
+    
+    @validates('bvn','when_is_harvest_season','no_of_hired_workers','no_of_family_workers',
+    'no_of_permanent_workers','no_hired_constantly')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
@@ -543,7 +689,7 @@ class HarvestTable(db.Model):
 class CareTable(db.Model):
     __tablename__ = 'care_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     healthcentloc= db.Column(db.String(200))
     healthcentcount= db.Column(db.String(200))
     healthcentdistance= db.Column(db.String(200))
@@ -562,7 +708,14 @@ class CareTable(db.Model):
     studywhere= db.Column(db.String(200))
     altIncomesource= db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
+    
+    @validates('bvn','healthcentloc','healthcentcount','healthcentdistance','healthcentfunctional','affordable',
+    'farmdistance','injuryevent','firstaid','lastcheck','inschool','level','schoolcount','schoolfunctional',
+    'qualification','studytime','studywhere','altIncomesource')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -572,7 +725,7 @@ class CareTable(db.Model):
 class Planet(db.Model):
     __tablename__ = 'planet_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     plantoexpand= db.Column(db.String(200))
     crop= db.Column(db.String(200))
     variety= db.Column(db.String(200))
@@ -604,7 +757,16 @@ class Planet(db.Model):
     pollutionfreq= db.Column(db.String(200))
     measures= db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
+    
+    @validates('bvn','plantoexpand','crop','variety','raiseorbuy','buywhere',
+    'seedlingprice','qtybought','degradedland','croprotation','season','disaster',
+    'burning','mill','energysource','replacedtree','placement','sourceofwater',
+    'covercrops','intercrop','cropintercropped','wastemgt','wastedisposal','recyclewaste',
+    'suffered','whensuffered','greywater','recyclegreywater','pollution','pollutionfreq','measures')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -614,7 +776,7 @@ class Planet(db.Model):
 class Safety(db.Model):
     __tablename__ = 'safety_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     ferment  = db.Column(db.String(200))
     fermentdays  = db.Column(db.String(200))
     fermentreason  = db.Column(db.String(200))
@@ -631,7 +793,14 @@ class Safety(db.Model):
     wear  = db.Column(db.String(200))
     disposal  = db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
+    
+    @validates('bvn','ferment','fermentdays','fermentreason','brokenqty','dowithbroken',
+    'unripeqty','dowithunripe','cocoastore','ffbstore','herbicide','herbicidestore',
+    'agrochemsource','harvesttool','wear','disposal')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -641,7 +810,7 @@ class Safety(db.Model):
 class LivingTable(db.Model):
     __tablename__ = 'living_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     houseowned = db.Column(db.String(200))
     stayswithfamily = db.Column(db.String(200))
     relationshipwithowner = db.Column(db.String(200))
@@ -668,8 +837,15 @@ class LivingTable(db.Model):
     hasaccessedInput = db.Column(db.String(200))
     input = db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
-
+    
+    @validates('bvn','houseowned','stayswithfamily','relationshipwithowner','householdeats','maleunderage',
+    'femaleunderage','childrenunderage','maleaboveage','femaleaboveage','childrenaboveage','liveswith',
+    'ownotherlands','standardofliving','sourceofwater','sourceeverytime','cookingmethod','haveelectricity',
+    'powerpayment','typeoftoilet','kitchensink','hasgroup','group','position','hasaccessedInput','input')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
@@ -678,15 +854,20 @@ class LivingTable(db.Model):
 class ConditionsTable(db.Model):
     __tablename__   = 'conditions_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     duration     = db.Column(db.String(200))
     seller     = db.Column(db.String(200))
     seller_mou     = db.Column(db.String(200))
     cropyieldprediction     = db.Column(db.String(200))
     cropexpectedmarketvalue      = db.Column(db.String(200))
     zowaselmarketplacepriceoffers     = db.Column(db.String(200))
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
     
+    @validates('bvn','duration','seller','seller_mou')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
+
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
@@ -707,6 +888,14 @@ class CropInfo(db.Model):
     female_to_male  = db.Column(db.String(200))
     farmer_name  = db.Column(db.String(200))
     gender  = db.Column(db.String(200))
+
+    @validates('tracing_id','crop_type','sourcing_location','crop_origin','crop_qty','crop_variety',
+    'cooperative','no_of_farmer_group','female_to_male','farmer_name','gender')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
+
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
@@ -740,6 +929,15 @@ class CropQuality(db.Model):
     curcumin  = db.Column(db.String(200))
     extraneous  = db.Column(db.String(200))
 
+    @validates('tracing_id','moisture_content','foreign_matter','test_weight','quality','rotten_shriveled',
+    'hardness','splits','oil_content','infestation','hectoliter','total_defects',
+    'dockage','ash_content','insoluble_ash','volatile','mold_weight','drying_process',
+    'dead_insects','excreta','insect_defiled','curcumin','extraneous')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
+
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
@@ -756,6 +954,11 @@ class InputsInfo(db.Model):
     insecticides  = db.Column(db.String(200))
     seeds  = db.Column(db.String(200))
     
+    @validates('tracing_id','fertilizers','herbicides','fungicides','insecticides','seeds')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -774,6 +977,12 @@ class Warehouse(db.Model):
     insurance  = db.Column(db.String(200))
     duration  = db.Column(db.String(200))
     cost  = db.Column(db.String(200))
+
+    @validates('tracing_id','location','warehouse_type','capacity','standard','insurance','duration','cost')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -808,6 +1017,15 @@ class Shipment(db.Model):
     quality_accepted  = db.Column(db.String(200))
     quality_rejected  = db.Column(db.String(200))
 
+    @validates('tracing_id','location','loading_date','no_of_people','vehicle_type','plate_no',
+    'vehicle_capacity','driver_name','driver_number','insurance','delivery_time','delivery_date',
+    'arrival_time','no_of_police','local_levy','state_levy','truck_levy','inter_state_levy',
+    'no_of_offloaders','quality_check','quality_checked','quality_accepted','quality_rejected')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
+
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
@@ -823,6 +1041,11 @@ class Recommendation(db.Model):
     rec_two  = db.Column(db.String(200))
     rec_three  = db.Column(db.String(200))
 
+    @validates('tracing_id','rec_one','rec_two','rec_three')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
     def __repr__(self):
@@ -832,14 +1055,19 @@ class ScoreAnalytics(db.Model):
     __tablename__   = 'score_analytics'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
-    bvn     = db.Column(db.String(200),db.ForeignKey('farmer_table.bvn'))
+    bvn     = db.Column(db.String(200))
     scores  = db.Column(db.String(200))
     conditions  = db.Column(db.String(200))
     capital  = db.Column(db.String(200))
     collateral  = db.Column(db.String(200))
     capacity  = db.Column(db.String(200))
     character  = db.Column(db.String(200))
-    kyf         = db.relationship('FarmerTable', foreign_keys=bvn)
+    
+    @validates('bvn','scores','conditions','capital','collateral','capacity','character')
+    def check_input(self, key, value):
+        if value in forbidden:
+            raise AssertionError('invalid input')
+        return value
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 

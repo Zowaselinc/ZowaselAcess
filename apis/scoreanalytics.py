@@ -15,6 +15,10 @@ class AddScoreAnalytics(Resource):
             return {"error":False,"message":f'scoreanalysis{added}',"data":new_data.json()}
         except KeyError:
             return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 
 # get score analytics
 class ScoreAnalyticsbvn(Resource):

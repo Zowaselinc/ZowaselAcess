@@ -24,6 +24,10 @@ class AddFarmPractice(Resource):
                 return {"error":False,"message":f'practice{added}',"data":farmerpractice.json()}
         except KeyError:
             return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 
 # get practice with bvn
 class Practicebvn(Resource):
