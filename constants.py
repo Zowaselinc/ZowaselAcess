@@ -1,6 +1,7 @@
 import numpy as np
 from models import *
-
+from flask_restx import Resource
+from flask import jsonify, request
 # define variables
 added = " added successfully"
 accepted = " accepted successfully"
@@ -69,3 +70,13 @@ def applyLoan(bvn):
         price = 10000
     print()
     return price
+
+class Endpoint(Resource):
+    def get(self, path):
+        return {"error":True,"message":f'{path} page does not exist'}
+    def post(self, path):
+        return {"error":True,"message":f'{path} page does not exist'}
+    def put(self, path):
+        return {"error":True,"message":f'{path} page does not exist'}
+    def delete(self, path):
+        return {"error":True,"message":f'{path} page does not exist'}

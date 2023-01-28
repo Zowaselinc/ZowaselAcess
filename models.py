@@ -43,11 +43,11 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 class Loan(db.Model):
     __tablename__ = 'loans'
     
-    id     = db.Column(db.Integer, unique=True, primary_key=True)
-    type      = db.Column(db.String(200), unique=True)
-    company      = db.Column(db.String(200))
-    repayment_months      = db.Column(db.Integer)
-    interest_rate_per_annum      = db.Column(db.Integer)
+    id     = db.Column(db.Integer, unique=True, primary_key=True,nullable=False)
+    type      = db.Column(db.String(200), unique=True,nullable=False)
+    company      = db.Column(db.String(200),nullable=False)
+    repayment_months      = db.Column(db.Integer,nullable=False)
+    interest_rate_per_annum      = db.Column(db.Integer,nullable=False)
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
     def json(self):

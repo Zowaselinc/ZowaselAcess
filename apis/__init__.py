@@ -1,9 +1,12 @@
 from flask import Blueprint
 from flask_restx import Api
+from constants import *
 
 blueprint = Blueprint("api", __name__)
 
 api = Api(blueprint, title="ZOWASEL FLASK API", version="1.0", description="ZOWASEL FLASK API")
+const = api.namespace('/',description='loans')
+const.add_resource(Endpoint,'/<path:path>')
 from .loans import *
 loans = api.namespace('loan',description='loans')
 loans.add_resource(AddLoan,'/add')
