@@ -28,6 +28,40 @@ class AddCapital(Resource):
 
 # get capital by bvn
 class Capitalbvn(Resource):
+    def put(self, bvn):
+        try:
+            # pull row from db table
+            farmer = FarmerTable.query.filter_by(bvn=bvn).first()
+            # return error if not found
+            if not farmer:
+                return {"error":True,"message":bvnnotfound}
+            # if found, validate new values
+            if farmer:
+                # validate new bvn
+                if farmer.bvn != request.json['bvn']:
+                    checkdup = FarmerTable.query.filter_by(bvn=request.json['bvn']).first()
+                    if checkdup:
+                        return {"error":True,"message":bvnexists}
+                    else:
+                        farmer.bvn=request.json['bvn']
+                # assign other fields
+                farmer.mainincomesource=request.json['mainincomesource']
+                farmer.otherincomesource=request.json['otherincomesource']
+                farmer.noofincomeearners=request.json['noofincomeearners']
+                farmer.hasbankaccount=request.json['hasbankaccount']
+                farmer.firstfundingoption=request.json['firstfundingoption']
+                farmer.needsaloan=request.json['needsaloan']
+                farmer.paybackmonths=request.json['paybackmonths']
+                farmer.harvestqtychanged=request.json['harvestqtychanged']
+                farmer.pestexpensechanged=request.json['pestexpensechanged']
+                db.session.commit()
+                return {"error":False,"message":f'farmer{updated}',"data":farmer.json()}
+        except KeyError:
+            return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
     def get(self, bvn):
         farmer = CapitalTable.query.filter_by(bvn=bvn).first()
         if farmer:

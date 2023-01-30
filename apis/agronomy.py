@@ -29,6 +29,41 @@ class AddAgronomyServices(Resource):
 
 # get agronomy by bvn
 class Agronomybvn(Resource):
+    def put(self, bvn):
+        try:
+            # pull row from db table
+            farmer = FarmerTable.query.filter_by(bvn=bvn).first()
+            # return error if not found
+            if not farmer:
+                return {"error":True,"message":bvnnotfound}
+            # if found, validate new values
+            if farmer:
+                # validate new bvn
+                if farmer.bvn != request.json['bvn']:
+                    checkdup = FarmerTable.query.filter_by(bvn=request.json['bvn']).first()
+                    if checkdup:
+                        return {"error":True,"message":bvnexists}
+                    else:
+                        farmer.bvn=request.json['bvn']
+                # assign other fields
+                farmer.knowsagriprocessed=request.json['knowsagriprocessed']
+                farmer.agronomistthattrainedyou=request.json['agronomistthattrainedyou']
+                farmer.canmanageecosystem=request.json['canmanageecosystem']
+                farmer.howtomanageecosystem=request.json['howtomanageecosystem']
+                farmer.istrainingbeneficial=request.json['istrainingbeneficial']
+                farmer.fieldroutines=request.json['fieldroutines']
+                farmer.harvestingchanges=request.json['harvestingchanges']
+                farmer.iscropcalendarbeneficial=request.json['iscropcalendarbeneficial']
+                farmer.cropcalendarbenefits=request.json['cropcalendarbenefits']
+                farmer.recordkeepingbenefits=request.json['recordkeepingbenefits']
+                db.session.commit()
+                return {"error":False,"message":f'farmer{updated}',"data":farmer.json()}
+        except KeyError:
+            return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
     def get(self, bvn):
         farmer = AgronomyServicesTable.query.filter_by(bvn=bvn).first()
         if farmer:
