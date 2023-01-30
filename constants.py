@@ -24,7 +24,7 @@ statusnotfound = "status not found"
 loannotfound = "loan type not found"
 companynotfound = "company not found"
 invalidinput = "invalid input"
-missingentry = "Provide all required fields"
+missingentry = "missing field"
 # define functions
 
 # paginated lists
@@ -59,16 +59,27 @@ def get_paginated_list(results, url, start, limit):
     
 # Loan amount recommender
 def applyLoan(bvn):
-    crop_card = Cropcard.query.filter_by(bvn=bvn).first()
-    print(bvn)
-    if crop_card:
-        prices = [int(crop_card.fertilizer_cost),int(crop_card.mechanization_cost),int(crop_card.labour_cost),
-        int(crop_card.harvest_cost),int(crop_card.other_cost),10000] 
-        price = np.median(prices)
-    else:
-        price = 10000
-    print()
-    return price
+    try:
+        crop_card = Cropcard.query.filter_by(bvn=bvn).first()
+        if crop_card:
+            prices = [int(crop_card.fertilizer_cost),int(crop_card.mechanization_cost),int(crop_card.labour_cost),
+            int(crop_card.harvest_cost),int(crop_card.other_cost),10000] 
+            price = np.median(prices)
+            if price >10000:
+                pass
+            elif price<10000:
+                pass
+            else:
+                price=10000
+        else:
+            price = 10000
+        return price
+    except KeyError:
+        return {"error":True,"message":missingentry}
+    except AssertionError:
+        return {"error":True,"message":invalidinput}
+    except Exception as e:
+        return {"error":True,"message":e.__doc__}
 
 class Endpoint(Resource):
     def get(self, path):

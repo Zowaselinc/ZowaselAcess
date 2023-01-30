@@ -27,11 +27,12 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 # connect to the database
 basedir = os.path.abspath(os.path.dirname(__file__)) 
 forbidden = ("", " ")
-#USER = os.getenv('USER')
-#PASSWORD = os.environ.get('PASSWORD')
-#URLDB = os.environ.get('URLDB')
-#app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{USER}:{PASSWORD}@{URLDB}'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://zowasekadmin:zowasel1234!A@zowaselaidb.celbaavi1fuh.us-east-1.rds.amazonaws.com/zowaselai'
+USER = "zowasekadmin" #os.getenv('USER')
+PASSWORD = "zowasel1234!A" #os.environ.get('PASSWORD')
+URLDB = "zowaselaidb.celbaavi1fuh.us-east-1.rds.amazonaws.com/zowaselai"#os.environ.get('URLDB')
+
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{USER}:{PASSWORD}@{URLDB}'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://zowasekadmin:zowasel1234!A@zowaselaidb.celbaavi1fuh.us-east-1.rds.amazonaws.com/zowaselai'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 CORS(app, resources={r'/*': {'origins': '*'}})
@@ -55,7 +56,13 @@ class Loan(db.Model):
         if value in forbidden:
             raise AssertionError('invalid input')
         return value
-    
+    @validates('repayment_months','interest_rate_per_annum')
+    def check_input(self, key, value):
+        try:
+            int(value)
+        except ValueError:
+            raise AssertionError('invalid input')
+        return value
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
 
@@ -191,6 +198,13 @@ class Cropcard(db.Model):
         if value in forbidden:
             raise AssertionError('invalid input')
         return value
+    @validates('fertilizer_cost','mechanization_cost','labour_cost','harvest_cost','other_cost')
+    def check_input(self, key, value):
+        try:
+            int(value)
+        except ValueError:
+            raise AssertionError('invalid input')
+        return value
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -264,7 +278,13 @@ class LoanTransfer(db.Model):
         if value in forbidden:
             raise AssertionError('invalid input')
         return value
-
+    @validates('amount')
+    def check_input(self, key, value):
+        try:
+            int(value)
+        except ValueError:
+            raise AssertionError('invalid input')
+        return value
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
 

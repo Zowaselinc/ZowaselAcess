@@ -71,6 +71,7 @@ def preprocess_numberOfLand(df):
 
 def preprocess_df(df):
     # Generate your features here!!!
+    df=df.fillna(-999)
     df.applyLoanAmount=df.applyLoanAmount.astype('int')
     df=preprocess_numberOfLand(df)
     df=preprocess_intercropping(preprocess_yearsCultivating(df))
