@@ -7,7 +7,7 @@ from models import *
 class AddScoreAnalytics(Resource):	
     def post(self):
         try:
-            new_data = ScoreAnalytics(bvn=request.json['bvn'],scores=request.json['scores'],
+            new_data = ScoreAnalytics(bvn=request.json['bvn'],mobile=request.json['mobile'],scores=request.json['scores'],
         conditions=request.json['conditions'],capital=request.json['capital'],collateral=request.json['collateral'],
         capacity=request.json['capacity'],character=request.json['character'])
             db.session.add(new_data)
@@ -51,10 +51,26 @@ class ListScoreAnalytics(Resource):
         all_farmers = [farmer.json() for farmer in all_farmers]
         return jsonify(get_paginated_list(
         all_farmers, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
 
 
 
+# get score analytics
+class ScoreAnalyticsmobile(Resource):
+    def get(self, mobile):
+        farmer = ScoreAnalytics.query.filter_by(mobile=mobile).first()
+        if farmer:
+            return {"error":False,"message":f'scoreanalysis{retrieved}',"data":farmer.json()}
+        else:
+            return {"error":True,"message":mobilenotfound}
+    def delete(self, mobile):
+        farmer = ScoreAnalytics.query.filter_by(mobile=mobile).first()
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {"error":False,"message":f'scoreanalysis{removed}'}
+        else:
+            return {"error":True,"message":mobilenotfound}

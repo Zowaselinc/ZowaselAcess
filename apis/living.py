@@ -7,7 +7,8 @@ from models import *
 class AddLivingTable(Resource):	
     def post(self):
         try:
-            new_data = LivingTable(bvn=request.json['bvn'],houseowned=request.json['houseowned'],
+            new_data = LivingTable(bvn=request.json['bvn'],mobile=request.json['mobile'],
+            houseowned=request.json['houseowned'],
         stayswithfamily=request.json['stayswithfamily'],relationshipwithowner=request.json['relationshipwithowner'],
         householdeats=request.json['householdeats'],maleunderage=request.json['maleunderage'],
         femaleunderage=request.json['femaleunderage'],childrenunderage=request.json['childrenunderage'],
@@ -27,6 +28,7 @@ class AddLivingTable(Resource):
             return {"error":True,"message":invalidinput}
         except Exception as e:
             return {"error":True,"message":e.__doc__}
+
 # get living by bvn
 class Livingbvn(Resource):
     def get(self, bvn):
@@ -60,8 +62,25 @@ class ListLiving(Resource):
         all_farmers = [farmer.json() for farmer in all_farmers]
         return jsonify(get_paginated_list(
         all_farmers, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
 
+# get living by mobile
+class Livingmobile(Resource):
+    def get(self, mobile):
+        farmer = LivingTable.query.filter_by(mobile=mobile).all()
+        if farmer:
+            return {"error":False,"message":f'living{retrieved}',"data":[farmers.json() for farmers in farmer]}
+        else:
+            return {"error":True,"message":mobilenotfound}
+    def delete(self, mobile):
+        farmer = LivingTable.query.filter_by(mobile=mobile).all()
+        if farmer:
+            for farmers in farmer:
+                db.session.delete(farmers)
+            db.session.commit()
+            return {"error":False,"message":f'living{removed}'}
+        else:
+            return {"error":True,"message":mobilenotfound}

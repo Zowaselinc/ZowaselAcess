@@ -11,7 +11,8 @@ class AddMobileData(Resource):
             if farmer:
                 return {"error":True,"message":bvnexists}
             else:
-                farmermobiledata = MobileDataTable(bvn=request.json['bvn'],mobilephonetype=request.json['mobilephonetype'],
+                farmermobiledata = MobileDataTable(bvn=request.json['bvn'],mobile=request.json['mobile'],
+                mobilephonetype=request.json['mobilephonetype'],
         avweeklyphoneuse=request.json['avweeklyphoneuse'],callsoutnumber=request.json['callsoutnumber'],
         callsoutminutes=request.json['callsoutminutes'],callsinnumber=request.json['callsinnumber'],
         callinminutes=request.json['callinminutes'],smssent=request.json['smssent'],
@@ -60,7 +61,24 @@ class ListMobileData(Resource):
         all_farmers = [farmer.json() for farmer in all_farmers]
         return jsonify(get_paginated_list(
         all_farmers, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
+
+# get mobile data with mobile  
+class MobileDatamobile(Resource):
+    def get(self, mobile):
+        farmer = MobileDataTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            return {"error":False,"message":f'mobile data{retrieved}',"data":farmer.json()}
+        else:
+            return {"error":True,"message":mobilenotfound}
+    def delete(self, mobile):
+        farmer = MobileDataTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {"error":False,"message":f'mobile data{retrieved}'}
+        else:
+            return {"error":True,"message":mobilenotfound}

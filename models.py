@@ -61,7 +61,7 @@ class Loan(db.Model):
         try:
             int(value)
         except ValueError:
-            raise AssertionError('invalid input')
+            raise ValueError('invalid input')
         return value
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -178,6 +178,7 @@ class Cropcard(db.Model):
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     farmer_name = db.Column(db.String(200))
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200))
     crop_name = db.Column(db.String(200))
     fertilizer_cost      = db.Column(db.String(200))
     fertilizer      = db.Column(db.String(200))
@@ -192,7 +193,7 @@ class Cropcard(db.Model):
     date_filled      = db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)    
 
-    @validates('farmer_name','bvn','crop_name','fertilizer_cost','fertilizer','mechanization_cost',
+    @validates('farmer_name','bvn','mobile','crop_name','fertilizer_cost','fertilizer','mechanization_cost',
     'mechanization','labour_cost','labour','harvest_cost','other_cost','others','date_filled')
     def check_input(self, key, value):
         if value in forbidden:
@@ -203,7 +204,7 @@ class Cropcard(db.Model):
         try:
             int(value)
         except ValueError:
-            raise AssertionError('invalid input')
+            raise ValueError('invalid input')
         return value
 
     def json(self):
@@ -216,6 +217,7 @@ class ScoreCard(db.Model):
     __tablename__   = 'score_card'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200))
     age = db.Column(db.String(200))
     number_of_land = db.Column(db.String(200))
     address = db.Column(db.String(200))
@@ -236,7 +238,7 @@ class ScoreCard(db.Model):
     bin     = db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
-    @validates('bvn','age','number_of_land','address','owner_caretaker','crop','intercropping',
+    @validates('bvn','mobile','age','number_of_land','address','owner_caretaker','crop','intercropping',
     'machines','estimate_monthly_income','years_cultivating','gender','owns_a_bank_account','size_of_farm',
     'number_of_crops','is_in_a_cooperative','no_of_agronomist_visits')
     def check_input(self, key, value):
@@ -265,6 +267,7 @@ class LoanTransfer(db.Model):
     status      = db.Column(db.String(200))
     group     = db.Column(db.String(200))
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200))
     score     = db.Column(db.String(200))
     bin     = db.Column(db.String(200))
     transfer_date   = db.Column(db.String(200))
@@ -273,7 +276,7 @@ class LoanTransfer(db.Model):
     balance = db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
 
-    @validates('type','bvn','amount')
+    @validates('type','bvn','mobile','amount')
     def check_input(self, key, value):
         if value in forbidden:
             raise AssertionError('invalid input')
@@ -283,7 +286,7 @@ class LoanTransfer(db.Model):
         try:
             int(value)
         except ValueError:
-            raise AssertionError('invalid input')
+            raise ValueError('invalid input')
         return value
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 
@@ -300,14 +303,14 @@ class FarmerTable(db.Model):
     surname     = db.Column(db.String(200))
     middlename     = db.Column(db.String(200))
     email     = db.Column(db.String(200), unique=True)
-    telephone     = db.Column(db.String(200))
+    telephone     = db.Column(db.String(200),unique=True)
     age     = db.Column(db.String(200))
     gender     = db.Column(db.String(200))
     language = db.Column(db.String(200))
     maritalstatus     = db.Column(db.String(200))
     bankname = db.Column(db.String(200))
     accountno     = db.Column(db.String(200))
-    bvn     = db.Column(db.String(200), unique=True)
+    bvn     = db.Column(db.String(200))
     meansofid     = db.Column(db.String(200))
     issuedate     = db.Column(db.String(200))
     expirydate     = db.Column(db.String(200))
@@ -351,6 +354,7 @@ class CapitalTable(db.Model):
     __tablename__   = 'capital_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     mainincomesource     = db.Column(db.String(200))
     otherincomesource     = db.Column(db.String(200))
     noofincomeearners     = db.Column(db.String(200))
@@ -361,7 +365,7 @@ class CapitalTable(db.Model):
     harvestqtychanged     = db.Column(db.String(200))
     pestexpensechanged     = db.Column(db.String(200))
 
-    @validates('bvn','mainincomesource','otherincomesource','noofincomeearners',
+    @validates('bvn','mobile','mainincomesource','otherincomesource','noofincomeearners',
     'hasbankaccount','firstfundingoption','needsaloan','paybackmonths','harvestqtychanged',
     'pestexpensechanged')
     def check_input(self, key, value):
@@ -378,6 +382,7 @@ class CreditAccessTable(db.Model):
     __tablename__   = 'credit_access_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     hasservedastreasurer     = db.Column(db.String(200))
     durationastreasurer     = db.Column(db.String(200))
     savesmoneymonthly     = db.Column(db.String(200))
@@ -397,7 +402,7 @@ class CreditAccessTable(db.Model):
     yearsofcultivating     = db.Column(db.String(200))
     annualturnover     = db.Column(db.String(200))
     
-    @validates('bvn','hasservedastreasurer','durationastreasurer','savesmoneymonthly',
+    @validates('bvn','mobile','hasservedastreasurer','durationastreasurer','savesmoneymonthly',
     'savingsamount','haddifficultyrepaying','difficultloanamount','difficultyreason',
     'noofdifficultloans','noofrepaidloans','noofloansontime','estmonthlyincome','costofcultivation',
     'farmproduceexchanged','nooftimesexchanged','collateral','applyloanamount','yearsofcultivating',
@@ -414,6 +419,7 @@ class CreditHistoryTable(db.Model):
     __tablename__   = 'credit_history_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     hastakenloanbefore     = db.Column(db.String(200))
     sourceofloan     = db.Column(db.String(200))
     pastloanamount     = db.Column(db.String(200))
@@ -422,7 +428,7 @@ class CreditHistoryTable(db.Model):
     canprovidecollateral     = db.Column(db.String(200))
     whynocollateral = db.Column(db.String(200))
     
-    @validates('bvn','hastakenloanbefore','sourceofloan','pastloanamount','howloanwasrepaid',
+    @validates('bvn','mobile','hastakenloanbefore','sourceofloan','pastloanamount','howloanwasrepaid',
     'isreadytopayinterest','canprovidecollateral','whynocollateral')
     def check_input(self, key, value):
         if value in forbidden:
@@ -437,6 +443,7 @@ class ProductivityViabilityTable(db.Model):
     __tablename__   = 'productivity_viability_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     cropscultivated     = db.Column(db.String(200))
     growscrops     = db.Column(db.String(200))
     oilpalmfertilizers     = db.Column(db.String(200))
@@ -461,7 +468,7 @@ class ProductivityViabilityTable(db.Model):
     isintensivefarmingpractised     = db.Column(db.String(200))
     economicactivities     = db.Column(db.String(200))
     
-    @validates('bvn','cropscultivated','growscrops','oilpalmfertilizers','cocoafertilizers',
+    @validates('bvn','mobile','cropscultivated','growscrops','oilpalmfertilizers','cocoafertilizers',
     'fertilizerfrequency','pestfungherbicides','stagechemicalapplied','noofoildrums',
     'noofbagssesame','noofbagssoyabeans','noofbagsmaize','noofbagssorghum','noofbagscocoabeans',
     'croptrainedon','wherewhenwhotrained','nooftraining','pruningfrequency','cropbasedproblems',
@@ -481,6 +488,7 @@ class AgronomyServicesTable(db.Model):
     __tablename__   = 'agronomy_services_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     knowsagriprocessed     = db.Column(db.String(200))
     agronomistthattrainedyou     = db.Column(db.String(200))
     canmanageecosystem    = db.Column(db.String(200))
@@ -492,7 +500,7 @@ class AgronomyServicesTable(db.Model):
     cropcalendarbenefits     = db.Column(db.String(200))
     recordkeepingbenefits     = db.Column(db.String(200))
     
-    @validates('bvn','knowsagriprocessed','agronomistthattrainedyou','canmanageecosystem',
+    @validates('bvn','mobile','knowsagriprocessed','agronomistthattrainedyou','canmanageecosystem',
     'howtomanageecosystem','istrainingbeneficial','fieldroutines','harvestingchanges',
     'iscropcalendarbeneficial','cropcalendarbenefits','recordkeepingbenefits')
     def check_input(self, key, value):
@@ -508,6 +516,7 @@ class PsychometricsTable(db.Model):
     __tablename__   = 'psychometrics_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     fluidintelligence     = db.Column(db.String(200))
     attitudesandbeliefs     = db.Column(db.String(200))
     agribusinessskills     = db.Column(db.String(200))
@@ -515,7 +524,7 @@ class PsychometricsTable(db.Model):
     savesenough     = db.Column(db.String(200))
     haslazyneighbors     = db.Column(db.String(200))
 
-    @validates('bvn','fluidintelligence','attitudesandbeliefs','agribusinessskills','ethicsandhonesty',
+    @validates('bvn','mobile','fluidintelligence','attitudesandbeliefs','agribusinessskills','ethicsandhonesty',
     'savesenough','haslazyneighbors')
     def check_input(self, key, value):
         if value in forbidden:
@@ -530,6 +539,7 @@ class MobileDataTable(db.Model):
     __tablename__   = 'mobile_data_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     mobilephonetype     = db.Column(db.String(200))
     avweeklyphoneuse     = db.Column(db.String(200))
     callsoutnumber     = db.Column(db.String(200))
@@ -545,7 +555,7 @@ class MobileDataTable(db.Model):
     mobileappkinds     = db.Column(db.String(200))
     appdeleterate     = db.Column(db.String(200))
     
-    @validates('bvn','mobilephonetype','avweeklyphoneuse','callsoutnumber','callsoutminutes',
+    @validates('bvn','mobile','mobilephonetype','avweeklyphoneuse','callsoutnumber','callsoutminutes',
     'callsinnumber','callinminutes','smssent','dataprecedingplanswitch','billpaymenthistory',
     'avweeklydatarefill','noOfmobileapps','avtimespentonapp','mobileappkinds','appdeleterate')
     def check_input(self, key, value):
@@ -560,6 +570,7 @@ class FarmlandTable(db.Model):
     __tablename__   = 'farmland_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     nooffarmlands     = db.Column(db.String(200))
     ownerorcaretaker     = db.Column(db.String(200))
     farmownername     = db.Column(db.String(200))
@@ -572,7 +583,7 @@ class FarmlandTable(db.Model):
     keepsanimals     = db.Column(db.String(200))
     animalsfeedon     = db.Column(db.String(200))
     
-    @validates('bvn','nooffarmlands','ownerorcaretaker','farmownername','farmownerphoneno',
+    @validates('bvn','mobile','nooffarmlands','ownerorcaretaker','farmownername','farmownerphoneno',
     'relationshipwithowner','inheritedfrom','sizeoffarm','farmcoordinates','farmaddress',
     'keepsanimals','animalsfeedon')
     def check_input(self, key, value):
@@ -588,6 +599,7 @@ class CapacityTable(db.Model):
     __tablename__   = 'capacity_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     howlongbeenfarming     = db.Column(db.String(200))
     participatedintraining     = db.Column(db.String(200))
     farmingpractice     = db.Column(db.String(200))
@@ -596,7 +608,7 @@ class CapacityTable(db.Model):
     cooperativename     = db.Column(db.String(200))
     educationlevel     = db.Column(db.String(200))
     
-    @validates('bvn','howlongbeenfarming','participatedintraining','farmingpractice',
+    @validates('bvn','mobile','howlongbeenfarming','participatedintraining','farmingpractice',
     'keepsanimals','hascooperative','cooperativename','educationlevel')
     def check_input(self, key, value):
         if value in forbidden:
@@ -612,6 +624,7 @@ class FarmPractice(db.Model):
     __tablename__   = 'farm_practice_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     sizeoffarm     = db.Column(db.String(200))
     farmisrentedorleased     = db.Column(db.String(200))
     noofyearsleased     = db.Column(db.String(200))
@@ -627,7 +640,7 @@ class FarmPractice(db.Model):
     hasfarmplanorproject     = db.Column(db.String(200))
     farmprojectinfo     = db.Column(db.String(200))
     
-    @validates('bvn','sizeoffarm','farmisrentedorleased','noofyearsleased','usesmachines',
+    @validates('bvn','mobile','sizeoffarm','farmisrentedorleased','noofyearsleased','usesmachines',
     'rotatescrops','noOfhectaresproducedyearly','approxfertilizeruse',
     'nooffertlizerapplications','decisionforspraying','weedcontrolpractice',
     'estimatedincomepercrop','cropthatcansellwell','hasfarmplanorproject','farmprojectinfo')
@@ -644,6 +657,7 @@ class MechanizationTable(db.Model):
     __tablename__   = 'mechanization_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     machinesused     = db.Column(db.String(200))
     machinehashelped     = db.Column(db.String(200))
     advisemachineorlabour     = db.Column(db.String(200))
@@ -651,7 +665,7 @@ class MechanizationTable(db.Model):
     canacquiremorelands     = db.Column(db.String(200))
     percentcostsaved     = db.Column(db.String(200)) 
     
-    @validates('bvn','machinesused','machinehashelped','advisemachineorlabour','othermachinesneeded',
+    @validates('bvn','mobile','machinesused','machinehashelped','advisemachineorlabour','othermachinesneeded',
     'canacquiremorelands','percentcostsaved')
     def check_input(self, key, value):
         if value in forbidden:
@@ -665,6 +679,7 @@ class CultivationTable(db.Model):
     __tablename__   = 'cultivation_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     type_of_labor     = db.Column(db.String(200))
     pay_for_labor     = db.Column(db.String(200))
     how_many_housechildren_help     = db.Column(db.String(200))
@@ -674,7 +689,7 @@ class CultivationTable(db.Model):
     labor_women_do     = db.Column(db.String(200))
     percent_female_hired     = db.Column(db.String(200)) 
     
-    @validates('bvn','type_of_labor','pay_for_labor','how_many_housechildren_help','season_children_help',
+    @validates('bvn','mobile','type_of_labor','pay_for_labor','how_many_housechildren_help','season_children_help',
     'labor_children_do','household_vs_hire_cost','labor_women_do','percent_female_hired')
     def check_input(self, key, value):
         if value in forbidden:
@@ -689,13 +704,14 @@ class HarvestTable(db.Model):
     __tablename__   = 'harvest_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     when_is_harvest_season     = db.Column(db.String(200))
     no_of_hired_workers     = db.Column(db.String(200))
     no_of_family_workers     = db.Column(db.String(200))
     no_of_permanent_workers    = db.Column(db.String(200))
     no_hired_constantly     = db.Column(db.String(200))
     
-    @validates('bvn','when_is_harvest_season','no_of_hired_workers','no_of_family_workers',
+    @validates('bvn','mobile','when_is_harvest_season','no_of_hired_workers','no_of_family_workers',
     'no_of_permanent_workers','no_hired_constantly')
     def check_input(self, key, value):
         if value in forbidden:
@@ -710,6 +726,7 @@ class CareTable(db.Model):
     __tablename__ = 'care_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     healthcentloc= db.Column(db.String(200))
     healthcentcount= db.Column(db.String(200))
     healthcentdistance= db.Column(db.String(200))
@@ -729,7 +746,7 @@ class CareTable(db.Model):
     altIncomesource= db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
     
-    @validates('bvn','healthcentloc','healthcentcount','healthcentdistance','healthcentfunctional','affordable',
+    @validates('bvn','mobile','healthcentloc','healthcentcount','healthcentdistance','healthcentfunctional','affordable',
     'farmdistance','injuryevent','firstaid','lastcheck','inschool','level','schoolcount','schoolfunctional',
     'qualification','studytime','studywhere','altIncomesource')
     def check_input(self, key, value):
@@ -746,6 +763,7 @@ class Planet(db.Model):
     __tablename__ = 'planet_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     plantoexpand= db.Column(db.String(200))
     crop= db.Column(db.String(200))
     variety= db.Column(db.String(200))
@@ -778,7 +796,7 @@ class Planet(db.Model):
     measures= db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
     
-    @validates('bvn','plantoexpand','crop','variety','raiseorbuy','buywhere',
+    @validates('bvn','mobile','plantoexpand','crop','variety','raiseorbuy','buywhere',
     'seedlingprice','qtybought','degradedland','croprotation','season','disaster',
     'burning','mill','energysource','replacedtree','placement','sourceofwater',
     'covercrops','intercrop','cropintercropped','wastemgt','wastedisposal','recyclewaste',
@@ -797,6 +815,7 @@ class Safety(db.Model):
     __tablename__ = 'safety_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     ferment  = db.Column(db.String(200))
     fermentdays  = db.Column(db.String(200))
     fermentreason  = db.Column(db.String(200))
@@ -814,7 +833,7 @@ class Safety(db.Model):
     disposal  = db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
     
-    @validates('bvn','ferment','fermentdays','fermentreason','brokenqty','dowithbroken',
+    @validates('bvn','mobile','ferment','fermentdays','fermentreason','brokenqty','dowithbroken',
     'unripeqty','dowithunripe','cocoastore','ffbstore','herbicide','herbicidestore',
     'agrochemsource','harvesttool','wear','disposal')
     def check_input(self, key, value):
@@ -831,6 +850,7 @@ class LivingTable(db.Model):
     __tablename__ = 'living_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     houseowned = db.Column(db.String(200))
     stayswithfamily = db.Column(db.String(200))
     relationshipwithowner = db.Column(db.String(200))
@@ -858,7 +878,7 @@ class LivingTable(db.Model):
     input = db.Column(db.String(200))
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
     
-    @validates('bvn','houseowned','stayswithfamily','relationshipwithowner','householdeats','maleunderage',
+    @validates('bvn','mobile','houseowned','stayswithfamily','relationshipwithowner','householdeats','maleunderage',
     'femaleunderage','childrenunderage','maleaboveage','femaleaboveage','childrenaboveage','liveswith',
     'ownotherlands','standardofliving','sourceofwater','sourceeverytime','cookingmethod','haveelectricity',
     'powerpayment','typeoftoilet','kitchensink','hasgroup','group','position','hasaccessedInput','input')
@@ -875,6 +895,7 @@ class ConditionsTable(db.Model):
     __tablename__   = 'conditions_table'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     duration     = db.Column(db.String(200))
     seller     = db.Column(db.String(200))
     seller_mou     = db.Column(db.String(200))
@@ -882,7 +903,7 @@ class ConditionsTable(db.Model):
     cropexpectedmarketvalue      = db.Column(db.String(200))
     zowaselmarketplacepriceoffers     = db.Column(db.String(200))
     
-    @validates('bvn','duration','seller','seller_mou')
+    @validates('bvn','mobile','duration','seller','seller_mou')
     def check_input(self, key, value):
         if value in forbidden:
             raise AssertionError('invalid input')
@@ -1076,6 +1097,7 @@ class ScoreAnalytics(db.Model):
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     date_created    = db.Column(db.String(200), default=datetime.utcnow)
     bvn     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     scores  = db.Column(db.String(200))
     conditions  = db.Column(db.String(200))
     capital  = db.Column(db.String(200))
@@ -1083,7 +1105,7 @@ class ScoreAnalytics(db.Model):
     capacity  = db.Column(db.String(200))
     character  = db.Column(db.String(200))
     
-    @validates('bvn','scores','conditions','capital','collateral','capacity','character')
+    @validates('bvn','mobile','scores','conditions','capital','collateral','capacity','character')
     def check_input(self, key, value):
         if value in forbidden:
             raise AssertionError('invalid input')

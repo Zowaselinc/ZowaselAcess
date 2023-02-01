@@ -7,7 +7,7 @@ from models import *
 class AddCollateral5c(Resource):	
     def post(self):
         try:
-            farmerland = FarmlandTable(bvn=request.json['bvn'],nooffarmlands=request.json['nooffarmlands'],
+            farmerland = FarmlandTable(bvn=request.json['bvn'],mobile=request.json['mobile'],nooffarmlands=request.json['nooffarmlands'],
         ownerorcaretaker=request.json['ownerorcaretaker'],farmownername=request.json['farmownername'],
         farmownerphoneno=request.json['farmownerphoneno'],relationshipwithowner=request.json['relationshipwithowner'],
         inheritedfrom=request.json['inheritedfrom'],sizeoffarm=request.json['sizeoffarm'],
@@ -23,6 +23,10 @@ class AddCollateral5c(Resource):
                 return {"error":False,"message":f'collateral{added}'}
         except KeyError:
             return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 class Collateral5cbvn(Resource):
     def get(self, bvn):
         farmer = FarmlandTable.query.filter_by(bvn=bvn).first()

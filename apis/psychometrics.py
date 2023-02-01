@@ -11,7 +11,8 @@ class AddPsychometrics(Resource):
             if farmer:
                 return {"error":True,"message":bvnexists}
             else:
-                farmerpsychometrics = PsychometricsTable(bvn=request.json['bvn'],fluidintelligence=request.json['fluidintelligence'],
+                farmerpsychometrics = PsychometricsTable(bvn=request.json['bvn'],mobile=request.json['mobile'],
+                fluidintelligence=request.json['fluidintelligence'],
         attitudesandbeliefs=request.json['attitudesandbeliefs'],agribusinessskills=request.json['agribusinessskills'],
         ethicsandhonesty=request.json['ethicsandhonesty'],savesenough=request.json['savesenough'],
         haslazyneighbors=request.json['haslazyneighbors'])
@@ -55,7 +56,23 @@ class ListPsychometrics(Resource):
         all_farmers = [farmer.json() for farmer in all_farmers]
         return jsonify(get_paginated_list(
         all_farmers, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
+# get psychometrics by mobile
+class Psychometricsmobile(Resource):
+    def get(self, mobile):
+        farmer = PsychometricsTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            return {"error":False,"message":f'psychometrics{retrieved}',"data":farmer.json()}
+        else:
+            return {"error":True,"message":mobilenotfound}
+    def delete(self, mobile):
+        farmer = PsychometricsTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {"error":False,"message":f'psychometrics{removed}'}
+        else:
+            return {"error":True,"message":mobilenotfound}

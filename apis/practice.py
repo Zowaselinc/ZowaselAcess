@@ -11,7 +11,8 @@ class AddFarmPractice(Resource):
             if farmer:
                 return {"error":True,"message":bvnexists}
             else:
-                farmerpractice = FarmPractice(bvn=request.json['bvn'],sizeoffarm=request.json['sizeoffarm'],
+                farmerpractice = FarmPractice(bvn=request.json['bvn'],mobile=request.json['mobile'],
+                sizeoffarm=request.json['sizeoffarm'],
         farmisrentedorleased=request.json['farmisrentedorleased'],noofyearsleased=request.json['noofyearsleased'],
         usesmachines=request.json['usesmachines'],rotatescrops=request.json['rotatescrops'],
         noOfhectaresproducedyearly=request.json['noOfhectaresproducedyearly'],approxfertilizeruse=request.json['approxfertilizeruse'],
@@ -60,9 +61,25 @@ class ListPractice(Resource):
         all_farmers = [farmer.json() for farmer in all_farmers]
         return jsonify(get_paginated_list(
         all_farmers, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
 
 
+# get practice with mobile
+class Practicemobile(Resource):
+    def get(self, mobile):
+        farmer = FarmPractice.query.filter_by(mobile=mobile).first()
+        if farmer:
+            return {"error":False,"message":f'practice{retrieved}',"data":farmer.json()}
+        else:
+            return {"error":True,"message":mobilenotfound}
+    def delete(self, mobile):
+        farmer = FarmPractice.query.filter_by(mobile=mobile).first()
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {"error":False,"message":f'practice{removed}'}
+        else:
+            return {"error":True,"message":mobilenotfound}

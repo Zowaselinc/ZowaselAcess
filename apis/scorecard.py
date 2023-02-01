@@ -16,6 +16,10 @@ class AddScoreCard(Resource):
             farmer = ScoreCard.query.filter_by(bvn=bvn).all()
             if farmer:
                 return {"error":True,"message":bvnexists}
+            mobile=request.json['mobile']
+            farmer = ScoreCard.query.filter_by(mobile=mobile).all()
+            if farmer:
+                return {"error":True,"message":mobileexists}
             else:
                 farmer = pd.DataFrame([['bvn','age','number_of_land','address','owner_caretaker','crop','intercropping', 'machines',
         'estimate_monthly_income','years_cultivating','gender','owns_a_bank_account','size_of_farm','number_of_crops','is_in_a_cooperative',
@@ -36,7 +40,7 @@ class AddScoreCard(Resource):
        'crop1', 'crop2', 'age1', 'age2', 'age3', 'age4']
                 score = model.predict_proba(tdf[train_cols])[:,1].round(2)
                 bin=bin_target(score)
-                history = ScoreCard(bvn=request.json['bvn'],age=request.json['age'],
+                history = ScoreCard(bvn=request.json['bvn'],mobile=request.json['mobile'],age=request.json['age'],
         number_of_land=request.json['number_of_land'],address=request.json['address'],
         owner_caretaker=request.json['owner_caretaker'],crop=request.json['crop'],
         intercropping=request.json['intercropping'], machines=request.json['machines'],
@@ -91,6 +95,23 @@ class Scorecardid(Resource):
             return {"error":False,"message":f'scorecard{removed}'}
         else:
             return ({"error":True,"message":idnotfound})
+
+# get scorecard by mobile   
+class Scorecardmobile(Resource):
+    def get(self, mobile):
+        farmer = ScoreCard.query.filter_by(mobile=mobile).first()
+        if farmer:
+            return {"error":False,"message":f'scorecard{retrieved}',"data":farmer.json()}
+        else:
+            return {"error":True,"message":mobilenotfound}
+    def delete(self, mobile):
+        farmer = ScoreCard.query.filter_by(mobile=mobile).first()
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {"error":False,"message":f'scorecard{removed}'}
+        else:
+            return ({"error":True,"message":mobilenotfound})
         
 # get all scorecard
 class AllScorecard(Resource):
@@ -106,7 +127,7 @@ class ListScorecard(Resource):
         all_farmers = [farmer.json() for farmer in all_farmers]
         return jsonify(get_paginated_list(
         all_farmers, 
-        '/list', 
+        f'/list/limit={limit}', 
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))

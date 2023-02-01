@@ -7,7 +7,7 @@ from models import *
 class AddConditions(Resource):	
     def post(self):
         try:
-            farmercondition = ConditionsTable(bvn=request.json['bvn'],duration=request.json['duration'],
+            farmercondition = ConditionsTable(bvn=request.json['bvn'],mobile=request.json['mobile'],duration=request.json['duration'],
         seller=request.json['seller'],seller_mou=request.json['seller_mou'],cropyieldprediction=0,
         cropexpectedmarketvalue=0,zowaselmarketplacepriceoffers=0)
         
@@ -56,7 +56,24 @@ class ListConditions(Resource):
         all_farmers = [farmer.json() for farmer in all_farmers]
         return jsonify(get_paginated_list(
         all_farmers, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
+
+# get condition by mobile
+class Conditionsmobile(Resource):
+    def get(self, mobile):
+        farmer = ConditionsTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            return {"error":False,"message":f'Conditions{retrieved}',"data":farmer.json()}
+        else:
+            return {"error":True,"message":bvnnotfound}
+    def delete(self, mobile):
+        farmer = ConditionsTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {"error":False,"message":f'Conditions{removed}'}
+        else:
+            return {"error":True,"message":mobilenotfound}

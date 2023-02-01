@@ -7,13 +7,13 @@ from models import *
 class AddCapital5c(Resource):	
     def post(self):
         try:
-            farmercapital = CapitalTable(bvn=request.json['bvn'],mainincomesource=request.json['mainincomesource'],
+            farmercapital = CapitalTable(bvn=request.json['bvn'],mobile=request.json['mobile'],mainincomesource=request.json['mainincomesource'],
         otherincomesource=request.json['otherincomesource'],noofincomeearners=request.json['noofincomeearners'],
         hasbankaccount=request.json['hasbankaccount'],firstfundingoption=request.json['firstfundingoption'],
         needsaloan=request.json['needsaloan'],paybackmonths=request.json['paybackmonths'],
         harvestqtychanged=request.json['harvestqtychanged'],pestexpensechanged=request.json['pestexpensechanged'])
             farmercreditaccess = CreditAccessTable(bvn=request.json['bvn'],
-        hasservedastreasurer=request.json['hasservedastreasurer'],durationastreasurer=request.json['durationastreasurer'],
+        hasservedastreasurer=request.json['hasservedastreasurer'],mobile=request.json['mobile'],durationastreasurer=request.json['durationastreasurer'],
         savesmoneymonthly=request.json['savesmoneymonthly'],savingsamount=request.json['savingsamount'],
         haddifficultyrepaying=request.json['haddifficultyrepaying'],difficultloanamount=request.json['difficultloanamount'],
         difficultyreason=request.json['difficultyreason'],noofdifficultloans=request.json['noofdifficultloans'],
@@ -38,6 +38,10 @@ class AddCapital5c(Resource):
             return {"error":False,"message":f'capital{added}'}
         except KeyError:
             return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 
 class Capital5cbvn(Resource):
     def get(self, bvn):

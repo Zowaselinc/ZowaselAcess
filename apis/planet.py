@@ -7,7 +7,8 @@ from models import *
 class AddPlanet(Resource):	
     def post(self):
         try:
-            new_data = Planet(bvn=request.json['bvn'],plantoexpand=request.json['plantoexpand'],crop=request.json['crop'],
+            new_data = Planet(bvn=request.json['bvn'],mobile=request.json['mobile'],
+            plantoexpand=request.json['plantoexpand'],crop=request.json['crop'],
         variety=request.json['variety'],raiseorbuy=request.json['raiseorbuy'],buywhere=request.json['buywhere'],
         seedlingprice=request.json['seedlingprice'],qtybought=request.json['qtybought'],degradedland=request.json['degradedland'],
         croprotation=request.json['croprotation'],season=request.json['season'],disaster=request.json['disaster'],
@@ -59,7 +60,25 @@ class ListPlanet(Resource):
         all_farmers = [farmer.json() for farmer in all_farmers]
         return jsonify(get_paginated_list(
         all_farmers, 
-        '/list', 
+        f'/list/limit={limit}', 
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
+
+# get planet with mobile
+class Planetmobile(Resource):
+    def get(self, mobile):
+        farmer = Planet.query.filter_by(mobile=mobile).all()
+        if farmer:
+            return {"error":False,"message":f'planet{retrieved}',"data":[farmers.json() for farmers in farmer]}
+        else:
+            return {"error":True,"message":mobilenotfound}
+    def delete(self, mobile):
+        farmer = Planet.query.filter_by(mobile=mobile).all()
+        if farmer:
+            for farmers in farmer:
+                db.session.delete(farmers)
+            db.session.commit()
+            return {"error":False,"message":f'planet{removed}'}
+        else:
+            return {"error":True,"message":mobilenotfound}

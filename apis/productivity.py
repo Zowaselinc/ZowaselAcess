@@ -11,7 +11,7 @@ class AddProductivityViability(Resource):
             if farmer:
                 return {"error":True,"message":bvnexists}
             else:
-                farmerproductivity = ProductivityViabilityTable(bvn=request.json['bvn'],
+                farmerproductivity = ProductivityViabilityTable(bvn=request.json['bvn'],mobile=request.json['mobile'],
         cropscultivated=request.json['cropscultivated'],growscrops=request.json['growscrops'],
         oilpalmfertilizers=request.json['oilpalmfertilizers'],cocoafertilizers=request.json['cocoafertilizers'],
         fertilizerfrequency=request.json['fertilizerfrequency'],pestfungherbicides=request.json['pestfungherbicides'],
@@ -65,7 +65,24 @@ class ListProductivity(Resource):
         all_farmers = [farmer.json() for farmer in all_farmers]
         return jsonify(get_paginated_list(
         all_farmers, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
+
+# get productivity with mobile
+class Productivitymobile(Resource):
+    def get(self, mobile):
+        farmer = ProductivityViabilityTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            return {"error":False,"message":f'productivity{retrieved}',"data":farmer.json()}
+        else:
+            return {"error":True,"message":mobilenotfound}
+    def delete(self, mobile):
+        farmer = ProductivityViabilityTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {"error":False,"message":f'productivity{removed}'}
+        else:
+            return {"error":True,"message":mobilenotfound}

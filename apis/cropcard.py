@@ -16,7 +16,8 @@ class AddCropCard(Resource):
             if farmer:
                 return {"error":True,"message":bvnexists}
             else:
-                card = Cropcard(bvn=request.json['bvn'],farmer_name=request.json['farmer_name'],
+                card = Cropcard(bvn=request.json['bvn'],mobile=request.json['mobile'],
+                farmer_name=request.json['farmer_name'],
         crop_name=request.json['crop_name'],fertilizer_cost=request.json['fertilizer_cost'],
         fertilizer=request.json['fertilizer'],mechanization_cost=request.json['mechanization_cost'],
         mechanization=request.json['mechanization'], labour_cost=request.json['labour_cost'],
@@ -138,8 +139,25 @@ class ListCropcard(Resource):
         all_cards = [farmer.json() for farmer in all_cards]
         return jsonify(get_paginated_list(
         all_cards, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
 
+# get crop card with mobile
+class Cropcardmobile(Resource):
+    def get(self, mobile):
+        cards = Cropcard.query.filter_by(mobile=mobile).all()
+        if cards:
+            return {"error":False,"message":f'cropcard{retrieved}',"data":[card.json() for card in cards]}
+        else:
+            return {"error":True,"message":mobilenotfound}
+    def delete(self, mobile):
+        cards = Cropcard.query.filter_by(mobile=mobile).all()
+        if cards:
+            for card in cards:
+                db.session.delete(card)
+            db.session.commit()
+            return {"error":False,"message":f'cropcard{removed}'}
+        else:
+            return ({"error":True,"message":mobilenotfound})

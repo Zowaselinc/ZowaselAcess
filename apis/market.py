@@ -248,7 +248,7 @@ class ListBuyersDailyPrice(Resource):
         price = [prices.json() for prices in price]
         return jsonify(get_paginated_list(
         price, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
@@ -259,7 +259,7 @@ class ListBuyersOffers(Resource):
         price = [prices.json() for prices in price]
         return jsonify(get_paginated_list(
         price, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
@@ -270,7 +270,7 @@ class ListFarmGatePrices(Resource):
         price = [prices.json() for prices in price]
         return jsonify(get_paginated_list(
         price, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
@@ -280,7 +280,7 @@ class ListMarketPrices(Resource):
         price = [prices.json() for prices in price]
         return jsonify(get_paginated_list(
         price, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))

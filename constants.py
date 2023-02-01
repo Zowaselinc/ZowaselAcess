@@ -3,6 +3,7 @@ from models import *
 from flask_restx import Resource
 from flask import jsonify, request
 # define variables
+minimumloanamount = 10000
 added = " added successfully"
 accepted = " accepted successfully"
 rejected = " rejected successfully"
@@ -10,6 +11,7 @@ removed = " removed successfully"
 updated = " updated successfully"
 retrieved = " retrieved successfully"
 bvnexists = "bvn already exists"
+mobileexists = "mobile already exists"
 emailexists = "email already exists"
 loanexists = "loan type already exists"
 tidexists = "tracing id already exists"
@@ -21,6 +23,7 @@ cropnotfound = "crop not found"
 emailnotfound = "email not found"
 groupnotfound = "group not found"
 statusnotfound = "status not found"
+mobilenotfound = "mobile not found"
 loannotfound = "loan type not found"
 companynotfound = "company not found"
 invalidinput = "invalid input"
@@ -45,14 +48,16 @@ def get_paginated_list(results, url, start, limit):
         obj['previous'] = ''
     else:
         start_copy = max(1, start - limit)
-        limit_copy = start - 1
-        obj['previous'] = url + '?start=%d&limit=%d' % (start_copy, limit_copy)
+        #limit_copy = start - 1
+        #obj['previous'] = url + '?start=%d&limit=%d' % (start_copy, limit_copy)
+        obj['previous'] = url + '?start=%d' % (start_copy)
     # make next url
     if start + limit > count:
         obj['next'] = ''
     else:
         start_copy = start + limit
-        obj['next'] = url + '?start=%d&limit=%d' % (start_copy, limit)
+        #obj['next'] = url + '?start=%d&limit=%d' % (start_copy, limit)
+        obj['next'] = url + '?start=%d' % (start_copy)
     # finally extract result according to bounds
     obj['results'] = results[(start - 1):(start - 1 + limit)]
     return obj
@@ -63,16 +68,16 @@ def applyLoan(bvn):
         crop_card = Cropcard.query.filter_by(bvn=bvn).first()
         if crop_card:
             prices = [int(crop_card.fertilizer_cost),int(crop_card.mechanization_cost),int(crop_card.labour_cost),
-            int(crop_card.harvest_cost),int(crop_card.other_cost),10000] 
+            int(crop_card.harvest_cost),int(crop_card.other_cost),minimumloanamount] 
             price = np.median(prices)
-            if price >10000:
+            if price >minimumloanamount:
                 pass
-            elif price<10000:
+            elif price<minimumloanamount:
                 pass
             else:
-                price=10000
+                price=minimumloanamount
         else:
-            price = 10000
+            price = minimumloanamount
         return price
     except KeyError:
         return {"error":True,"message":missingentry}

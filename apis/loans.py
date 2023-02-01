@@ -76,7 +76,7 @@ class ListLoans(Resource):
         all_loans = [loan.json() for loan in all_loans]
         return jsonify(get_paginated_list(
         all_loans, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))

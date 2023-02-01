@@ -7,7 +7,7 @@ from models import *
 class AddSafety(Resource):	
     def post(self):
         try:
-            new_data = Safety(bvn=request.json['bvn'],ferment=request.json['ferment'],
+            new_data = Safety(bvn=request.json['bvn'],mobile=request.json['mobile'],ferment=request.json['ferment'],
         fermentdays=request.json['fermentdays'],fermentreason=request.json['fermentreason'],brokenqty=request.json['brokenqty'],
         dowithbroken=request.json['dowithbroken'],unripeqty=request.json['unripeqty'],dowithunripe=request.json['dowithunripe'],
         cocoastore=request.json['cocoastore'],ffbstore=request.json['ffbstore'],herbicide=request.json['herbicide'],
@@ -55,7 +55,25 @@ class ListSafety(Resource):
         all_farmers = [farmer.json() for farmer in all_farmers]
         return jsonify(get_paginated_list(
         all_farmers, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
+
+# get safety by mobile
+class Safetymobile(Resource):
+    def get(self, mobile):
+        farmer = Safety.query.filter_by(mobile=mobile).all()
+        if farmer:
+            return {"error":False,"message":f'safety{retrieved}',"data":[farmers.json() for farmers in farmer]}
+        else:
+            return {"error":True,"message":mobilenotfound}
+    def delete(self, mobile):
+        farmer = Safety.query.filter_by(mobile=mobile).all()
+        if farmer:
+            for farmers in farmer:
+                db.session.delete(farmers)
+            db.session.commit()
+            return {"error":False,"message":f'safety{removed}'}
+        else:
+            return {"error":True,"message":mobilenotfound}

@@ -11,7 +11,8 @@ class AddHarvest(Resource):
             if farmer:
                 return {"error":True,"message":bvnexists}
             else:
-                farmerharvest = HarvestTable(bvn=request.json['bvn'],when_is_harvest_season=request.json['when_is_harvest_season'],
+                farmerharvest = HarvestTable(bvn=request.json['bvn'],mobile=request.json['mobile'],
+                when_is_harvest_season=request.json['when_is_harvest_season'],
         no_of_hired_workers=request.json['no_of_hired_workers'],no_of_family_workers=request.json['no_of_family_workers'],
         no_of_permanent_workers=request.json['no_of_permanent_workers'],no_hired_constantly=request.json['no_hired_constantly'])
                 db.session.add(farmerharvest)
@@ -55,7 +56,23 @@ class ListHarvest(Resource):
         all_farmers = [farmer.json() for farmer in all_farmers]
         return jsonify(get_paginated_list(
         all_farmers, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
+# get harvest by mobile
+class Harvestmobile(Resource):
+    def get(self, mobile):
+        farmer = HarvestTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            return {"error":False,"message":f'harvest{retrieved}',"data":farmer.json()}
+        else:
+            return {"error":True,"message":mobilenotfound}
+    def delete(self, mobile):
+        farmer = HarvestTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {"error":False,"message":f'harvest{removed}'}
+        else:
+            return {"error":True,"message":mobilenotfound}

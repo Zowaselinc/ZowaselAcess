@@ -7,12 +7,12 @@ from models import *
 class AddCharacter5c(Resource):
     def post(self):
         try:
-            farmercredithistory = CreditHistoryTable(bvn=request.json['bvn'],
+            farmercredithistory = CreditHistoryTable(bvn=request.json['bvn'],mobile=request.json['mobile'],
         hastakenloanbefore=request.json['hastakenloanbefore'],sourceofloan=request.json['sourceofloan'],
         pastloanamount=request.json['pastloanamount'],howloanwasrepaid=request.json['howloanwasrepaid'],
         isreadytopayinterest=request.json['isreadytopayinterest'],canprovidecollateral=request.json['canprovidecollateral'],
         whynocollateral=request.json['whynocollateral'])
-            farmerproductivity = ProductivityViabilityTable(bvn=request.json['bvn'],
+            farmerproductivity = ProductivityViabilityTable(bvn=request.json['bvn'],mobile=request.json['mobile'],
         cropscultivated=request.json['cropscultivated'],growscrops=request.json['growscrops'],
         oilpalmfertilizers=request.json['oilpalmfertilizers'],cocoafertilizers=request.json['cocoafertilizers'],
         fertilizerfrequency=request.json['fertilizerfrequency'],pestfungherbicides=request.json['pestfungherbicides'],
@@ -25,17 +25,17 @@ class AddCharacter5c(Resource):
         tooyoungcrops=request.json['tooyoungcrops'],youngcropsandstage=request.json['youngcropsandstage'],
         cultivationstartdate=request.json['cultivationstartdate'],isintensivefarmingpractised=request.json['isintensivefarmingpractised'],
         economicactivities=request.json['economicactivities'])
-            farmeragronomy = AgronomyServicesTable(bvn=request.json['bvn'],
+            farmeragronomy = AgronomyServicesTable(bvn=request.json['bvn'],mobile=request.json['mobile'],
         knowsagriprocessed=request.json['knowsagriprocessed'],agronomistthattrainedyou=request.json['agronomistthattrainedyou'],
         canmanageecosystem=request.json['canmanageecosystem'],howtomanageecosystem=request.json['howtomanageecosystem'],
         istrainingbeneficial=request.json['istrainingbeneficial'],fieldroutines=request.json['fieldroutines'],
         harvestingchanges=request.json['harvestingchanges'],iscropcalendarbeneficial=request.json['iscropcalendarbeneficial'],
         cropcalendarbenefits=request.json['cropcalendarbenefits'],recordkeepingbenefits=request.json['recordkeepingbenefits'])
-            farmerpsychometrics = PsychometricsTable(bvn=request.json['bvn'],fluidintelligence=request.json['fluidintelligence'],
+            farmerpsychometrics = PsychometricsTable(bvn=request.json['bvn'],mobile=request.json['mobile'],fluidintelligence=request.json['fluidintelligence'],
         attitudesandbeliefs=request.json['attitudesandbeliefs'],agribusinessskills=request.json['agribusinessskills'],
         ethicsandhonesty=request.json['ethicsandhonesty'],savesenough=request.json['savesenough'],
         haslazyneighbors=request.json['haslazyneighbors'])
-            farmermobiledata = MobileDataTable(bvn=request.json['bvn'],mobilephonetype=request.json['mobilephonetype'],
+            farmermobiledata = MobileDataTable(bvn=request.json['bvn'],mobile=request.json['mobile'],mobilephonetype=request.json['mobilephonetype'],
         avweeklyphoneuse=request.json['avweeklyphoneuse'],callsoutnumber=request.json['callsoutnumber'],
         callsoutminutes=request.json['callsoutminutes'],callsinnumber=request.json['callsinnumber'],
         callinminutes=request.json['callinminutes'],smssent=request.json['smssent'],
@@ -73,6 +73,10 @@ class AddCharacter5c(Resource):
             return {"error":False,"message":f'character{added}'}
         except KeyError:
             return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 class Character5cbvn(Resource):
     def get(self, bvn):
         farmer1 = CreditHistoryTable.query.filter_by(bvn=bvn).first()

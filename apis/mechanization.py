@@ -11,7 +11,7 @@ class AddMechanization(Resource):
             if farmer:
                 return {"error":True,"message":bvnexists}
             else:
-                farmermechanization = MechanizationTable(bvn=request.json['bvn'],
+                farmermechanization = MechanizationTable(bvn=request.json['bvn'],mobile=request.json['mobile'],
         machinesused=request.json['machinesused'],machinehashelped=request.json['machinehashelped'],
         advisemachineorlabour=request.json['advisemachineorlabour'],othermachinesneeded=request.json['othermachinesneeded'],
         canacquiremorelands=request.json['canacquiremorelands'],percentcostsaved=request.json['percentcostsaved'])
@@ -56,7 +56,24 @@ class ListMechanization(Resource):
         all_farmers = [farmer.json() for farmer in all_farmers]
         return jsonify(get_paginated_list(
         all_farmers, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
+
+# get mechanization with mobile
+class Mechanizationmobile(Resource):
+    def get(self, mobile):
+        farmer = MechanizationTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            return {"error":False,"message":f'mechanization{retrieved}',"data":farmer.json()}
+        else:
+            return {"error":True,"message":mobilenotfound}
+    def delete(self, mobile):
+        farmer = MechanizationTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {"error":False,"message":f'mechanization{removed}'}
+        else:
+            return {"error":True,"message":mobilenotfound}

@@ -219,6 +219,24 @@ class Farmergroup(Resource):
         else:
             return {"error":True,"message":groupnotfound}
     
+# get farmer by telephone
+class Farmertelephone(Resource):
+    def get(self, telephone):
+        farmers = FarmerTable.query.filter_by(telephone=telephone).all()
+        if farmers:
+            all_farmers = [farmer.json() for farmer in farmers]
+            return jsonify({'error': False,'message': f'farmer{retrieved}','data': all_farmers})
+        else:
+            return {"error":True,"message":mobilenotfound}
+    def delete(self, telephone):
+        farmers = FarmerTable.query.filter_by(telephone=telephone).all()
+        if farmers:
+            for farmer in farmers:
+                db.session.delete(farmer)
+            db.session.commit()
+            return {"error":False,"message":f'farmer{removed}'}
+        else:
+            return {"error":True,"message":mobilenotfound}
 # get all farmers
 class AllFarmers(Resource):
     def get(self):
@@ -233,7 +251,7 @@ class ListFarmers(Resource):
         all_farmers = [farmer.json() for farmer in all_farmers]
         return jsonify(get_paginated_list(
         all_farmers, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))

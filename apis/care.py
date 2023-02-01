@@ -7,7 +7,7 @@ from models import *
 class AddCareTable(Resource):	
     def post(self):
         try:
-            new_data = CareTable(bvn=request.json['bvn'],healthcentloc=request.json['healthcentloc'],
+            new_data = CareTable(bvn=request.json['bvn'],mobile=request.json['mobile'],healthcentloc=request.json['healthcentloc'],
         healthcentcount=request.json['healthcentcount'],healthcentdistance=request.json['healthcentdistance'],
         healthcentfunctional=request.json['healthcentfunctional'],affordable=request.json['affordable'],
         farmdistance=request.json['farmdistance'],injuryevent=request.json['injuryevent'],firstaid=request.json['firstaid'],
@@ -57,8 +57,25 @@ class ListCare(Resource):
         all_farmers = [farmer.json() for farmer in all_farmers]
         return jsonify(get_paginated_list(
         all_farmers, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
 
+# get care by mobile
+class Caremobile(Resource):
+    def get(self, mobile):
+        farmer = CareTable.query.filter_by(mobile=mobile).all()
+        if farmer:
+            return {"error":False,"message":f'care{retrieved}',"data":[farmers.json() for farmers in farmer]}
+        else:
+            return {"error":True,"message":mobilenotfound}
+    def delete(self, mobile):
+        farmer = CareTable.query.filter_by(mobile=mobile).all()
+        if farmer:
+            for farmers in farmer:
+                db.session.delete(farmers)
+            db.session.commit()
+            return {"error":False,"message":f'care{removed}'}
+        else:
+            return {"error":True,"message":mobilenotfound}

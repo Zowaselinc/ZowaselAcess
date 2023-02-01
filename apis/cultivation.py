@@ -11,7 +11,8 @@ class AddCultivation(Resource):
             if farmer:
                 return {"error":True,"message":bvnexists}
             else:
-                farmercultivation = CultivationTable(bvn=request.json['bvn'],type_of_labor=request.json['type_of_labor'],
+                farmercultivation = CultivationTable(bvn=request.json['bvn'],mobile=request.json['mobile'],
+                type_of_labor=request.json['type_of_labor'],
         pay_for_labor=request.json['pay_for_labor'],how_many_housechildren_help=request.json['how_many_housechildren_help'],
         season_children_help=request.json['season_children_help'],labor_children_do=request.json['labor_children_do'],
         household_vs_hire_cost=request.json['household_vs_hire_cost'],labor_women_do=request.json['labor_women_do'],
@@ -33,7 +34,7 @@ class Cultivationbvn(Resource):
         if farmer:
             return {"error":False,"message":f'cultivation{retrieved}',"data":farmer.json()}
         else:
-            return {"error":True,"message":bvnexists}
+            return {"error":True,"message":bvnnotfound}
     def delete(self, bvn):
         farmer = CultivationTable.query.filter_by(bvn=bvn).first()
         if farmer:
@@ -57,9 +58,25 @@ class ListCultivation(Resource):
         all_farmers = [farmer.json() for farmer in all_farmers]
         return jsonify(get_paginated_list(
         all_farmers, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
 
 
+# get cultivation with mobile
+class Cultivationmobile(Resource):
+    def get(self, mobile):
+        farmer = CultivationTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            return {"error":False,"message":f'cultivation{retrieved}',"data":farmer.json()}
+        else:
+            return {"error":True,"message":mobilenotfound}
+    def delete(self, mobile):
+        farmer = CultivationTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {"error":False,"message":f'cultivation{removed}'}
+        else:
+            return {"error":True,"message":mobilenotfound}

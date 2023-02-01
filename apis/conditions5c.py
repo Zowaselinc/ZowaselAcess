@@ -8,7 +8,7 @@ from models import *
 class AddConditions5c(Resource):	
     def post(self):
         try:
-            farmercondition = ConditionsTable(bvn=request.json['bvn'],duration=request.json['duration'],
+            farmercondition = ConditionsTable(bvn=request.json['bvn'],mobile=request.json['mobile'],duration=request.json['duration'],
         seller=request.json['seller'],seller_mou=request.json['seller_mou'],cropyieldprediction=0,
         cropexpectedmarketvalue=0,zowaselmarketplacepriceoffers=0)
         
@@ -21,6 +21,10 @@ class AddConditions5c(Resource):
                 return {"error":False,"message":f'Conditions{added}',"data":farmercondition.json()}
         except KeyError:
             return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 
 class Conditions5cbvn(Resource):
     def get(self, bvn):

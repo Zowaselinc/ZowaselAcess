@@ -11,7 +11,8 @@ class AddFarmlandData(Resource):
             if farmer:
                 return {"error":True,"message":bvnexists}
             else:
-                farmerland = FarmlandTable(bvn=request.json['bvn'],nooffarmlands=request.json['nooffarmlands'],
+                farmerland = FarmlandTable(bvn=request.json['bvn'],mobile=request.json['mobile'],
+                nooffarmlands=request.json['nooffarmlands'],
         ownerorcaretaker=request.json['ownerorcaretaker'],farmownername=request.json['farmownername'],
         farmownerphoneno=request.json['farmownerphoneno'],relationshipwithowner=request.json['relationshipwithowner'],
         inheritedfrom=request.json['inheritedfrom'],sizeoffarm=request.json['sizeoffarm'],
@@ -58,7 +59,24 @@ class ListFarmland(Resource):
         all_farmers = [farmer.json() for farmer in all_farmers]
         return jsonify(get_paginated_list(
         all_farmers, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
+
+# get farmland by mobile
+class Farmlandmobile(Resource):
+    def get(self, mobile):
+        farmer = FarmlandTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            return {"error":False,"message":f'farmland{retrieved}',"data":farmer.json()}
+        else:
+            return {"error":True,"message":mobilenotfound}
+    def delete(self, mobile):
+        farmer = FarmlandTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {"error":False,"message":added}
+        else:
+            return {"error":True,"message":mobilenotfound}

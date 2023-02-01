@@ -10,23 +10,30 @@ from dateutil.relativedelta import relativedelta
 class AddLoanTransfer(Resource):	
     def post(self):
         try:
-            type = request.json['type']
-            bvn=request.json['bvn']
+            type=request.json['type']
+            # identify farmer with bvn or mobile
+            try:
+                bvn=request.json['bvn']
+                farmer = ScoreCard.query.filter_by(bvn=bvn).first()
+                mobile = farmer.mobile
+            except KeyError:
+                mobile=request.json['mobile']
+                farmer = ScoreCard.query.filter_by(mobile=mobile).first()
+                bvn = farmer.bvn
+            
             loan = Loan.query.filter_by(type=type).first()
             if not loan:
                 return {"error":True,"message":loannotfound}
-            farmer = ScoreCard.query.filter_by(bvn=bvn).first()
             if not farmer:
                 if loan:
                     try:
                         amount=request.json['amount']
                     except KeyError:
-                        amount=farmer.applyLoanAmount
+                        amount=minimumloanamount
                     new_data = LoanTransfer(type=type,company=loan.company,
-                amount=amount,group='',
-                score='',bin='',
+                amount=amount,group='',score='',bin='',
                 repayment_amount=float(amount)*(((loan.interest_rate_per_annum*(loan.repayment_months/12))+100)/100),
-                status='Offered',bvn=bvn,repayment_months=loan.repayment_months,
+                status='Offered',bvn=bvn,mobile=mobile,repayment_months=loan.repayment_months,
                 repaid = 0, balance = 0,transfer_date='Pending',due_date='Pending')
                     db.session.add(new_data)
                     db.session.commit()
@@ -41,7 +48,7 @@ class AddLoanTransfer(Resource):
                 amount=amount,group=farmer.is_in_a_cooperative,
                 score=farmer.score,bin=farmer.bin,
                 repayment_amount=float(amount)*(((loan.interest_rate_per_annum*(loan.repayment_months/12))+100)/100),
-                status='Offered',bvn=bvn,repayment_months=loan.repayment_months,
+                status='Offered',bvn=bvn,mobile=mobile,repayment_months=loan.repayment_months,
                 repaid = 0, balance = 0,transfer_date='Pending',due_date='Pending')
                     db.session.add(new_data)
                     db.session.commit()
@@ -52,6 +59,9 @@ class AddLoanTransfer(Resource):
             return {"error":True,"message":invalidinput}
         except Exception as e:
             return {"error":True,"message":e.__doc__}
+
+
+
 
 # get transfer by bvn
 class Transferbvn(Resource):
@@ -70,6 +80,24 @@ class Transferbvn(Resource):
             return {"error":False,"message":f'loan transfer{removed}'}
         else:
             return {"error":True,"message":bvnnotfound}
+
+# get transfer by mobile
+class Transfermobile(Resource):
+    def get(self, mobile):
+        farmer = LoanTransfer.query.filter_by(mobile=mobile).all()
+        if farmer:
+            transfers= [transfer.json() for transfer in farmer]
+            return jsonify({"error":False,"message":f'loan transfer{retrieved}',"data": transfers})
+        else:
+            return {"error":True,"message":mobilenotfound}
+    def delete(self, mobile):
+        farmer = LoanTransfer.query.filter_by(mobile=mobile).first()
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {"error":False,"message":f'loan transfer{removed}'}
+        else:
+            return {"error":True,"message":mobilenotfound}
     
 # get transfer by id
 class Transferid(Resource):
@@ -331,7 +359,7 @@ class ListTransfer(Resource):
         all_farmers = [farmer.json() for farmer in all_farmers]
         return jsonify(get_paginated_list(
         all_farmers, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))

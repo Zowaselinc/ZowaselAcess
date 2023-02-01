@@ -7,12 +7,12 @@ from models import *
 class AddCapacity5c(Resource):	
     def post(self):
         try:
-            farmercapacity = CapacityTable(bvn=request.json['bvn'],
+            farmercapacity = CapacityTable(bvn=request.json['bvn'],mobile=request.json['mobile'],
         howlongbeenfarming=request.json['howlongbeenfarming'],participatedintraining=request.json['participatedintraining'],
         farmingpractice=request.json['farmingpractice'],keepsanimals=request.json['keepsanimals'],
         hascooperative=request.json['hascooperative'],cooperativename=request.json['cooperativename'],
         educationlevel=request.json['educationlevel'])
-            farmerpractice = FarmPractice(bvn=request.json['bvn'],sizeoffarm=request.json['sizeoffarm'],
+            farmerpractice = FarmPractice(bvn=request.json['bvn'],mobile=request.json['mobile'],sizeoffarm=request.json['sizeoffarm'],
         farmisrentedorleased=request.json['farmisrentedorleased'],noofyearsleased=request.json['noofyearsleased'],
         usesmachines=request.json['usesmachines'],rotatescrops=request.json['rotatescrops'],
         noOfhectaresproducedyearly=request.json['noOfhectaresproducedyearly'],approxfertilizeruse=request.json['approxfertilizeruse'],
@@ -20,16 +20,16 @@ class AddCapacity5c(Resource):
         weedcontrolpractice=request.json['weedcontrolpractice'],estimatedincomepercrop=request.json['estimatedincomepercrop'],
         cropthatcansellwell=request.json['cropthatcansellwell'],hasfarmplanorproject=request.json['hasfarmplanorproject'],
         farmprojectinfo=request.json['farmprojectinfo'])
-            farmermechanization = MechanizationTable(bvn=request.json['bvn'],
+            farmermechanization = MechanizationTable(bvn=request.json['bvn'],mobile=request.json['mobile'],
         machinesused=request.json['machinesused'],machinehashelped=request.json['machinehashelped'],
         advisemachineorlabour=request.json['advisemachineorlabour'],othermachinesneeded=request.json['othermachinesneeded'],
         canacquiremorelands=request.json['canacquiremorelands'],percentcostsaved=request.json['percentcostsaved'])
-            farmercultivation = CultivationTable(bvn=request.json['bvn'],type_of_labor=request.json['type_of_labor'],
+            farmercultivation = CultivationTable(bvn=request.json['bvn'],mobile=request.json['mobile'],type_of_labor=request.json['type_of_labor'],
         pay_for_labor=request.json['pay_for_labor'],how_many_housechildren_help=request.json['how_many_housechildren_help'],
         season_children_help=request.json['season_children_help'],labor_children_do=request.json['labor_children_do'],
         household_vs_hire_cost=request.json['household_vs_hire_cost'],labor_women_do=request.json['labor_women_do'],
         percent_female_hired=request.json['percent_female_hired'])
-            farmerharvest = HarvestTable(bvn=request.json['bvn'],when_is_harvest_season=request.json['when_is_harvest_season'],
+            farmerharvest = HarvestTable(bvn=request.json['bvn'],mobile=request.json['mobile'],when_is_harvest_season=request.json['when_is_harvest_season'],
         no_of_hired_workers=request.json['no_of_hired_workers'],no_of_family_workers=request.json['no_of_family_workers'],
         no_of_permanent_workers=request.json['no_of_permanent_workers'],no_hired_constantly=request.json['no_hired_constantly'])
             farmer = CapacityTable.query.filter_by(bvn=request.json['bvn']).first()
@@ -65,6 +65,10 @@ class AddCapacity5c(Resource):
             return {"error":False,"message":f'capacity{added}'}
         except KeyError:
             return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
 
 class AllCapacity5c(Resource):
     def get(self):

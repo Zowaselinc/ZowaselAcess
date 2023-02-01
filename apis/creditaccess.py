@@ -11,7 +11,7 @@ class AddCreditAccess(Resource):
             if farmer:
                 return {"error":True,"message":bvnexists}
             else:
-                farmercreditaccess = CreditAccessTable(bvn=request.json['bvn'],
+                farmercreditaccess = CreditAccessTable(bvn=request.json['bvn'],mobile=request.json['mobile'],
         hasservedastreasurer=request.json['hasservedastreasurer'],durationastreasurer=request.json['durationastreasurer'],
         savesmoneymonthly=request.json['savesmoneymonthly'],savingsamount=request.json['savingsamount'],
         haddifficultyrepaying=request.json['haddifficultyrepaying'],difficultloanamount=request.json['difficultloanamount'],
@@ -62,7 +62,24 @@ class ListCreditAccess(Resource):
         all_farmers = [farmer.json() for farmer in all_farmers]
         return jsonify(get_paginated_list(
         all_farmers, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
+
+# get credit access by mobile
+class CreditAccessmobile(Resource):
+    def get(self, mobile):
+        farmer = CreditAccessTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            return {"error":False,"message":f'credit access{retrieved}',"data":farmer.json()}
+        else:
+            return {"error":True,"message":mobilenotfound}
+    def delete(self, mobile):
+        farmer = CreditAccessTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {"error":False,"message":f'credit access{removed}'}
+        else:
+            return {"error":True,"message":mobilenotfound}

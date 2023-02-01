@@ -11,7 +11,7 @@ class AddCreditHistory(Resource):
             if farmer:
                 return {"error":True,"message":bvnexists}
             else:
-                farmercredithistory = CreditHistoryTable(bvn=request.json['bvn'],
+                farmercredithistory = CreditHistoryTable(bvn=request.json['bvn'],mobile=request.json['mobile'],
         hastakenloanbefore=request.json['hastakenloanbefore'],sourceofloan=request.json['sourceofloan'],
         pastloanamount=request.json['pastloanamount'],howloanwasrepaid=request.json['howloanwasrepaid'],
         isreadytopayinterest=request.json['isreadytopayinterest'],canprovidecollateral=request.json['canprovidecollateral'],
@@ -57,7 +57,24 @@ class ListCreditHistory(Resource):
         all_farmers = [farmer.json() for farmer in all_farmers]
         return jsonify(get_paginated_list(
         all_farmers, 
-        '/list', 
+        f'/list/limit={limit}',
         start=request.args.get('start', 1), 
         limit=request.args.get('limit', limit)
     ))
+
+# get credit history by mobile
+class CreditHistorymobile(Resource):
+    def get(self, mobile):
+        farmer = CreditHistoryTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            return {"error":False,"message":f'credit history{retrieved}',"data":farmer.json()}
+        else:
+            return {"error":True,"message":mobilenotfound}
+    def delete(self, mobile):
+        farmer = CreditHistoryTable.query.filter_by(mobile=mobile).first()
+        if farmer:
+            db.session.delete(farmer)
+            db.session.commit()
+            return {"error":False,"message":f'credit history{removed}'}
+        else:
+            return {"error":True,"message":mobilenotfound}
