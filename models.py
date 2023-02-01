@@ -178,7 +178,7 @@ class Cropcard(db.Model):
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     farmer_name = db.Column(db.String(200))
     bvn     = db.Column(db.String(200))
-    mobile     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     crop_name = db.Column(db.String(200))
     fertilizer_cost      = db.Column(db.String(200))
     fertilizer      = db.Column(db.String(200))
@@ -217,7 +217,7 @@ class ScoreCard(db.Model):
     __tablename__   = 'score_card'
     id     = db.Column(db.Integer, unique=True, primary_key=True)
     bvn     = db.Column(db.String(200))
-    mobile     = db.Column(db.String(200))
+    mobile     = db.Column(db.String(200),unique=True)
     age = db.Column(db.String(200))
     number_of_land = db.Column(db.String(200))
     address = db.Column(db.String(200))
