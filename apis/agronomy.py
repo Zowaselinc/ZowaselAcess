@@ -10,6 +10,9 @@ class AddAgronomyServices(Resource):
             farmer = AgronomyServicesTable.query.filter_by(bvn=request.json['bvn']).first()
             if farmer:
                 return {"error":True,"message":bvnexists}
+            farmer = AgronomyServicesTable.query.filter_by(mobile=request.json['mobile']).first()
+            if farmer:
+                return {"error":True,"message":mobileexists}
             else:
                 farmeragronomy = AgronomyServicesTable(bvn=request.json['bvn'],mobile=request.json['mobile'],
         knowsagriprocessed=request.json['knowsagriprocessed'],agronomistthattrainedyou=request.json['agronomistthattrainedyou'],
@@ -32,7 +35,7 @@ class Agronomybvn(Resource):
     def put(self, bvn):
         try:
             # pull row from db table
-            farmer = FarmerTable.query.filter_by(bvn=bvn).first()
+            farmer = AgronomyServicesTable.query.filter_by(bvn=bvn).first()
             # return error if not found
             if not farmer:
                 return {"error":True,"message":bvnnotfound}
@@ -40,14 +43,14 @@ class Agronomybvn(Resource):
             if farmer:
                 # validate new bvn
                 if farmer.bvn != request.json['bvn']:
-                    checkdup = FarmerTable.query.filter_by(bvn=request.json['bvn']).first()
+                    checkdup = AgronomyServicesTable.query.filter_by(bvn=request.json['bvn']).first()
                     if checkdup:
                         return {"error":True,"message":bvnexists}
                     else:
                         farmer.bvn=request.json['bvn']
                 # validate new mobile number
                 if farmer.mobile != request.json['mobile']:
-                    checkdup = FarmerTable.query.filter_by(mobile=request.json['mobile']).first()
+                    checkdup = AgronomyServicesTable.query.filter_by(mobile=request.json['mobile']).first()
                     if checkdup:
                         return {"error":True,"message":mobileexists}
                     else:
@@ -110,7 +113,7 @@ class Agronomymobile(Resource):
     def put(self, mobile):
         try:
             # pull row from db table
-            farmer = FarmerTable.query.filter_by(mobile=mobile).first()
+            farmer = AgronomyServicesTable.query.filter_by(mobile=mobile).first()
             # return error if not found
             if not farmer:
                 return {"error":True,"message":mobilenotfound}
@@ -118,14 +121,14 @@ class Agronomymobile(Resource):
             if farmer:
                 # validate new bvn
                 if farmer.bvn != request.json['bvn']:
-                    checkdup = FarmerTable.query.filter_by(bvn=request.json['bvn']).first()
+                    checkdup = AgronomyServicesTable.query.filter_by(bvn=request.json['bvn']).first()
                     if checkdup:
                         return {"error":True,"message":bvnexists}
                     else:
                         farmer.bvn=request.json['bvn']
                 # validate new mobile number
                 if farmer.mobile != request.json['mobile']:
-                    checkdup = FarmerTable.query.filter_by(mobile=request.json['mobile']).first()
+                    checkdup = AgronomyServicesTable.query.filter_by(mobile=request.json['mobile']).first()
                     if checkdup:
                         return {"error":True,"message":mobileexists}
                     else:

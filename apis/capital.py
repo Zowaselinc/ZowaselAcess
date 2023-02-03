@@ -10,6 +10,9 @@ class AddCapital(Resource):
             farmer = CapitalTable.query.filter_by(bvn=request.json['bvn']).first()
             if farmer:
                 return {"error":True,"message":bvnexists}
+            farmer = CapitalTable.query.filter_by(mobile=request.json['mobile']).first()
+            if farmer:
+                return {"error":True,"message":mobileexists}
             else:
                 farmercapital = CapitalTable(bvn=request.json['bvn'],mobile=request.json['mobile'],mainincomesource=request.json['mainincomesource'],
         otherincomesource=request.json['otherincomesource'],noofincomeearners=request.json['noofincomeearners'],
@@ -31,7 +34,7 @@ class Capitalbvn(Resource):
     def put(self, bvn):
         try:
             # pull row from db table
-            farmer = FarmerTable.query.filter_by(bvn=bvn).first()
+            farmer = CapitalTable.query.filter_by(bvn=bvn).first()
             # return error if not found
             if not farmer:
                 return {"error":True,"message":bvnnotfound}
@@ -39,14 +42,14 @@ class Capitalbvn(Resource):
             if farmer:
                 # validate new bvn
                 if farmer.bvn != request.json['bvn']:
-                    checkdup = FarmerTable.query.filter_by(bvn=request.json['bvn']).first()
+                    checkdup = CapitalTable.query.filter_by(bvn=request.json['bvn']).first()
                     if checkdup:
                         return {"error":True,"message":bvnexists}
                     else:
                         farmer.bvn=request.json['bvn']
                 # validate new mobile number
                 if farmer.mobile != request.json['mobile']:
-                    checkdup = FarmerTable.query.filter_by(mobile=request.json['mobile']).first()
+                    checkdup = CapitalTable.query.filter_by(mobile=request.json['mobile']).first()
                     if checkdup:
                         return {"error":True,"message":mobileexists}
                     else:
@@ -108,7 +111,7 @@ class Capitalmobile(Resource):
     def put(self, mobile):
         try:
             # pull row from db table
-            farmer = FarmerTable.query.filter_by(mobile=mobile).first()
+            farmer = CapitalTable.query.filter_by(mobile=mobile).first()
             # return error if not found
             if not farmer:
                 return {"error":True,"message":mobilenotfound}
@@ -116,14 +119,14 @@ class Capitalmobile(Resource):
             if farmer:
                 # validate new bvn
                 if farmer.bvn != request.json['bvn']:
-                    checkdup = FarmerTable.query.filter_by(bvn=request.json['bvn']).first()
+                    checkdup = CapitalTable.query.filter_by(bvn=request.json['bvn']).first()
                     if checkdup:
                         return {"error":True,"message":bvnexists}
                     else:
                         farmer.bvn=request.json['bvn']
                 # validate new mobile number
                 if farmer.mobile != request.json['mobile']:
-                    checkdup = FarmerTable.query.filter_by(mobile=request.json['mobile']).first()
+                    checkdup = CapitalTable.query.filter_by(mobile=request.json['mobile']).first()
                     if checkdup:
                         return {"error":True,"message":mobileexists}
                     else:

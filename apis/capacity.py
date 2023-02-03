@@ -10,6 +10,9 @@ class AddCapacity(Resource):
             farmer = CapacityTable.query.filter_by(bvn=request.json['bvn']).first()
             if farmer:
                 return {"error":True,"message":bvnexists}
+            farmer = CapacityTable.query.filter_by(mobile=request.json['mobile']).first()
+            if farmer:
+                return {"error":True,"message":mobileexists}
             else:
                 farmercapacity = CapacityTable(bvn=request.json['bvn'],mobile=request.json['mobile'],
         howlongbeenfarming=request.json['howlongbeenfarming'],participatedintraining=request.json['participatedintraining'],
@@ -31,7 +34,7 @@ class Capacitybvn(Resource):
     def put(self, bvn):
         try:
             # pull row from db table
-            farmer = FarmerTable.query.filter_by(bvn=bvn).first()
+            farmer = CapacityTable.query.filter_by(bvn=bvn).first()
             # return error if not found
             if not farmer:
                 return {"error":True,"message":bvnnotfound}
@@ -39,14 +42,14 @@ class Capacitybvn(Resource):
             if farmer:
                 # validate new bvn
                 if farmer.bvn != request.json['bvn']:
-                    checkdup = FarmerTable.query.filter_by(bvn=request.json['bvn']).first()
+                    checkdup = CapacityTable.query.filter_by(bvn=request.json['bvn']).first()
                     if checkdup:
                         return {"error":True,"message":bvnexists}
                     else:
                         farmer.bvn=request.json['bvn']
                 # validate new mobile number
                 if farmer.mobile != request.json['mobile']:
-                    checkdup = FarmerTable.query.filter_by(mobile=request.json['mobile']).first()
+                    checkdup = CapacityTable.query.filter_by(mobile=request.json['mobile']).first()
                     if checkdup:
                         return {"error":True,"message":mobileexists}
                     else:
@@ -106,7 +109,7 @@ class Capacitymobile(Resource):
     def put(self, mobile):
         try:
             # pull row from db table
-            farmer = FarmerTable.query.filter_by(mobile=mobile).first()
+            farmer = CapacityTable.query.filter_by(mobile=mobile).first()
             # return error if not found
             if not farmer:
                 return {"error":True,"message":mobilenotfound}
@@ -114,14 +117,14 @@ class Capacitymobile(Resource):
             if farmer:
                 # validate new bvn
                 if farmer.bvn != request.json['bvn']:
-                    checkdup = FarmerTable.query.filter_by(bvn=request.json['bvn']).first()
+                    checkdup = CapacityTable.query.filter_by(bvn=request.json['bvn']).first()
                     if checkdup:
                         return {"error":True,"message":bvnexists}
                     else:
                         farmer.bvn=request.json['bvn']
                 # validate new mobile number
                 if farmer.mobile != request.json['mobile']:
-                    checkdup = FarmerTable.query.filter_by(mobile=request.json['mobile']).first()
+                    checkdup = CapacityTable.query.filter_by(mobile=request.json['mobile']).first()
                     if checkdup:
                         return {"error":True,"message":mobileexists}
                     else:

@@ -908,6 +908,13 @@ class ConditionsTable(db.Model):
         if value in forbidden:
             raise AssertionError('invalid input')
         return value
+    @validates('cropyieldprediction','cropexpectedmarketvalue','zowaselmarketplacepriceoffers')
+    def check_input(self, key, value):
+        try:
+            int(value)
+        except ValueError:
+            raise ValueError('invalid input')
+        return value
 
     def json(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns} 

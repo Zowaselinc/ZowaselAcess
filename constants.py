@@ -63,9 +63,33 @@ def get_paginated_list(results, url, start, limit):
     return obj
     
 # Loan amount recommender
+# with bvn
 def applyLoan(bvn):
     try:
         crop_card = Cropcard.query.filter_by(bvn=bvn).first()
+        if crop_card:
+            prices = [int(crop_card.fertilizer_cost),int(crop_card.mechanization_cost),int(crop_card.labour_cost),
+            int(crop_card.harvest_cost),int(crop_card.other_cost),minimumloanamount] 
+            price = np.median(prices)
+            if price >minimumloanamount:
+                pass
+            elif price<minimumloanamount:
+                pass
+            else:
+                price=minimumloanamount
+        else:
+            price = minimumloanamount
+        return price
+    except KeyError:
+        return {"error":True,"message":missingentry}
+    except AssertionError:
+        return {"error":True,"message":invalidinput}
+    except Exception as e:
+        return {"error":True,"message":e.__doc__}
+# with mobile
+def applyLoanMobile(mobile):
+    try:
+        crop_card = Cropcard.query.filter_by(mobile=mobile).first()
         if crop_card:
             prices = [int(crop_card.fertilizer_cost),int(crop_card.mechanization_cost),int(crop_card.labour_cost),
             int(crop_card.harvest_cost),int(crop_card.other_cost),minimumloanamount] 

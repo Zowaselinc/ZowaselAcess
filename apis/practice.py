@@ -69,6 +69,53 @@ class ListPractice(Resource):
 
 # get practice with mobile
 class Practicemobile(Resource):
+    def put(self, mobile):
+        try:
+            # pull row from db table
+            farmer = FarmPractice.query.filter_by(mobile=mobile).first()
+            # return error if not found
+            if not farmer:
+                return {"error":True,"message":mobilenotfound}
+            # if found, validate new values
+            if farmer:
+                # validate new bvn
+                if farmer.bvn != request.json['bvn']:
+                    checkdup = FarmPractice.query.filter_by(bvn=request.json['bvn']).first()
+                    if checkdup:
+                        return {"error":True,"message":bvnexists}
+                    else:
+                        farmer.bvn=request.json['bvn']
+                # validate new mobile number
+                if farmer.mobile != request.json['mobile']:
+                    checkdup = FarmPractice.query.filter_by(mobile=request.json['mobile']).first()
+                    if checkdup:
+                        return {"error":True,"message":mobileexists}
+                    else:
+                        farmer.mobile=request.json['mobile']
+                # assign other fields
+                farmer.sizeoffarm=request.json['sizeoffarm']
+                farmer.farmisrentedorleased=request.json['farmisrentedorleased']
+                farmer.noofyearsleased=request.json['noofyearsleased']
+                farmer.usesmachines=request.json['usesmachines']
+                farmer.rotatescrops=request.json['rotatescrops']
+                farmer.noOfhectaresproducedyearly=request.json['noOfhectaresproducedyearly']
+                farmer.approxfertilizeruse=request.json['approxfertilizeruse']
+                farmer.nooffertlizerapplications=request.json['nooffertlizerapplications']
+                farmer.decisionforspraying=request.json['decisionforspraying']
+                farmer.weedcontrolpractice=request.json['weedcontrolpractice']
+                farmer.estimatedincomepercrop=request.json['estimatedincomepercrop']
+                farmer.cropthatcansellwell=request.json['cropthatcansellwell']
+                farmer.hasfarmplanorproject=request.json['hasfarmplanorproject']
+                farmer.farmprojectinfo=request.json['farmprojectinfo']
+                db.session.commit()
+                return {"error":False,"message":f'farmer{updated}',"data":farmer.json()}
+        except KeyError:
+            return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
+    
     def get(self, mobile):
         farmer = FarmPractice.query.filter_by(mobile=mobile).first()
         if farmer:

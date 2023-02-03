@@ -69,6 +69,64 @@ class ListLiving(Resource):
 
 # get living by mobile
 class Livingmobile(Resource):
+    def put(self, mobile):
+        try:
+            # pull row from db table
+            farmer = LivingTable.query.filter_by(mobile=mobile).first()
+            # return error if not found
+            if not farmer:
+                return {"error":True,"message":mobilenotfound}
+            # if found, validate new values
+            if farmer:
+                # validate new bvn
+                if farmer.bvn != request.json['bvn']:
+                    checkdup = LivingTable.query.filter_by(bvn=request.json['bvn']).first()
+                    if checkdup:
+                        return {"error":True,"message":bvnexists}
+                    else:
+                        farmer.bvn=request.json['bvn']
+                # validate new mobile number
+                if farmer.mobile != request.json['mobile']:
+                    checkdup = LivingTable.query.filter_by(mobile=request.json['mobile']).first()
+                    if checkdup:
+                        return {"error":True,"message":mobileexists}
+                    else:
+                        farmer.mobile=request.json['mobile']
+                # assign other fields
+                farmer.houseowned=request.json['houseowned']
+                farmer.stayswithfamily=request.json['stayswithfamily']
+                farmer.relationshipwithowner=request.json['relationshipwithowner']
+                farmer.householdeats=request.json['householdeats']
+                farmer.maleunderage=request.json['maleunderage']
+                farmer.femaleunderage=request.json['femaleunderage']
+                farmer.childrenunderage=request.json['childrenunderage']
+                farmer.maleaboveage=request.json['maleaboveage']
+                farmer.femaleaboveage=request.json['femaleaboveage']
+                farmer.childrenaboveage=request.json['childrenaboveage']
+                farmer.liveswith=request.json['liveswith']
+                farmer.ownotherlands=request.json['ownotherlands']
+                farmer.standardofliving=request.json['standardofliving']
+                farmer.sourceofwater=request.json['sourceofwater']
+                farmer.sourceeverytime=request.json['sourceeverytime']
+                farmer.cookingmethod=request.json['cookingmethod']
+                farmer.haveelectricity=request.json['haveelectricity']
+                farmer.powerpayment=request.json['powerpayment']
+                farmer.typeoftoilet=request.json['typeoftoilet']
+                farmer.kitchensink=request.json['kitchensink']
+                farmer.hasgroup=request.json['hasgroup']
+                farmer.group=request.json['group']
+                farmer.position=request.json['position']
+                farmer.hasaccessedInput=request.json['hasaccessedInput']
+                farmer.input=request.json['input']
+                db.session.commit()
+                return {"error":False,"message":f'farmer{updated}',"data":farmer.json()}
+        except KeyError:
+            return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
+    
     def get(self, mobile):
         farmer = LivingTable.query.filter_by(mobile=mobile).all()
         if farmer:

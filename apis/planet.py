@@ -67,6 +67,69 @@ class ListPlanet(Resource):
 
 # get planet with mobile
 class Planetmobile(Resource):
+    def put(self, mobile):
+        try:
+            # pull row from db table
+            farmer = Planet.query.filter_by(mobile=mobile).first()
+            # return error if not found
+            if not farmer:
+                return {"error":True,"message":mobilenotfound}
+            # if found, validate new values
+            if farmer:
+                # validate new bvn
+                if farmer.bvn != request.json['bvn']:
+                    checkdup = Planet.query.filter_by(bvn=request.json['bvn']).first()
+                    if checkdup:
+                        return {"error":True,"message":bvnexists}
+                    else:
+                        farmer.bvn=request.json['bvn']
+                # validate new mobile number
+                if farmer.mobile != request.json['mobile']:
+                    checkdup = Planet.query.filter_by(mobile=request.json['mobile']).first()
+                    if checkdup:
+                        return {"error":True,"message":mobileexists}
+                    else:
+                        farmer.mobile=request.json['mobile']
+                # assign other fields
+                farmer.plantoexpand=request.json['plantoexpand']
+                farmer.crop=request.json['crop']
+                farmer.variety=request.json['variety']
+                farmer.raiseorbuy=request.json['raiseorbuy']
+                farmer.buywhere=request.json['buywhere']
+                farmer.seedlingprice=request.json['seedlingprice']
+                farmer.qtybought=request.json['qtybought']
+                farmer.degradedland=request.json['degradedland']
+                farmer.croprotation=request.json['croprotation']
+                farmer.season=request.json['season']
+                farmer.disaster=request.json['disaster']
+                farmer.burning=request.json['burning']
+                farmer.mill=request.json['mill']
+                farmer.energysource=request.json['energysource']
+                farmer.replacedtree=request.json['replacedtree']
+                farmer.placement=request.json['placement']
+                farmer.sourceofwater=request.json['sourceofwater']
+                farmer.covercrops=request.json['covercrops']
+                farmer.intercrop=request.json['intercrop']
+                farmer.cropintercropped=request.json['cropintercropped']
+                farmer.wastemgt=request.json['wastemgt']
+                farmer.wastedisposal=request.json['wastedisposal']
+                farmer.recyclewaste=request.json['recyclewaste']
+                farmer.suffered=request.json['suffered']
+                farmer.whensuffered=request.json['whensuffered']
+                farmer.greywater=request.json['greywater']
+                farmer.recyclegreywater=request.json['recyclegreywater']
+                farmer.pollution=request.json['pollution']
+                farmer.pollutionfreq=request.json['pollutionfreq']
+                farmer.measures=request.json['measures']
+                db.session.commit()
+                return {"error":False,"message":f'farmer{updated}',"data":farmer.json()}
+        except KeyError:
+            return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
+    
     def get(self, mobile):
         farmer = Planet.query.filter_by(mobile=mobile).all()
         if farmer:

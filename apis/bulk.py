@@ -67,7 +67,7 @@ class AddBulkScorecard(Resource):
         'no_of_agronomist_visits'])
                         for col in farmer.columns:
                             farmer[col] = dfr[col]
-                        farmer['applyLoanAmount'] = applyLoan(farmer['bvn'])
+                        farmer['applyLoanAmount'] = applyLoanMobile(dfr['mobile'])
                         farmer = farmer.rename({'number_of_land':'numberOfLand','estimate_monthly_income':'estimateMonthlyIncome',
                      'years_cultivating':'yearsCultivating'},axis=1)
                         cols=['age', 'numberOfLand', 'owner_caretaker', 'crop','applyLoanAmount','intercropping', 'machines', 'estimateMonthlyIncome','yearsCultivating']
