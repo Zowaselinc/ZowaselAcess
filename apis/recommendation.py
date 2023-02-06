@@ -21,6 +21,35 @@ class AddRecommendation(Resource):
 
 # get recommendation by id
 class RecommendationTracing(Resource):
+    def put(self, tracing_id):
+        try:
+            # pull row from db table
+            farmer = Recommendation.query.filter_by(tracing_id=tracing_id).first()
+            # return error if not found
+            if not farmer:
+                return {"error":True,"message":tidnotfound}
+            # if found, validate new values
+            if farmer:
+                # validate new tracing_id
+                if farmer.tracing_id != request.json['tracing_id']:
+                    checkdup = Recommendation.query.filter_by(tracing_id=request.json['tracing_id']).first()
+                    if checkdup:
+                        return {"error":True,"message":tidexists}
+                    else:
+                        farmer.tracing_id=request.json['tracing_id']
+                # assign other fields
+                farmer.rec_one=request.json['rec_one']
+                farmer.rec_two=request.json['rec_two']
+                farmer.rec_three=request.json['rec_three']
+                db.session.commit()
+                return {"error":False,"message":f'farmer{updated}',"data":farmer.json()}
+        except KeyError:
+            return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
+    
     def get(self, tracing_id):
         farmer = Recommendation.query.filter_by(tracing_id=tracing_id).all()
         if farmer:

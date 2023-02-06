@@ -22,6 +22,40 @@ class AddWarehouse(Resource):
 
 # get warehouse with id
 class WarehouseTracing(Resource):
+    def put(self, tracing_id):
+        try:
+            # pull row from db table
+            farmer = Warehouse.query.filter_by(tracing_id=tracing_id).first()
+            # return error if not found
+            if not farmer:
+                return {"error":True,"message":tidnotfound}
+            # if found, validate new values
+            if farmer:
+                # validate new tracing_id
+                if farmer.tracing_id != request.json['tracing_id']:
+                    checkdup = Warehouse.query.filter_by(tracing_id=request.json['tracing_id']).first()
+                    if checkdup:
+                        return {"error":True,"message":tidexists}
+                    else:
+                        farmer.tracing_id=request.json['tracing_id']
+                # assign other fields
+                farmer.location=request.json['location']
+                farmer.warehouse_type=request.json['warehouse_type']
+                farmer.capacity=request.json['capacity']
+                farmer.standard=request.json['standard']
+                farmer.insurance=request.json['insurance']
+                farmer.duration=request.json['duration']
+                farmer.cost=request.json['cost']
+                db.session.commit()
+                return {"error":False,"message":f'farmer{updated}',"data":farmer.json()}
+        except KeyError:
+            return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
+    
+    
     def get(self, tracing_id):
         farmer = Warehouse.query.filter_by(tracing_id=tracing_id).all()
         if farmer:

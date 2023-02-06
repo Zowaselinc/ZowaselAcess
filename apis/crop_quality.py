@@ -27,6 +27,54 @@ class AddCropQuality(Resource):
 
 # get crop quality with id
 class CropQualityTracing(Resource):
+    def put(self, tracing_id):
+        try:
+            # pull row from db table
+            farmer = CropQuality.query.filter_by(tracing_id=tracing_id).first()
+            # return error if not found
+            if not farmer:
+                return {"error":True,"message":tidnotfound}
+            # if found, validate new values
+            if farmer:
+                # validate new tracing_id
+                if farmer.tracing_id != request.json['tracing_id']:
+                    checkdup = CropQuality.query.filter_by(tracing_id=request.json['tracing_id']).first()
+                    if checkdup:
+                        return {"error":True,"message":tidexists}
+                    else:
+                        farmer.tracing_id=request.json['tracing_id']
+                # assign other fields
+                farmer.moisture_content=request.json['moisture_content']
+                farmer.foreign_matter=request.json['foreign_matter']
+                farmer.test_weight=request.json['test_weight']
+                farmer.quality=request.json['quality']
+                farmer.rotten_shriveled=request.json['rotten_shriveled']
+                farmer.hardness=request.json['hardness']
+                farmer.splits=request.json['splits']
+                farmer.oil_content=request.json['oil_content']
+                farmer.infestation=request.json['infestation']
+                farmer.hectoliter=request.json['hectoliter']
+                farmer.total_defects=request.json['total_defects']
+                farmer.dockage=request.json['dockage']
+                farmer.ash_content=request.json['ash_content']
+                farmer.insoluble_ash=request.json['insoluble_ash']
+                farmer.volatile=request.json['volatile']
+                farmer.mold_weight=request.json['mold_weight']
+                farmer.drying_process=request.json['drying_process']
+                farmer.dead_insects=request.json['dead_insects']
+                farmer.excreta=request.json['excreta']
+                farmer.insect_defiled=request.json['insect_defiled']
+                farmer.curcumin=request.json['curcumin']
+                farmer.extraneous=request.json['extraneous']
+                db.session.commit()
+                return {"error":False,"message":f'farmer{updated}',"data":farmer.json()}
+        except KeyError:
+            return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
+    
     def get(self, tracing_id):
         farmer = CropQuality.query.filter_by(tracing_id=tracing_id).all()
         if farmer:

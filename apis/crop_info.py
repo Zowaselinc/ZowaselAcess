@@ -23,6 +23,41 @@ class AddCropInfo(Resource):
 
 # getcrop info with id
 class CropInfoTracing(Resource):
+    def put(self, tracing_id):
+        try:
+            # pull row from db table
+            farmer = CropInfo.query.filter_by(tracing_id=tracing_id).first()
+            # return error if not found
+            if not farmer:
+                return {"error":True,"message":tidnotfound}
+            # if found, validate new values
+            if farmer:
+                # validate new tracing_id
+                if farmer.tracing_id != request.json['tracing_id']:
+                    checkdup = CropInfo.query.filter_by(tracing_id=request.json['tracing_id']).first()
+                    if checkdup:
+                        return {"error":True,"message":tidexists}
+                    else:
+                        farmer.tracing_id=request.json['tracing_id']
+                # assign other fields
+                farmer.crop_type=request.json['crop_type']
+                farmer.sourcing_location=request.json['sourcing_location']
+                farmer.crop_origin=request.json['crop_origin']
+                farmer.crop_qty=request.json['crop_qty']
+                farmer.crop_variety=request.json['crop_variety']
+                farmer.cooperative=request.json['cooperative']
+                farmer.no_of_farmer_group=request.json['no_of_farmer_group']
+                farmer.female_to_male=request.json['female_to_male']
+                farmer.farmer_name=request.json['farmer_name'],
+                farmer.gender=request.json['gender']
+                db.session.commit()
+                return {"error":False,"message":f'farmer{updated}',"data":farmer.json()}
+        except KeyError:
+            return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
     def get(self, tracing_id):
         farmer = CropInfo.query.filter_by(tracing_id=tracing_id).all()
         if farmer:
