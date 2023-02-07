@@ -137,10 +137,15 @@ class Scorecardmobile(Resource):
                 farmer.number_of_crops=request.json['number_of_crops']
                 farmer.is_in_a_cooperative=request.json['is_in_a_cooperative']
                 farmer.no_of_agronomist_visits=request.json['no_of_agronomist_visits']
-                farmer.applyLoanAmount=request.json['applyLoanAmount']
-                db.session.commit()
+                farmer.applyLoanAmount=applyLoanMobile(request.json['mobile'])
+                farmer.mobile=request.json['mobile']
+                farmer.bvn=request.json['bvn']
+                farmer.score=farmer.score
+                farmer.bin=farmer.bin
+                #db.session.commit()
 
                 # upload loan amount
+                #'''
                 bvn=farmer.bvn
                 mobile=farmer.mobile
                 farmer = ScoreCard.query.filter_by(mobile=mobile).first()
@@ -179,6 +184,7 @@ class Scorecardmobile(Resource):
                     farmer.score = model.predict_proba(tdf[train_cols])[:,1].round(2)[0]
                     farmer.bin=bin_target([farmer.score])[0]
                     db.session.commit()
+                #'''
                 return {"error":False,"message":f'farmer{updated}',"data":farmer.json()}
         except KeyError:
             return {"error":True,"message":missingentry}

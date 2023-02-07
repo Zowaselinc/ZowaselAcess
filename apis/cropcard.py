@@ -170,6 +170,8 @@ class Cropcardmobile(Resource):
                     else:
                         farmer.mobile=request.json['mobile']
                 # assign other fields
+                farmer.mobile=request.json['mobile']
+                farmer.bvn=request.json['bvn']
                 farmer.farmer_name=request.json['farmer_name']
                 farmer.crop_name=request.json['crop_name']
                 farmer.fertilizer_cost=request.json['fertilizer_cost']
@@ -184,6 +186,7 @@ class Cropcardmobile(Resource):
                 farmer.others=request.json['others']
                 db.session.commit()
                 # upload loan amount
+                '''
                 bvn=farmer.bvn
                 mobile=farmer.mobile
                 farmer = ScoreCard.query.filter_by(mobile=mobile).first()
@@ -222,7 +225,7 @@ class Cropcardmobile(Resource):
                     farmer.score = model.predict_proba(tdf[train_cols])[:,1].round(2)[0]
                     farmer.bin=bin_target([farmer.score])[0]
                     db.session.commit()
-                
+                '''
                 return {"error":False,"message":f'farmer{updated}',"data":farmer.json()}
         except KeyError:
             return {"error":True,"message":missingentry}
