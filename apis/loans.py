@@ -31,6 +31,34 @@ class AddLoan(Resource):
 
 # get loan by type
 class Loantype(Resource):
+    def put(self, type):
+        try:
+            # pull row from db table
+            loan = Loan.query.filter_by(type=type).first()
+            # return error if not found
+            if not loan:
+                return {"error":True,"message":loannotfound}
+            # if found, validate new values
+            if loan:
+                # validate new tracing_id
+                if loan.type != request.json['type']:
+                    checkdup = Loan.query.filter_by(type=request.json['type']).first()
+                    if checkdup:
+                        return {"error":True,"message":loanexists}
+                    else:
+                        loan.type=request.json['type']
+                # assign other fields
+                loan.company=request.json['company']
+                loan.repayment_months=request.json['repayment_months']
+                loan.interest_rate_per_annum=request.json['interest_rate_per_annum']
+                db.session.commit()
+                return {"error":False,"message":f'loan type{updated}',"data":loan.json()}
+        except KeyError:
+            return {"error":True,"message":missingentry}
+        except AssertionError:
+            return {"error":True,"message":invalidinput}
+        except Exception as e:
+            return {"error":True,"message":e.__doc__}
     def get(self, type):
         loan = Loan.query.filter_by(type=type).first()
         if loan:
